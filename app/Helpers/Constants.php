@@ -1,0 +1,5 @@
+<?php
+
+define('API_RESPONSE_CODE_OK', 200);
+define('API_RESPONSE_CODE_CREATED', 201);
+define('API_RESPONSE_CODE_NO_CONTENT', 204);
