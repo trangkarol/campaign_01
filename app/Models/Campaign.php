@@ -10,6 +10,8 @@ class Campaign extends BaseModel
 
     const BLOCK = 0;
     const ACTIVE = 1;
+    const STATUS_PUBLIC = 0;
+    const STATUS_PRIVATE = 1;
 
     public function __construct($attributes = [])
     {
@@ -99,7 +101,7 @@ class Campaign extends BaseModel
     {
         return $this->getUserByRole('blocked')->get();
     }
-    
+
     public function isActive()
     {
         return $this->attributes['status'] == static::ACTIVE;

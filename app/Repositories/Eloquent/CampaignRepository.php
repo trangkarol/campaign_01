@@ -83,7 +83,8 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         return true;
     }
 
-    public function delete($campaign) {
+    public function delete($campaign)
+    {
         $campaign->donations()->delete();
         $campaign->tags()->detach();
         $campaign->users()->detach();
@@ -92,5 +93,53 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         $campaign->settings()->delete();
 
         return $campaign->delete();
+    }
+
+    public function search($inputs)
+    {
+        $tagIds = $inputs['tag_id'];
+        $dateStart = $inputs['date_start'];
+        $dateEnd = $inputs['date_end'];
+        $campaign = $this;
+
+        if ($inputs['status']) {
+            $campaign = $campaign->where('status', $inputs['status']);
+        }
+
+        if ($inputs['hashtag']) {
+            $campaign = $campaign->where('hashtag', 'like', '%' . $inputs['hashtag'] . '%');
+        }
+
+        if ($inputs['title']) {
+            $campaign = $campaign->where('title', 'like', '%' . $inputs['title'] . '%');
+        }
+
+        if ($inputs['latitude']) {
+            $campaign = $campaign->where('latitude', '>=', $inputs['latitude']);
+        }
+
+        if ($inputs['longitude']) {
+            $campaign = $campaign->where('longitude', '<=', $inputs['longitude']);
+        }
+
+        if ($tagIds != config('settings.search_default')) {
+            $campaign = $campaign->with(['tags' => function ($query) use ($tagIds) {
+                $query->whereIn('campaign_tag.tag_id', $tagIds);
+            }]);
+        }
+
+        if ($dateStart) {
+            $campaign = $campaign->with(['settings' => function ($query) use ($dateStart) {
+                $query->where('settings.key', config('settings.campaign.start_day'))->where('value', '>=', $dateStart);
+            }]);
+        }
+
+        if ($dateEnd) {
+            $campaign = $campaign->with(['settings' => function ($query) use ($dateEnd) {
+                $query->where('settings.key', config('settings.campaign.end_day'))->where('value', '<=', $dateEnd);
+            }]);
+        }
+
+        return $campaign->get();// bo sung phan trang khi campaign timeline duoc merge
     }
 }

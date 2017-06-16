@@ -21,6 +21,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['auth:api', 'xssProtection'
     Route::group(['prefix' => '/campaign', 'as' => 'campaign.'], function () {
         Route::post('post-create', 'CampaignController@create')->name('create');
         Route::delete('post-delete', 'CampaignController@delete')->name('delete');
+        Route::get('search', 'CampaignController@search')->name('search');
     });
 
     Route::group(['prefix' => '/event', 'as' => 'event.'], function () {

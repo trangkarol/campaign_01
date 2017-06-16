@@ -11,6 +11,7 @@ use App\Http\Requests\CreateCampaignRequest;
 use App\Exceptions\Api\UnknowException;
 use Illuminate\Http\Request;
 use App\Models\Role;
+use App\Models\Campaign;
 
 class CampaignController extends ApiController
 {
@@ -37,7 +38,7 @@ class CampaignController extends ApiController
         $data = $request->only('title', 'description', 'hashtag', 'longitude', 'latitude', 'tags', 'settings', 'media');
 
         $data['role_id'] = $this->roleRepository->getRoleId(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN);
-         
+
         if (!$data['role_id']) {
             throw new NotFoundException('Not found role when create campaign');
         }
@@ -53,7 +54,7 @@ class CampaignController extends ApiController
     protected function delete(Request $request)
     {
         $campaign = $this->campaignRepository->find($request->id);
-        
+
         if (!$campaign) {
             throw new UnknowException('NOT_FOUND', NOT_FOUND);
         }
@@ -66,6 +67,30 @@ class CampaignController extends ApiController
             $eventIds = $campaign->events()->pluck('id');
             $this->campacts['event'] = $this->eventRepository->delete($eventIds);
             $this->campacts['campaign'] = $this->campaignRepository->delete($campaign);
+        });
+    }
+
+    /**
+     * search campaign of user.
+     *
+     * @return void
+     */
+    public function search(Request $request)
+    {
+        $data = $request->only(
+            'tag_id',
+            'hashtag',
+            'title',
+            'longitude',
+            'latitude',
+            'date_start',
+            'date_end'
+        );
+
+        $data['status'] = Campaign::STATUS_PUBLIC;
+
+        return $this->getData(function () use ($data) {
+            $this->compacts['campaign'] = $this->campaignRepository->search($data);
         });
     }
 }
