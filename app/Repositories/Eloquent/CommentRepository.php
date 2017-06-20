@@ -21,4 +21,11 @@ class CommentRepository extends BaseRepository implements CommentInterface
 
         return $model->comments()->create($data);
     }
+
+    public function getComment($modelId)
+    {
+        return $this->with(['likes', 'user', 'subComment' => function ($query) {
+            $query->with('likes', 'user')->paginate(10);;
+        }])->where('commentable_id', $modelId)->paginate(10);
+    }
 }

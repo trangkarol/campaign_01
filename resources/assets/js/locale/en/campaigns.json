@@ -1,3 +1,23 @@
 {
-  "campaigns": "Campaigns"
+    "campaigns": "Campaigns",
+    "timeline": "Timeline",
+    "campaign-infor": "Campaign Information",
+    "start-day": "Start day",
+    "end-day": "End day",
+    "address": "Address",
+    "email": "Email",
+    "phone": "Phone",
+    "other-social": "Other Social Networks",
+    "operation-time": "Operation Time",
+    "location": "Location",
+    "typical-images": "Typical Images",
+    "tags": "Tags",
+    "related-campaigns": "Related Campaigns",
+    "list-members": "List members",
+    "lbl-members": "members attended to this campaign",
+    "join-now": "Join now!",
+    "more-comment": "View more comments ",
+    "reply": "reply",
+    "write-comment": "Write something ....",
+    "view-more": "View more comments"
 }

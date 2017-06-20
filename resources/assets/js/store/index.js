@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import campaign from './modules/campaign'
 import auth from './modules/auth'
+import comment from './modules/comment'
 
 Vue.use(Vuex)
 
@@ -12,10 +13,11 @@ export default new Vuex.Store({
     modules: {
         campaign,
         auth,
+        comment,
     },
     // #root state
     state: {
-      loading: false,
+        loading: false,
     },
     // #root mutations
     mutations: {

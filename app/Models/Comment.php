@@ -38,4 +38,9 @@ class Comment extends BaseModel
     {
         return $this->morphMany(Like::class, 'likeable');
     }
+
+    public function subComment()
+    {
+        return $this->hasMany(Comment::class, 'parent_id', 'id');
+    }
 }

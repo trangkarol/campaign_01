@@ -26,6 +26,7 @@ class Campaign extends BaseModel
         'longitude',
         'latitude',
         'status',
+        'address',
     ];
 
     protected $dates = ['deleted_at'];

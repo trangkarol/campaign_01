@@ -21,6 +21,7 @@ class Event extends BaseModel
         'description',
         'longitude',
         'latitude',
+        'address',
     ];
 
     protected $dates = ['deleted_at'];

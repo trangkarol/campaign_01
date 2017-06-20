@@ -1,3 +1,6 @@
 export default {
-    campaigns: []
+    campaign: [],
+    events: [],
+    tags: [],
+    loading: true
 }

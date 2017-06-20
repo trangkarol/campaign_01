@@ -16,7 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+Route::get('/show-campaign', function (Request $request) {
+    return $request->user();
+});
 Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function () {
     Route::group(['namespace' => 'Auth'], function () {
         Route::post('login', 'AuthController@login')->name('login');
@@ -38,6 +40,8 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
         Route::get('joined-campaign', 'UserController@listJoinedCampaign')->name('joined-campaign');
     });
 
+    Route::post('logout', 'Auth\AuthController@logout')->name('logout');
+
     Route::post('check-exist', 'CommonController@checkExist');
 
     Route::group(['middleware' => 'auth:api'], function () {
@@ -49,6 +53,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::patch('remove-user', 'CampaignController@removeUser')->name('remove-user');
             Route::patch('change-owner', 'CampaignController@changeOwner')->name('change-owner');
             Route::post('approve-user', 'CampaignController@approveUserJoinCampaign')->name('approve');
+            Route::get('/{id}/timeline/event', 'CampaignController@getListEvent');
         });
 
         Route::resource('campaign', 'CampaignController', ['only' => ['store', 'update', 'destroy', 'show']]);
@@ -71,7 +76,11 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             });
         });
 
-        Route::resource('/comment', 'CommentController', ['only' => ['update', 'destroy']]);
+        Route::resource('/comment', 'CommentController', ['only' => ['update', 'destroy', 'show']]);
+
+        Route::group(['prefix' => '/comment', 'as' => 'comment.'], function () {
+            Route::post('/create-comment-event/{modelId}', 'CommentController@createCommentEvent');
+        });
 
         Route::group(['prefix' => '/donation'], function () {
             Route::patch('/update-status/{id}', 'DonationController@updateStatus')->name('update-status');

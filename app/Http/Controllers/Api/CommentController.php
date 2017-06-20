@@ -26,15 +26,17 @@ class CommentController extends ApiController
         $this->commentRepository = $commentRepository;
     }
 
-    public function createCommentEvent(CommentRequest $request)
+    public function createCommentEvent($modelId, CommentRequest $request)
     {
-        if (!$request->event_id) {
+        if (!$modelId) {
             throw new UnknowException('Event_id is null');
         }
 
         $data = $request->intersect('parent_id', 'content');
+        $data['event_id'] = $modelId;
         $data['user_id'] = $this->user->id;
-        $event = $this->eventRepository->findOrFail($request->event_id);
+
+        $event = $this->eventRepository->findOrFail($data['event_id']);
 
         if ($this->user->cant('comment', $event)) {
             throw new UnknowException('Permission error: User can not create comment in this event.');
@@ -88,6 +90,19 @@ class CommentController extends ApiController
 
         return $this->doAction(function () use ($id) {
             $this->compacts['deleteComment'] = $this->commentRepository->delete($id);
+        });
+    }
+
+    public function show($modelId)
+    {
+        // $comment = $this->commentRepository->findOrFail($id);
+
+        // if ($this->user->cant('update', $comment)) {
+        //     throw new UnknowException('Permission error: User can not edit this comment.');
+        // }
+
+        return $this->getData(function () use ($modelId) {
+            $this->compacts['comment'] = $this->commentRepository->getComment($modelId);
         });
     }
 }

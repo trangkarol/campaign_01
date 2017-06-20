@@ -6,6 +6,7 @@ use App\Repositories\Contracts\CampaignInterface;
 use App\Repositories\Contracts\RoleInterface;
 use App\Repositories\Contracts\TagInterface;
 use App\Repositories\Contracts\EventInterface;
+use App\Repositories\Contracts\CommentInterface;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\UnknowException;
 use Illuminate\Http\Request;
@@ -20,18 +21,21 @@ class CampaignController extends ApiController
     private $tagRepository;
     private $eventRepository;
     private $campaignRepository;
+    private $commentRepository;
 
     public function __construct(
         CampaignInterface $campaignRepository,
         RoleInterface $roleRepository,
         TagInterface $tagRepository,
-        EventInterface $eventRepository
+        EventInterface $eventRepository,
+        CommentInterface $commentRepository
     ) {
         parent::__construct();
         $this->roleRepository = $roleRepository;
         $this->tagRepository = $tagRepository;
         $this->eventRepository = $eventRepository;
         $this->campaignRepository = $campaignRepository;
+        $this->commentRepository = $commentRepository;
     }
 
     public function store(CampaignRequest $request)
@@ -108,6 +112,7 @@ class CampaignController extends ApiController
             $this->compacts['campaign'] = $this->campaignRepository->update($campaign, $data);
         });
     }
+
     /**
      * show campaign the first.
      *
@@ -118,21 +123,24 @@ class CampaignController extends ApiController
     {
         $campaign = $this->campaignRepository->findOrFail($id);
 
-        if ($this->user->cant('view', $campaign)) {
-            throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
-        }
+        // if ($this->user->cant('view', $campaign)) {
+        //     throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
+        // }
 
         return $this->getData(function () use ($campaign) {
-            $this->compacts['events'] = [];
+            $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events());
+            // dd($this->eventRepository->getEvent($campaign->events())->toArray());
+            // $this->compacts['comments'] = $this->commentRepository->getComment($campaign->events());
+            // $eventIds = $campaign->events()->pluck('id')->all();
+            // dd($eventIds, $this->commentRepository->getComment($eventIds));
+            // if (!$campaign->events()->get()->isEmpty()) {
+            //     $this->compacts['events'] = $this->paginateData(
+            //         $this->eventRepository->getEvent($campaign->events())
+            //     );
+            // }
 
-            if ($campaign->events()->get()->isEmpty()) {
-                $this->compacts['events'] = $this->paginateData(
-                    $this->eventRepository->getEvent($campaign->events())
-                );
-            }
-
-            $this->compacts['campaignTimeline'] = $this->campaignRepository->getCampaignTimeline($campaign);
-            $this->compacts['campaign'] = $campaign;
+            $roleIdOwner = $this->roleRepository->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)->id;
+            $this->compacts['show_campaign'] = $this->campaignRepository->getCampaign($campaign, $roleIdOwner);
         });
     }
 
@@ -161,18 +169,16 @@ class CampaignController extends ApiController
      * @param  array  $data
      * @return $campaign
     */
-    public function getCampaignTimeline($id)
+    public function getListEvent($id)
     {
         $campaign = $this->campaignRepository->findOrFail($id);
 
-        if ($this->user->cannot('view', $campaign)) {
-            throw new NotFoundException('You do not have authorize to delete this campaign', UNAUTHORIZED);
-        }
+        // if ($this->user->cannot('view', $campaign)) {
+        //     throw new NotFoundException('You do not have authorize to delete this campaign', UNAUTHORIZED);
+        // }
 
         return $this->getData(function () use ($campaign) {
-            $this->compacts['event'] = $this->paginateData(
-                $this->eventRepository->getEventFromCampaign($campaign->events())
-            );
+            $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events());
         });
     }
 

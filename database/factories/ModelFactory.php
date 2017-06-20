@@ -48,6 +48,7 @@ $factory->define(App\Models\Campaign::class, function (Faker\Generator $faker) {
         'latitude' => $faker->latitude,
         'status' => $faker->randomElement([0, 1]),
         'title' => $faker->paragraph(),
+        'address' => $faker->address,
         'created_at' => $faker->dateTime(),
         'updated_at' => $faker->dateTime(),
     ];
@@ -72,6 +73,7 @@ $factory->define(App\Models\Event::class, function (Faker\Generator $faker) {
         'description' => $faker->paragraph(),
         'longitude' => $faker->longitude,
         'latitude' => $faker->latitude,
+        'address' => $faker->address,
         'created_at' => $faker->dateTime(),
         'updated_at' => $faker->dateTime(),
     ];

@@ -10,7 +10,7 @@ interface CampaignInterface extends RepositoryInterface
 
     public function update($campaign, $inputs);
 
-    public function getCampaignTimeline($campaign);
+    public function getCampaign($campaign, $roleIdOwner);
 
     public function getListUser($campaign);
 

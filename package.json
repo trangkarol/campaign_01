@@ -23,6 +23,11 @@
     "vue": "^2.1.10",
     "vue-i18n": "^7.0.3",
     "vue-router": "^2.5.3",
-    "vuex": "^2.3.1"
+    "vuex": "^2.3.1",
+    "v-tag-list": "0.0.2"
+  },
+  "dependencies": {
+    "moment": "^2.18.1",
+    "vue-timeago": "^3.3.4"
   }
 }
