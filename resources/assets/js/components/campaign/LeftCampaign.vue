@@ -92,8 +92,10 @@
 </template>
 
 <script>
+    import Vue from 'vue'
     import { mapState } from 'vuex'
     import { config, editorOption } from '../../config'
+    import * as VueGoogleMaps from 'vue2-google-maps'
 
     Vue.use(VueGoogleMaps, {
         load: {
@@ -105,7 +107,6 @@
     export default {
         computed: {
             ...mapState('campaign', ['campaign']),
-
             positions() {
                 return { lat: parseFloat(this.campaign.latitude), lng: parseFloat(this.campaign.longitude) }
             },

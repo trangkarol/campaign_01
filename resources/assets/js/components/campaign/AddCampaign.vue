@@ -23,6 +23,7 @@
                                     </span>
                                 </div>
                             </div>
+
                             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group label-floating">
                                     <label class="control-label">{{ $t('campaigns.hashtag') }}</label>
@@ -82,6 +83,7 @@
                                 </gmap-marker>
                             </gmap-map>
                         </div>
+
                         <div class="form-group label-floating"></div>
                         <div class="ui-block-title">
                             <h6 class="title">{{ $t('campaigns.settings') }}</h6>

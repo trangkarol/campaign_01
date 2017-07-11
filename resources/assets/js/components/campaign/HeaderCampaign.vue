@@ -7,7 +7,7 @@
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="ui-block">
                         <div class="top-header top-header-favorit">
-                            <div class="top-header-thumb">
+                            <div class="top-header-thumb" v-if="campaign.campaign_images != null">
                                 <img :src="campaign.campaign_images.url_file" alt="nature">
                                 <div class="top-header-author">
                                     <div class="author-thumb" v-if="campaign.owner != null">
