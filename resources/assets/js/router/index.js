@@ -2,7 +2,7 @@ import { authGuard, guestGuard } from './middleware'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
-import {get } from '../helpers/api'
+import { get } from '../helpers/api'
 import { getUser } from './router'
 // Register Components to router
 import Campaign from '../components/campaign/Campaign.vue'

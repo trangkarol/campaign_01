@@ -12,7 +12,7 @@ import FormComment from './FormComment.vue'
 
 export default {
     created() {
-        this.changeComment(this.comments)
+            this.changeComment({ comments: this.comments, modelId: this.modelId })
     },
     props: ['comments', 'modelId', 'flag'],
     computed: {

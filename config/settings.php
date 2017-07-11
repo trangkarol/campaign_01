@@ -3,7 +3,6 @@
 return [
     'admin_system' => 'admin system',
     'comment_parent' => 0,
-    'paginate_comment' => 4,
     'paginate_default' => 15,
     'locale' => ['vi', 'en', 'ja'],
     'campaigns' => [

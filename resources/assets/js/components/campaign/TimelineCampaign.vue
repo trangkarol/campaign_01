@@ -16,6 +16,7 @@ import { mapState, mapActions } from 'vuex'
 import axios from 'axios'
 import ListEvents from './ListEvents.vue'
 import noty from '../../helpers/noty'
+import Modal from '../libs/Modal.vue'
 
 export default {
     computed: {

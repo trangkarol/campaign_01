@@ -37,7 +37,9 @@
         "create_event": "Create Event",
         "restore": "Restore all Attributes",
         "save": "Save all Changes",
-        "change_password": "Change Password Now!"
+        "change_password": "Change Password Now!",
+        "agree": "Agree",
+        "cancel": "Cancel"
     },
     "quote": {
         "confirm_account": "Don’t you have an account?",

@@ -26,7 +26,6 @@ Vue.use(VueTimeago, {
         'en-US': require('vue-timeago/locales/en-US.json')
     }
 });
-
 const router = makeRouter(routes)
 
 Vue.use(VueQuillEditor)

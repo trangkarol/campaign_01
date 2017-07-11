@@ -5,6 +5,8 @@ export const DELETE_CAMPAIGN = 'DELETE_CAMPAIGN'
 export const SHOW_CAMPAIGN = 'SHOW_CAMPAIGN'
 export const FETCH_DATA = 'FETCH_DATA'
 export const LOADING = 'LOADING'
+export const JOIN_CAMPAIGN = 'JOIN_CAMPAIGN'
+export const LEAVE_CAMPAIGN = 'LEAVE_CAMPAIGN'
 
 export default {
     CAMPAIGN_DETAIL,
@@ -13,5 +15,7 @@ export default {
     DELETE_CAMPAIGN,
     SHOW_CAMPAIGN,
     FETCH_DATA,
-    LOADING
+    LOADING,
+    JOIN_CAMPAIGN,
+    LEAVE_CAMPAIGN
 }

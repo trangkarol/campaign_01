@@ -124,9 +124,9 @@ class CampaignController extends ApiController
     {
         $campaign = $this->campaignRepository->findOrFail($id);
 
-        if ($this->user->cant('view', $campaign)) {
-            throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
-        }
+        // if ($this->user->cant('view', $campaign)) {
+        //     throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
+        // }
 
         return $this->getData(function () use ($campaign) {
             $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events());
@@ -246,6 +246,48 @@ class CampaignController extends ApiController
     {
         return $this->getData(function () use ($id) {
             $this->compacts['members'] = $this->campaignRepository->getMembers($id);
+        });
+    }
+
+    /**
+     * user request join to campaign
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function joinCampaign($id)
+    {
+        $campaign = $this->campaignRepository->findOrFail($id);
+
+        if ($this->user->cannot('joinCampaign', $campaign)) {
+            throw new NotFoundException('You do not have authorize to join this campaign', UNAUTHORIZED);
+        }
+
+        $user = $this->user;
+
+        return $this->doAction(function () use ($user, $campaign) {
+            $this->campaignRepository->joinCampaign($campaign, $user->id);
+            $this->compacts['join_campaign'] = $user;
+        });
+    }
+
+    /**
+     * user request leave to campaign
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function leaveCampaign($id)
+    {
+        $campaign = $this->campaignRepository->findOrFail($id);
+
+        if ($this->user->cannot('leaveCampaign', $campaign)) {
+            throw new NotFoundException('You do not have authorize to leave this campaign', UNAUTHORIZED);
+        }
+
+        $user = $this->user;
+
+        return $this->doAction(function () use ($user, $campaign) {
+            $this->campaignRepository->leaveCampaign($campaign, $user->id);
+            $this->compacts['leave_campaign'] = $user;
         });
     }
 }

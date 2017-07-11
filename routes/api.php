@@ -65,6 +65,8 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::get('get/tags', 'CampaignController@getTags')->name('tags');
             Route::get('/{id}/timeline/event', 'CampaignController@getListEvent');
             Route::get('member/{campaignId}', 'CampaignController@members')->name('members');
+            Route::post('join-campaign/{id}', 'CampaignController@joinCampaign')->name('joinCampaign');
+            Route::post('leave-campaign/{id}', 'CampaignController@leaveCampaign')->name('leaveCampaign');
         });
 
         Route::resource('campaign', 'CampaignController', ['only' => ['store', 'update', 'destroy', 'show']]);

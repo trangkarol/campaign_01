@@ -3,9 +3,9 @@ import { get, post } from 'axios'
 
 export default {
     [types.CHANGE_COMMENT](state, data) {
-        state.comments[data[0].commentable_id] = []
+        state.comments[data.modelId] = []
 
-        data.forEach(function(item, index) {
+        data.comments.forEach(function(item, index) {
             state.comments[item.commentable_id][index] = item
         })
     },

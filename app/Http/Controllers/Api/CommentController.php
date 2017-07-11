@@ -105,6 +105,12 @@ class CommentController extends ApiController
 
     public function show($modelId)
     {
+        $comment = $this->commentRepository->findOrFail($id);
+
+        if ($this->user->cant('update', $comment)) {
+            throw new UnknowException('Permission error: User can not edit this comment.');
+        }
+
         return $this->getData(function () use ($modelId) {
             $this->compacts['comment'] = $this->commentRepository->getComment($modelId);
         });

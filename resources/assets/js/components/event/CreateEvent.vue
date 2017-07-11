@@ -272,6 +272,7 @@
                                 container: false,
                                 type: 'success'
                             })
+                            this.$route.router.go(`/campaign/${this.$route.params.campaign_id}`)
                         })
                         .catch(err => {
                             noty({

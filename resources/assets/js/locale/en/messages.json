@@ -13,5 +13,11 @@
     "profile": {
         "change_success": "Change your profile successfully!"
     },
-    "load_fail": "Load data fail"
+    "load_fail": "Load data fail",
+    "comfirm-join-campaign": "Do you want to join to this campaign?",
+    "comfirm-leave-campaign": "Do you want to leave to this campaign?",
+    "join_campaign_success": "You joined to campaign is successfully!",
+    "join_campaign_fail": "You join to campaign is fail!",
+    "leave_campaign_success": "You left campaign is successfully!",
+    "leave_campaign_fail": "You leave campaign is fail!"
 }

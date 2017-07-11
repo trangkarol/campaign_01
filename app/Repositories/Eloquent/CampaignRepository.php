@@ -232,7 +232,10 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     */
     public function getListUser($campaign)
     {
-        return $campaign->with('users')->get();
+        $data = [];
+        $data['members'] = $campaign->with('users')->get();
+        $data['memberIds'] = $campaign->with('users')->get();
+        return $member = $campaign->with('users')->get();
     }
 
     public function createOrDeleteLike($campaign, $userId)
@@ -315,5 +318,20 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     public function getMembers($id)
     {
         return $this->findOrFail($id)->members()->where('status', User::ACTIVE);
+    }
+
+    public function joinCampaign($campaign, $userId)
+    {
+        return $campaign->users()->attach([
+            $userId => [
+                'role_id' => app(RoleRepository::class)->findRoleOrFail(Role::ROLE_MEMBER, Role::TYPE_CAMPAIGN)->id,
+                'status' => Campaign::APPROVING,
+            ]
+        ]);
+    }
+
+    public function leaveCampaign($campaign, $userId)
+    {
+        return $campaign->users()->detach($userId);
     }
 }

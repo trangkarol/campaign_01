@@ -116,6 +116,51 @@
 
                 return 0
             }
+        },
+        methods: {
+            ...mapActions('campaign', ['joinCampaign', 'leaveCampaign']),
+            comfirmJoinCampaign() {
+                this.flag_confirm_join = true
+            },
+            comfirmLeaveCampaign() {
+                this.flag_confirm_leave = true
+            },
+            cancelJoinCampaign() {
+                this.flag_confirm_join = false
+            },
+            joinCampaigns() {
+                this.joinCampaign(this.campaign.id)
+                    .then(status => {
+                        if (status) {
+                            this.flag_confirm_join = false
+                            const message = this.$i18n.t('messages.join_campaign_success')
+                            noty({ text: message, force: true, type: 'success', container: false })
+                        }
+                    })
+                    .catch(err => {
+                        this.flag_confirm_join = false
+                        const message = this.$i18n.t('messages.join_campaign_fail')
+                        noty({ text: message, force: true, container: false })
+                    })
+            },
+            leaveCampaigns() {
+                this.leaveCampaign(this.campaign.id)
+                    .then(status => {
+                        if (status) {
+                            this.flag_confirm_leave = false
+                            const message = this.$i18n.t('messages.leave_campaign_success')
+                            noty({ text: message, force: true, type: 'success', container: false })
+                        }
+                    })
+                    .catch(err => {
+                        this.flag_confirm_leave = false
+                        const message = this.$i18n.t('messages.leave_campaign_fail')
+                        noty({ text: message, force: true, container: false })
+                    })
+            }
+        },
+        components: {
+           Modal
         }
     }
 </script>

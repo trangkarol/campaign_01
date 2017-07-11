@@ -4,11 +4,19 @@
             <article class="hentry post">
                 <div class="post__author author vcard inline-items">
                     <img :src="event.media[0].url_file" alt="event">
+<<<<<<< 8d24c8c32d71554b20ece7f7ea6751176c9217f0
+=======
+
+>>>>>>>  view campaign
                     <div class="author-date">
                         <a class="h6 post__author-name fn" href="#">{{ event.title }}</a>
                         <div class="post__date">
                             <timeago
                                 :max-time="86400 * 365"
+<<<<<<< 8d24c8c32d71554b20ece7f7ea6751176c9217f0
+=======
+
+>>>>>>>  view campaign
                                 class="published"
                                 :since="event.created_at">
                             </timeago>
@@ -56,6 +64,10 @@
                         </a>
                     </div>
 
+<<<<<<< 8d24c8c32d71554b20ece7f7ea6751176c9217f0
+=======
+
+>>>>>>>  view campaign
                 </div>
 
                 <div class="control-block-button post-control-button">
@@ -77,26 +89,43 @@
             </article>
 
             <comment :comments="event.comments" :model-id ="event.id" :flag="model"></comment>
+<<<<<<< 8d24c8c32d71554b20ece7f7ea6751176c9217f0
 
+=======
+>>>>>>>  view campaign
         </div>
     </div>
 </template>
 
 <script>
+<<<<<<< 8d24c8c32d71554b20ece7f7ea6751176c9217f0
 import { mapState } from 'vuex'
+=======
+import { mapState, mapActions, mapGetters } from 'vuex'
+import { get, post } from '../../helpers/api'
+>>>>>>>  view campaign
 import axios from 'axios'
 import Comment from '../comment/Comment.vue'
 
 export default {
+<<<<<<< 8d24c8c32d71554b20ece7f7ea6751176c9217f0
     data: () => ({
         model: 'event'
     }),
     computed: {
         ...mapState('campaign', ['campaign', 'events', 'loading']),
+=======
+	data: () => ({
+        model: 'event'
+	}),
+	computed: {
+		...mapState('campaign', ['campaign', 'events', 'loading']),
+>>>>>>>  view campaign
         ...mapState('auth', {
             authenticated: state => state.authenticated,
             user: state => state.user
         }),
+<<<<<<< 8d24c8c32d71554b20ece7f7ea6751176c9217f0
     },
     methods: {
        //
@@ -104,6 +133,15 @@ export default {
     components: {
         Comment
     }
+=======
+	},
+    methods: {
+       //
+    },
+	components: {
+        Comment
+	}
+>>>>>>>  view campaign
 }
 </script>
 

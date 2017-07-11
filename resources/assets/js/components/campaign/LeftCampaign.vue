@@ -107,7 +107,6 @@
     export default {
         computed: {
             ...mapState('campaign', ['campaign']),
-
             positions() {
                 return { lat: parseFloat(this.campaign.latitude), lng: parseFloat(this.campaign.longitude) }
             },
