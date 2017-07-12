@@ -23,6 +23,7 @@ class Comment extends BaseModel
     ];
 
     protected $dates = ['deleted_at'];
+    protected $appends = ['sub_comment', 'likes', 'user'];
 
     public function user()
     {
@@ -47,5 +48,20 @@ class Comment extends BaseModel
     public function subComment()
     {
         return $this->hasMany(Comment::class, 'parent_id', 'id');
+    }
+
+    public function getSubCommentAttribute()
+    {
+        return $this->subComment()->with('user', 'likes.user')->orderBy('created_at', 'desc')->paginate(config('settings.paginate_comment'));
+    }
+
+    public function getLikesAttribute()
+    {
+        return $this->likes()->with('user')->get();
+    }
+
+    public function getUserAttribute()
+    {
+        return $this->user()->first();
     }
 }

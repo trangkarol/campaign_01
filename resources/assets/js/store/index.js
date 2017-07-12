@@ -4,6 +4,7 @@ import campaign from './modules/campaign'
 import auth from './modules/auth'
 import comment from './modules/comment'
 import event from './modules/event'
+import like from './modules/like'
 
 Vue.use(Vuex)
 

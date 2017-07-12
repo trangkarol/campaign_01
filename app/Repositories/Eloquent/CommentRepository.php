@@ -25,15 +25,24 @@ class CommentRepository extends BaseRepository implements CommentInterface
             'user_id' => $data['user_id'],
             'name' => Activity::CREATE,
         ]);
+
         return $comment;
     }
 
     public function getComment($modelId)
     {
-        return $this->with(['likes', 'user', 'subComment' => function ($query) {
-            $query->with('likes', 'user')->paginate(config('settings.paginate_comment'));
-        }])->where('commentable_id', $modelId)
-           ->where('parent_id', config('settings.comment_parent'))
+        return $this->with('likes', 'user')->where('parent_id', config('settings.comment_parent'))
+            ->where('commentable_id', $modelId)->orderBy('created_at', 'desc')
+            ->paginate(config('settings.paginate_comment'));
+    }
+
+    public function getSubComment($id)
+    {
+        $comment = $this->findOrFail($id);
+
+        return $comment->subComment()
+           ->with('user', 'likes.user')
+           ->orderBy('created_at', 'desc')
            ->paginate(config('settings.paginate_comment'));
     }
 }

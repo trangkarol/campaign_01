@@ -16,7 +16,8 @@ import axios from 'axios'
 
 export default {
     data: () => ({
-       comment: { content: '' }
+       comment: { content: '' },
+       flagAction: 'create'
     }),
     props: ['modelId', 'commentParentId', 'flag'],
     computed: {
@@ -29,12 +30,18 @@ export default {
         ...mapActions('comment', ['addComment']),
         addComments(e) {
             if (e.keyCode === 13) {
-                this.addComment({ modelId: this.modelId, commentParentId: this.commentParentId, flag: this.flag, comment: this.comment })
-                    .then(status => {
-                        if (status) {
-                            this.comment.content = ''
-                        }
-                    })
+                this.addComment({
+                    modelId: this.modelId,
+                    commentParentId: this.commentParentId,
+                    flag: this.flag,
+                    comment: this.comment,
+                    flagAction: this.flagAction
+                })
+                .then(status => {
+                    if (status) {
+                        this.comment.content = ''
+                    }
+                })
             }
         }
     },

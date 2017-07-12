@@ -8,19 +8,23 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import axios from 'axios'
 
 export default {
     data: () => ({
-        comment: { content: '' }
+        comment: { content: '' },
+        flagAction: 'edit'
     }),
     props: ['parentComment', 'flagEdit'],
     created() {
         this.changeContent()
     },
     computed: {
-        //
+        ...mapState('auth', {
+            authenticated: state => state.authenticated,
+            user: state => state.user
+        }),
     },
     methods: {
         ...mapActions('comment', ['editComment']),
@@ -29,15 +33,17 @@ export default {
                 let data = {
                     comment: this.comment,
                     commentId: this.parentComment.id,
-                    modelId: this.parentComment.commentable_id
+                    commentParentId: this.parentComment.parent_id,
+                    modelId: this.parentComment.commentable_id,
+                    flagAction: this.flagAction
                 }
 
                 this.editComment(data)
-                 .then(status => {
-                        if (status) {
-                            this.$emit('changeFlagEdit')
-                        }
-                    })
+                .then(status => {
+                    if (status) {
+                        this.$emit('changeFlagEdit')
+                    }
+                })
             }
         },
         changeContent() {

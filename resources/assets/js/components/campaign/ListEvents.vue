@@ -55,7 +55,6 @@
                             <span v-if="event.comments != null">{{ event.comments.length }}</span>
                         </a>
                     </div>
-
                 </div>
 
                 <div class="control-block-button post-control-button">
@@ -77,7 +76,6 @@
             </article>
 
             <comment :comments="event.comments" :model-id ="event.id" :flag="model"></comment>
-
         </div>
     </div>
 </template>

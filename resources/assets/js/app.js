@@ -20,6 +20,16 @@ import { ImageResize } from './helpers/quill-editor/ImageResize'
 Quill.register('modules/imageImport', ImageImport)
 Quill.register('modules/imageResize', ImageResize)
 
+
+Vue.use(VueTimeago, {
+    name: 'timeago', // component name, `timeago` by default
+    locale: 'en-US',
+    locales: {
+        // you will need json-loader in webpack 1
+        'en-US': require('vue-timeago/locales/en-US.json')
+    }
+});
+
 Vue.use(VueQuillEditor)
 Vue.use(VueI18n)
 Vue.use(VueTimeago, configPlugin.timeago);

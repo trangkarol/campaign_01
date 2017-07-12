@@ -32,7 +32,7 @@ export const fetchData = ({ commit }, data) => {
 
 export const attendCampaign = ({ commit }, data) => {
     return new Promise((resolve, reject) => {
-        post('campaign/attend-campaign/' + data.campaignId + data.flag)
+        post('campaign/attend-campaign/' + data.campaignId + '/' + data.flag)
             .then(res => {
                 if (res.data.http_status.status) {
                     if (data.flag == 'join') {

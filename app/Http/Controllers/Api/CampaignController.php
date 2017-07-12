@@ -124,9 +124,9 @@ class CampaignController extends ApiController
     {
         $campaign = $this->campaignRepository->findOrFail($id);
 
-        if ($this->user->cant('view', $campaign)) {
-            throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
-        }
+        // if ($this->user->cant('view', $campaign)) {
+        //     throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
+        // }
 
         return $this->getData(function () use ($campaign) {
             $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events());

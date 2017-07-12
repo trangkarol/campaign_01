@@ -57,16 +57,11 @@ const router = [
                 ]
             },
             {
-                path: '/',
-                component: App,
-                children: [{
-                    path: 'campaign/:id',
-                    component: Campaign,
-                    children: [{
-                        path: 'timeline',
-                        component: TimelineCampaign
-                    }]
-                }]
+                path: 'campaign/:id',
+                component: Campaign,
+                children: [
+                    { path: 'timeline', component: TimelineCampaign }
+                ]
             },
             { path: '/event/:event_id/index.html', component: HomeEvent }
         ]

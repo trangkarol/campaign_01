@@ -90,6 +90,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
 
         Route::group(['prefix' => '/comment', 'as' => 'comment.'], function () {
             Route::post('/create-comment/{modelId}/{parentId}/{flag}', 'CommentController@createComment')->name('create');
+            Route::get('/sub-comment/{parentId}', 'CommentController@getSubComment');
         });
 
         Route::group(['prefix' => '/donation'], function () {

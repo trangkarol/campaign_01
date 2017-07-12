@@ -57,12 +57,8 @@ class CommentController extends ApiController
             throw new UnknowException('Permission error: User can not create comment in this post.');
         }
 
-        $this->doAction(function () use ($data, $model) {
+        return $this->doAction(function () use ($data, $model) {
             $this->compacts['createComment'] = $this->commentRepository->createComment($data, $model);
-        });
-
-        return $this->getData(function () use ($modelId) {
-            $this->compacts['comment'] = $this->commentRepository->getComment($modelId);
         });
     }
 
@@ -76,12 +72,8 @@ class CommentController extends ApiController
             throw new UnknowException('Permission error: User can not edit this comment.');
         }
 
-        $this->doAction(function () use ($id, $data) {
+        return $this->doAction(function () use ($id, $data) {
             $this->compacts['updateComment'] = $this->commentRepository->update($id, $data);
-        });
-
-        return $this->getData(function () use ($modelId) {
-            $this->compacts['comment'] = $this->commentRepository->getComment($modelId);
         });
     }
 
@@ -94,17 +86,22 @@ class CommentController extends ApiController
             throw new UnknowException('Permission error: User can not edit this comment.');
         }
 
-        $this->doAction(function () use ($id) {
+        return $this->doAction(function () use ($id) {
             $this->compacts['deleteComment'] = $this->commentRepository->delete($id);
-        });
-
-        return $this->getData(function () use ($modelId) {
-            $this->compacts['comment'] = $this->commentRepository->getComment($modelId);
         });
     }
 
     public function show($modelId)
     {
-        //
+        return $this->getData(function () use ($modelId) {
+            $this->compacts['loadMore'] = $this->commentRepository->getComment($modelId);
+        });
+    }
+
+    public function getSubComment($parentId)
+    {
+        return $this->getData(function () use ($parentId) {
+            $this->compacts['subComment'] = $this->commentRepository->getSubComment($parentId);
+        });
     }
 }
