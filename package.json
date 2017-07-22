@@ -36,5 +36,9 @@
     "redis": "^2.7.1",
     "socket.io": "^2.0.3",
     "vue-socket.io": "^2.1.1-a"
+  },
+  "dependencies": {
+    "vue-google-maps-location-selector": "^1.0.1",
+    "vue-location-picker": "^1.0.1"
   }
 }

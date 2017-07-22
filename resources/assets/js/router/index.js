@@ -24,6 +24,7 @@ import Profile from '../components/user/Profile.vue'
 import Setting from '../components/user/Setting.vue'
 import CampaignUser from '../components/user/CampaignUser.vue'
 import HomeEvent from '../components/event/HomeEvent.vue'
+import GetLocation from '../components/google_map/GetLocation.vue'
 
 const router = [
     ...authGuard([{
@@ -65,7 +66,9 @@ const router = [
                     { path: 'photo', component: PhotoCampaign, name: 'campaign.photo' }
                 ]
             },
-            { path: '/event/:event_id/index.html', component: HomeEvent, name: 'event.index' }
+            { path: '/event/:event_id/index.html', component: HomeEvent, name: 'event.index' },
+            { path: '/get-location', component: GetLocation },
+
         ]
     }]),
 
