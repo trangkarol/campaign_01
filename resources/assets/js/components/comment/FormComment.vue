@@ -1,5 +1,5 @@
 <template lang="html">
-    <form class="comment-form inline-items" @submit.prevent="addComment" :class="classFormComment">
+    <form class="comment-form inline-items" @submit.stop.prevent="addComment" :class="classFormComment">
         <div class="post__author author vcard inline-items">
             <router-link :to="{ name: 'user.timeline', params: { id: user.id }}">
                 <img :src="user.image_thumbnail" :alt="user.name">
@@ -45,9 +45,9 @@ export default {
     },
     methods: {
         ...mapActions('comment', ['addComment']),
-        addComments(e) {
+        addComments: _.debounce(function (e) {
             if (e.keyCode === 13 && !e.shiftKey) {
-                if (this.comment.content !== '') {
+                if (this.comment.content.trim() != '') {
                     this.addComment({
                         modelId: this.modelId,
                         commentParentId: this.commentParentId,
@@ -57,20 +57,20 @@ export default {
                         commentTotal: this.paginates[this.modelId].total
                     })
                     .then(status => {
-                        if (status) {
-                            this.comment.content = ''
-                            e.target.style.height = "5px";
-                        }
+                        this.comment.content = ''
+                        e.target.style.height = "5px"
                     })
                     .catch(err => {
                         //
                     })
                 } else {
+                    this.comment.content = ''
+                    e.target.style.height = "5px"
                     const message = this.$i18n.t('messages.comment_not_empty')
                     noty({ text: message, force: true, container: false })
                 }
             }
-        },
+        }, 100),
         input(e) {
             e.target.style.height = "5px";
             e.target.style.height = (e.target.scrollHeight)+"px";

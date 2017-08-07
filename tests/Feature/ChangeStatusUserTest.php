@@ -36,12 +36,13 @@ class ChangeStatusUserTest extends TestCase
         ]);
 
         $this->actingAs($user, 'api');
-        $response = $this->json('POST', route('campaign.approve'), [
-            'campaign_id' => $campaign->id,
-            'user_id' => 1,
-        ], [
+        $response = $this->json('POST', route('campaign.approve', [
+                'campaignId' => $campaign->id,
+                'userId'=> 1,
+                'flag' => Campaign::FLAG_APPROVE,
+            ]), [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
-        ]);
+            ]);
 
         $response->assertStatus(CODE_OK);
     }
@@ -68,12 +69,13 @@ class ChangeStatusUserTest extends TestCase
         ]);
 
         $this->actingAs($user, 'api');
-        $response = $this->json('POST', route('campaign.approve'), [
-            'campaign_id' => $campaign->id,
-            'user_id' => 1,
-        ], [
+        $response = $this->json('POST', route('campaign.approve', [
+                'campaignId' => $campaign->id,
+                'userId'=> 1,
+                'flag' => Campaign::FLAG_APPROVE,
+            ]), [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
-        ]);
+            ]);
 
         $response->assertStatus(CODE_OK);
     }
@@ -100,12 +102,13 @@ class ChangeStatusUserTest extends TestCase
         ]);
 
         $this->actingAs($user, 'api');
-        $response = $this->json('POST', route('campaign.approve'), [
-            'campaign_id' => 1000,
-            'user_id' => 1,
-        ], [
+        $response = $this->json('POST', route('campaign.approve', [
+                'campaignId' => -1,
+                'userId'=> 1,
+                'flag' => Campaign::FLAG_APPROVE,
+            ]), [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
-        ]);
+            ]);
 
         $response->assertStatus(NOT_FOUND);
     }
@@ -132,12 +135,13 @@ class ChangeStatusUserTest extends TestCase
         ]);
 
         $this->actingAs($user, 'api');
-        $response = $this->json('POST', route('campaign.approve'), [
-            'campaign_id' => $campaign->id,
-            'user_id' => 1,
-        ], [
+        $response = $this->json('POST', route('campaign.approve', [
+                'campaignId' => $campaign->id,
+                'userId'=> 1,
+                'flag' => Campaign::FLAG_APPROVE,
+            ]), [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
-        ]);
+            ]);
 
         $response->assertStatus(UNAUTHORIZED);
     }

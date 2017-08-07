@@ -7,7 +7,7 @@
  */
 
 import * as types from './mutation-types';
-import { post, get } from '../../../helpers/api'
+import { post, get, patch } from '../../../helpers/api'
 
 export const campaignDetail = ({ commit }, campaignId) => {
     get(`campaign/${campaignId}`)
@@ -26,10 +26,10 @@ export const getlistPhotos = ({ commit }, campaignId) => {
 export const fetchData = ({ commit }, data) => {
     commit(types.LOADING, true)
 
-    if (data.pageNumberEvent > (parseInt(data.pageCurrent) + 1)) {
+    if (data.pageNumberEvent >= (parseInt(data.pageCurrent) + 1)) {
         get(`campaign/${data.campaignId}/timeline/event?page=${(parseInt(data.pageCurrent) + 1)}`)
             .then(res => {
-                commit(types.FETCH_DATA, res.data.events.data)
+                commit(types.FETCH_DATA, res.data.events)
                 commit(types.LOADING, false)
             })
     } else {
@@ -58,7 +58,6 @@ export const attendCampaign = ({ commit }, data) => {
     })
 };
 
-
 export const loadMorePhotos = ({ commit }, data) => {
     if ((parseInt(data.currentPage) + 1) <= data.lastPage) {
         return new Promise((resolve, reject) => {
@@ -74,6 +73,77 @@ export const loadMorePhotos = ({ commit }, data) => {
     }
 };
 
+export const getListMembers = ({ commit }, data) => {
+    return new Promise((resolve, reject) => {
+        get(`campaign/members/${data.campaignId}/${data.status}`)
+            .then(res => {
+                resolve(res.data)
+            })
+            .catch(err => {
+                reject(err)
+            })
+    })
+};
+
+export const changeStatusMember = ({ commit }, data) => {
+    return new Promise((resolve, reject) => {
+        post(`campaign/change-status-user/${data.campaignId}/${data.userId}/${data.flag}`)
+            .then(res => {
+                if (data.flag == 'approve') {
+                    commit(types.APPROVE_JOIN_CAMPAIGN, res.data.change_status)
+                }
+
+                resolve(res.data.http_status.status)
+            })
+            .catch(err => {
+                reject(err)
+            })
+    })
+};
+
+export const loadMoreMembers = ({ commit }, data) => {
+    if ((parseInt(data.pageCurrent) + 1) <= data.pageNumberEvent) {
+        return new Promise((resolve, reject) => {
+            get(`campaign/search-members/${data.campaignId}/${data.status}?=${(parseInt(data.pageCurrent) + 1)}`)
+                .then(res => {
+                    resolve(res.data.members)
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
+};
+
+export const searchMember = ({ commit }, data) => {
+    if ((parseInt(data.pageCurrent) + 1) <= data.pageNumberEvent) {
+        return new Promise((resolve, reject) => {
+            get(`campaign/search-members/${data.campaignId}/${data.status}?search=${data.search}&roleId=${data.roleId}&page=${(parseInt(data.pageCurrent) + 1)}`)
+                .then(res => {
+                    resolve(res.data)
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
+};
+
+export const changeMemberRole = ({ commit }, data) => {
+    return new Promise((resolve, reject) => {
+        patch(`campaign/change-role`, data)
+            .then(res => {
+                commit(types.BLOCKED_CAMPAIGN, data.userId)
+
+                resolve(res.data.http_status.status)
+            })
+            .catch(err => {
+                console.log('bug', err)
+                reject(err)
+            })
+    })
+};
+
 export const setDetailcampaign = ({ commit }, data) => {
     commit(types.SET_DETAIL_CAMPAIGN, data)
 };
@@ -84,5 +154,10 @@ export default {
     attendCampaign,
     getlistPhotos,
     loadMorePhotos,
-    setDetailcampaign
+    setDetailcampaign,
+    getListMembers,
+    changeStatusMember,
+    loadMoreMembers,
+    searchMember,
+    changeMemberRole
 };

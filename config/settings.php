@@ -3,6 +3,7 @@
 return [
     'admin_system' => 'admin system',
     'comment_parent' => 0,
+    'search_default' => 0,
     'paginate_default' => 15,
     'paginate_notification' => 5,
     'paginate_comment' => 2,

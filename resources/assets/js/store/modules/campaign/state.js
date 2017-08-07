@@ -5,8 +5,6 @@ export default {
         memberIds: [],
     },
     events: [],
-    pageNumberEvent: [],
-    pageCurrentEvent: [],
     tags: [],
     loading: true,
     listPhotos: [],

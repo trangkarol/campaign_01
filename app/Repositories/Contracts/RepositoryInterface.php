@@ -14,7 +14,7 @@ interface RepositoryInterface
 
     public function lists($column, $key = null);
 
-    public function paginate($limit = null, $columns = ['*']);
+    public function paginate($limit = null, $columns = ['*'], $page = null);
 
     public function find($id, $columns = ['*']);
 
@@ -23,6 +23,8 @@ interface RepositoryInterface
     public function where($conditions, $operator = null, $value = null);
 
     public function whereIn($column, $value);
+
+    public function whereHas($relationships, $function);
 
     public function orWhere($column, $operator = null, $value = null);
 
@@ -35,6 +37,8 @@ interface RepositoryInterface
     public function whereNull($colunm);
 
     public function whereNotNull($colunm);
+
+    public function whereDoesntHave($relationships, $function);
 
     public function create($input);
 

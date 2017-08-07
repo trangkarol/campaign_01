@@ -1,6 +1,6 @@
 <template lang="html">
     <div id="newsfeed-items-grid" v-if="events != null">
-        <div class="ui-block" v-for="event in events">
+        <div class="ui-block" v-for="event in events.data">
             <article class="hentry post">
                 <div class="post__author author vcard inline-items">
                     <router-link :to="{ name: 'event.index', params: { event_id: event.id }}">
@@ -21,10 +21,13 @@
                         </div>
                     </div>
 
-                    <div class="more"><svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg>
+                    <div class="more" v-if="checkPermission"><svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg>
                         <ul class="more-dropdown">
                             <li>
                                 <a href="javascript:void(0)">{{ $t('events.edit-event') }}</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)">{{ $t('events.delete-event') }}</a>
                             </li>
                         </ul>
                     </div>
@@ -32,24 +35,28 @@
                 <show-text
                     :type="false"
                     :text="event.description"
-                    :show_char=100
+                    :show_char=300
                     :show="$t('events.show_more')"
                     :hide="$t('events.show_less')"
-                    :number_char_show=70>
+                    :number_char_show=300>
                 </show-text>
-                 <like :type="'likeInfo'"
+
+                <like :type="'likeInfo'"
+                    :checkLike="event.checkLike"
+                    :likes="event.likes"
+                    :model="'event'"
+                    :modelId="event.id"
+                    :numberOfComments="event.comments.total">
+                </like>
+
+                <div class="control-block-button post-control-button">
+                    <like :type="'like'"
                         :checkLike="event.checkLike"
                         :likes="event.likes"
                         :model="'event'"
                         :modelId="event.id"
                         :numberOfComments="event.comments.total"
                     ></like>
-
-                <div class="control-block-button post-control-button">
-
-                    <a href="javascript:void(0)" class="btn btn-control">
-                        <svg class="olymp-like-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-like-post-icon"></use></svg>
-                    </a>
 
                     <a href="javascript:void(0)" class="btn btn-control">
                         <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
@@ -60,7 +67,6 @@
                     </a>
 
                 </div>
-
             </article>
 
             <comment
@@ -75,7 +81,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import axios from 'axios'
 import Comment from '../comment/Comment.vue'
 import ShowText from '../libs/ShowText.vue'
@@ -87,7 +93,14 @@ export default {
         flagComments: []
     }),
     computed: {
-        ...mapState('campaign', ['campaign', 'events', 'loading']),
+        ...mapGetters('campaign', [
+            'checkPermission',
+        ]),
+        ...mapState('campaign', [
+            'campaign',
+            'events',
+            'loading'
+        ]),
         ...mapState('auth', {
             authenticated: state => state.authenticated,
             user: state => state.user

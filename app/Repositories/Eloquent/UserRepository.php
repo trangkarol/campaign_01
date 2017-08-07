@@ -175,4 +175,32 @@ class UserRepository extends BaseRepository implements UserInterface
             ->media()
             ->createMany($uploadedFiles);
     }
+
+    /**
+     * search members of campaign
+     * @param  App\Models\Campaign $campaign
+     * @param  int $id
+     * @return boolen
+     */
+    public function searchMembers($campaignId, $status, $search, $roleId)
+    {
+        $user = $this;
+
+        if (!is_null($search)) {
+            $user = $user->where('name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%');
+        }
+
+        return $user->where('status', User::ACTIVE)
+            ->whereHas('campaigns', function ($query) use ($campaignId, $status, $roleId) {
+            $query = $query->where('campaign_id', $campaignId)
+                ->where('campaign_user.status', $status);
+
+            if ($roleId != config('settings.search_default')) {
+                $query = $query->where('campaign_user.role_id', $roleId);
+            }
+        })->with(['campaigns' => function ($query) use ($campaignId) {
+            $query->where('campaign_id', $campaignId);
+        }])->paginate(config('settings.paginate_default'));
+    }
 }

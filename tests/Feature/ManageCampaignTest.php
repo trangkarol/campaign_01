@@ -29,9 +29,9 @@ class ManageCampaignTest extends TestCase
         ]);
         $this->actingAs($user, 'api');
         $response = $this->json('PATCH', route('campaign.change-role'), [
-            'user_id' => 1,
-            'campaign_id' => $campaign->id,
-            'role_id' => 4,
+            'userId' => 1,
+            'campaignId' => $campaign->id,
+            'flag' => 'member',
         ]);
 
         $response->assertJsonFragment([
@@ -56,9 +56,9 @@ class ManageCampaignTest extends TestCase
         ]);
         $this->actingAs($user, 'api');
         $response = $this->json('PATCH', route('campaign.change-role'), [
-            'user_id' => 123,
-            'campaign_id' => $campaign->id,
-            'role_id' => 4,
+            'userId' => 123,
+            'campaignId' => $campaign->id,
+            'flag' => 'member',
         ]);
 
         $response->assertStatus(INTERNAL_SERVER_ERROR)
@@ -89,9 +89,9 @@ class ManageCampaignTest extends TestCase
         ]);
         $this->actingAs($owner, 'api');
         $response = $this->json('PATCH', route('campaign.change-role'), [
-            'user_id' => $member->id,
-            'campaign_id' => $campaign->id,
-            'role_id' => 6,
+            'userId' => $member->id,
+            'campaignId' => $campaign->id,
+            'flag' => 'blocked',
         ]);
 
         $response->assertStatus(CODE_OK);
@@ -111,8 +111,8 @@ class ManageCampaignTest extends TestCase
         ]);
         $this->actingAs($user, 'api');
         $response = $this->json('PATCH', route('campaign.remove-user'), [
-            'user_id' => 1,
-            'campaign_id' => $campaign->id,
+            'userId' => 1,
+            'campaignId' => $campaign->id,
         ]);
 
         $response->assertExactJson([
@@ -142,8 +142,8 @@ class ManageCampaignTest extends TestCase
         ]);
         $this->actingAs($owner, 'api');
         $response = $this->json('PATCH', route('campaign.remove-user'), [
-            'user_id' => $member->id,
-            'campaign_id' => $campaign->id,
+            'userId' => $member->id,
+            'campaignId' => $campaign->id,
         ]);
 
         $response->assertStatus(CODE_OK);
@@ -167,9 +167,9 @@ class ManageCampaignTest extends TestCase
         ]);
         $this->actingAs($owner, 'api');
         $response = $this->json('PATCH', route('campaign.change-owner'), [
-            'user_id' => $member->id,
-            'campaign_id' => $campaign->id,
-            'role_id' => 6,
+            'userId' => $member->id,
+            'campaignId' => $campaign->id,
+            'roleId' => 'blocked',
         ]);
 
         $response->assertStatus(CODE_OK);

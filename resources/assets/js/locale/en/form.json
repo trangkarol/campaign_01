@@ -67,5 +67,9 @@
         "choose_quality": "Choose quality",
         "choose_type": "Choose type",
         "choose_product": "Choose Product"
-    }
+    },
+    "search_all": "Search all",
+    "stt": "No.",
+    "name-member": "Name member",
+    "role": "Role"
 }

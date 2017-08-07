@@ -27,5 +27,11 @@
     "load_notification_message_fail": "Could't load messages",
     "you": "You :",
     "more_messages": "View More Messages",
-    "connection_error": "Connect error"
+    "connection_error": "Connect error",
+    "comfirm-accept-request": "Do you want to accept this member join to campaign?",
+    "comfirm-cancel-request": "Do you want to reject this member join to campaign?",
+    "message-success": "Successfully!",
+    "message-fail": "Fail!",
+    "comfirm-block-member": "Do you want to block this member in this campaign?",
+    "search-list-member": "Search name, email"
 }

@@ -40,4 +40,9 @@ class RoleRepository extends BaseRepository implements RoleInterface
 
         return $roles;
     }
+
+    public function getRoles($roleType)
+    {
+        return $this->where('type', $roleType)->get();
+    }
 }

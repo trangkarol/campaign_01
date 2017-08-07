@@ -71,13 +71,14 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::patch('change-role', 'CampaignController@changeMemberRole')->name('change-role');
             Route::patch('remove-user', 'CampaignController@removeUser')->name('remove-user');
             Route::patch('change-owner', 'CampaignController@changeOwner')->name('change-owner');
-            Route::post('approve-user', 'CampaignController@approveUserJoinCampaign')->name('approve');
+            Route::post('change-status-user/{campaignId}/{userId}/{flag}', 'CampaignController@changeStatusMember')->name('approve');
             Route::get('get/tags', 'CampaignController@getTags')->name('tags');
             Route::get('/{id}/timeline/event', 'CampaignController@getListEvent');
-            Route::get('member/{campaignId}', 'CampaignController@members')->name('members');
+            Route::get('members/{campaignId}/{status}', 'CampaignController@members')->name('members');
             Route::post('attend-campaign/{id}/{flag}', 'CampaignController@attendCampaign')->name('attendCampaign');
             Route::get('list-photos/{id}', 'CampaignController@listPhotos');
             Route::get('campaign-related/{id}', 'CampaignController@getCampaignRelated');
+            Route::get('search-members/{campaignId}/{status}', 'CampaignController@searchMembers');
         });
 
         Route::resource('campaign', 'CampaignController', ['only' => ['store', 'update', 'destroy', 'show']]);
@@ -123,5 +124,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::get('quill-uploaded-images', 'CommonController@quillUploadedImages');
             Route::delete('delete/{path?}', 'UploadController@delete')->name('delete')->where('path', '.+');
         });
+
+        Route::resource('expense', 'ExpenseController', ['only' => ['store', 'update', 'destroy']]);
     });
 });

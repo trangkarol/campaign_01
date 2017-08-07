@@ -16,12 +16,12 @@
         <ul class="comments-list">
             <li v-for="(comment, index) in comments[modelId]" class="has-children comment">
                 <div class="post__author author vcard inline-items" v-if="comment.user != null">
-                    <router-link :to="{ name: 'user.followers', params: { id: comment.user.id }}" class="h6 post__author-name fn">
+                    <router-link :to="{ name: 'user.timeline', params: { id: comment.user.id }}" class="h6 post__author-name fn">
                         <img :src="comment.user.image_thumbnail" :alt="comment.user.name">
                     </router-link>
 
                     <div class="author-date">
-                        <router-link :to="{ name: 'user.followers', params: { id: comment.user.id }}" class="h6 post__author-name fn">{{ comment.user.name }}</router-link>
+                        <router-link :to="{ name: 'user.timeline', params: { id: comment.user.id }}" class="h6 post__author-name fn">{{ comment.user.name }}</router-link>
                         <div class="post__date">
                             <timeago
                                 :max-time="86400 * 365"

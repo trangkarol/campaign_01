@@ -83,9 +83,10 @@ class ActionRepository extends BaseRepository implements ActionInterface
     public function getActionPhotos($actions)
     {
         return $actions
-            ->with(['likes.user', 'media' => function ($query) {
-                $query->where('type', Media::IMAGE)->orderBy('created_at', 'desc')->get();
-            }])
+            ->with('likes.user', 'media')
+            ->whereHas('media', function ($query) {
+                $query->where('type', Media::IMAGE)->orderBy('created_at', 'desc');
+            })
             ->orderBy('created_at', 'DESC')
             ->paginate(8);
     }

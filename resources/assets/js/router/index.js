@@ -7,9 +7,12 @@ import { getUser } from './router'
 // Register Components to router
 import Campaign from '../components/campaign/Campaign.vue'
 import TimelineCampaign from '../components/campaign/TimelineCampaign.vue'
-import PhotoCampaign from '../components/campaign/Photo/PhotoCampaign.vue'
+import PhotoCampaign from '../components/campaign/photo/PhotoCampaign.vue'
 import CampaignRelated from '../components/campaign/CampaignRelated.vue'
 import CampaignAbout from '../components/campaign/CampaignAbout.vue'
+import OwnerCampaign from '../components/campaign/owner/OwnerCampaign.vue'
+import MemberRequest from '../components/campaign/owner/MemberRequest.vue'
+import ListMember from '../components/campaign/owner/ListMember.vue'
 import App from '../components/layout/App.vue'
 import Friend from '../components/user/Friend.vue'
 import MasterUser from '../components/user/MasterUser.vue'
@@ -78,7 +81,16 @@ const router = [
                     { path: 'timeline', component: TimelineCampaign, name: 'campaign.timeline' },
                     { path: 'photo', component: PhotoCampaign, name: 'campaign.photo' },
                     { path: 'campaign-related', component: CampaignRelated, name: 'campaign.campaign_related' },
-                    { path: 'campaign-about', component: CampaignAbout, name: 'campaign.about' }
+                    { path: 'campaign-about', component: CampaignAbout, name: 'campaign.about' },
+                    {
+                        path: 'owner-campaign',
+                        component: OwnerCampaign,
+                        name: 'campaign.owner',
+                        children: [
+                            { path: 'member-request', component: MemberRequest, name: 'campaign.member_request' },
+                            { path: 'list-member', component: ListMember, name: 'campaign.list_member' }
+                        ]
+                    }
                 ]
             },
             {

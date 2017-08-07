@@ -10,7 +10,7 @@ interface CampaignInterface extends RepositoryInterface
 
     public function update($campaign, $inputs);
 
-    public function getCampaign($campaign, $roleIdOwner);
+    public function getCampaign($campaign, $userId);
 
     public function getListUser($campaign);
 
@@ -22,11 +22,15 @@ interface CampaignInterface extends RepositoryInterface
 
     public function changeOwner($campaign, $userId, $roleId);
 
-    public function changeStatusUser($data, $status);
+    public function changeStatusUser($data);
 
-    public function getMembers($id);
+    public function getMembers($campaign, $status, $roleIdBlocked);
 
     public function listPhotos($campaign);
 
     public function getCampaignRelated($campaign, $userId);
+
+    public function statisticsMembers($campaign);
+
+    public function searchMembers($campaign, $status, $search);
 }

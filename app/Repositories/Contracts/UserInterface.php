@@ -19,4 +19,6 @@ interface UserInterface extends RepositoryInterface
     public function joinCampaign($campaignId);
 
     public function uploadImages(array $files, $path);
+
+    public function searchMembers($campaignId, $status, $search, $roleId);
 }

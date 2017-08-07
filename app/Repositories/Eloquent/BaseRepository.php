@@ -116,10 +116,10 @@ abstract class BaseRepository implements RepositoryInterface
         return $model;
     }
 
-    public function paginate($limit = null, $columns = ['*'])
+    public function paginate($limit = null, $columns = ['*'], $page = null)
     {
         $limit = $limit ?: config('setting.paginate');
-        $model = $this->model->paginate($limit, $columns);
+        $model = $this->model->paginate($limit, $columns, $page);
         $this->makeModel();
 
         return $model;
@@ -193,6 +193,20 @@ abstract class BaseRepository implements RepositoryInterface
     public function whereNotNull($colunm)
     {
         $this->model = $this->model->whereNotNull($colunm);
+
+        return $this;
+    }
+
+    public function whereHas($relationships, $function)
+    {
+        $this->model = $this->model->whereHas($relationships, $function);
+
+        return $this;
+    }
+
+    public function whereDoesntHave($relationships, $function)
+    {
+        $this->model = $this->model->whereHas($relationships, $function);
 
         return $this;
     }

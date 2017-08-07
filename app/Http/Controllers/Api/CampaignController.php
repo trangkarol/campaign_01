@@ -8,6 +8,7 @@ use App\Repositories\Contracts\TagInterface;
 use App\Repositories\Contracts\EventInterface;
 use App\Repositories\Contracts\CommentInterface;
 use App\Repositories\Contracts\ActionInterface;
+use App\Repositories\Contracts\UserInterface;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\UnknowException;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ class CampaignController extends ApiController
     private $campaignRepository;
     private $commentRepository;
     private $actionRepository;
+    private $userRepository;
 
     public function __construct(
         CampaignInterface $campaignRepository,
@@ -31,7 +33,8 @@ class CampaignController extends ApiController
         TagInterface $tagRepository,
         EventInterface $eventRepository,
         CommentInterface $commentRepository,
-        ActionInterface $actionRepository
+        ActionInterface $actionRepository,
+        UserInterface $userRepository
     ) {
         parent::__construct();
         $this->roleRepository = $roleRepository;
@@ -40,6 +43,7 @@ class CampaignController extends ApiController
         $this->campaignRepository = $campaignRepository;
         $this->commentRepository = $commentRepository;
         $this->actionRepository = $actionRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function store(CampaignRequest $request)
@@ -80,17 +84,23 @@ class CampaignController extends ApiController
         });
     }
 
-    public function approveUserJoinCampaign(Request $request)
+    public function changeStatusMember($campaignId, $userId, $flag)
     {
-        $data = $request->only('user_id', 'campaign_id');
-        $data['campaign'] = $this->campaignRepository->findOrFail($data['campaign_id']);
+        $campaign = $this->campaignRepository->findOrFail($campaignId);
 
-        if ($this->user->cannot('changeStatusUser', $data['campaign'])) {
+        $data = [
+            'campaign' => $campaign,
+            'user_id' => $userId,
+            'flag' => $flag,
+        ];
+
+        if ($this->user->cannot('changeStatusUser', $campaign)) {
             throw new UnknowException('You do not have authorize to change status user in this campaign', UNAUTHORIZED);
         }
 
         return $this->doAction(function () use ($data) {
-            $this->compacts['campaign'] = $this->campaignRepository->changeStatusUser($data, Campaign::APPROVED);
+            $this->campaignRepository->changeStatusUser($data);
+            $this->compacts['change_status'] = $this->userRepository->findOrFail($data['user_id']);
         });
     }
 
@@ -132,11 +142,13 @@ class CampaignController extends ApiController
             throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
         }
 
-        return $this->getData(function () use ($campaign) {
-            $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events());
+        $roleIdBlocked = $this->roleRepository->findRoleOrFail(Role::ROLE_BLOCKED, Role::TYPE_CAMPAIGN)->id;
+        $userId = $this->user->id;
 
-            $roleIdOwner = $this->roleRepository->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)->id;
-            $this->compacts['show_campaign'] = $this->campaignRepository->getCampaign($campaign, $roleIdOwner);
+        return $this->getData(function () use ($campaign, $userId, $roleIdBlocked) {
+            $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events());
+            $this->compacts['show_campaign'] = $this->campaignRepository->getCampaign($campaign, $userId);
+            $this->compacts['members'] = $this->campaignRepository->getMembers($campaign, Campaign::APPROVED, $roleIdBlocked);
         });
     }
 
@@ -198,12 +210,12 @@ class CampaignController extends ApiController
      */
     public function changeMemberRole(Request $request)
     {
-        $data = $request->only('campaign_id', 'user_id', 'role_id');
-        $campaign = $this->campaignRepository->findOrFail($data['campaign_id']);
+        $data = $request->only('campaignId', 'userId', 'roleId');
+        $campaign = $this->campaignRepository->findOrFail($data['campaignId']);
 
         return $this->doAction(function () use ($data, $campaign) {
             $this->authorize('manage', $campaign);
-            $this->campaignRepository->changeMemberRole($campaign, $data['user_id'], $data['role_id']);
+            $this->campaignRepository->changeMemberRole($campaign, $data['userId'], $data['roleId']);
         });
     }
 
@@ -246,12 +258,38 @@ class CampaignController extends ApiController
         });
     }
 
-    public function members($id)
+    public function members($campaignId, $status)
     {
-        return $this->getData(function () use ($id) {
-            $this->compacts['members'] = $this->campaignRepository->getMembers($id);
+        $campaign = $this->campaignRepository->findOrFail($campaignId);
+        $roleIdBlocked = $this->roleRepository->findRoleOrFail(Role::ROLE_BLOCKED, Role::TYPE_CAMPAIGN)->id;
+
+        if ($this->user->cannot('view', $campaign)) {
+            throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
+        }
+
+        return $this->getData(function () use ($campaign, $status, $roleIdBlocked) {
+            $this->compacts['roles'] = $this->roleRepository->getRoles(Role::TYPE_CAMPAIGN);
+            $this->compacts['members'] = $this->campaignRepository->getMembers($campaign, $status, $roleIdBlocked);
         });
     }
+
+    public function searchMembers($campaignId, $status, Request $request)
+    {
+
+        $campaign = $this->campaignRepository->findOrFail($campaignId);
+        $data = $request->only('search', 'roleId');
+        $roleIdBlocked = $this->roleRepository->findRoleOrFail(Role::ROLE_BLOCKED, Role::TYPE_CAMPAIGN)->id;
+
+        if ($this->user->cannot('view', $campaign)) {
+            throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
+        }
+
+        return $this->getData(function () use ($campaignId, $status, $data) {
+            $this->compacts['roles'] = $this->roleRepository->getRoles(Role::TYPE_CAMPAIGN);
+            $this->compacts['members'] = $this->userRepository->searchMembers($campaignId, $status, $data['search'], $data['roleId']);
+        });
+    }
+
 
     /**
      * user request join to campaign

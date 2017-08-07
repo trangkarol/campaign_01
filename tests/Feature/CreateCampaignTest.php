@@ -30,6 +30,7 @@ class CreateCampaign extends TestCase
             'hashtag' => $faker->unique()->name,
             'longitude' => $faker->longitude($min = -180, $max = 180),
             'latitude' => $faker->latitude($min = -90, $max = 90),
+            'address' => $faker->address,
             'tags' => [
                 [
                     'id' => null,
@@ -91,6 +92,7 @@ class CreateCampaign extends TestCase
             'longitude' => $faker->longitude($min = -180, $max = 180),
             'latitude' => $faker->latitude($min = -90, $max = 90),
             'tags' => [],
+            'address' => $faker->address,
             'settings' => [
                 [
                     'key' => 1,
@@ -125,6 +127,7 @@ class CreateCampaign extends TestCase
             'hashtag' => $faker->unique()->name,
             'longitude' => $faker->longitude($min = -180, $max = 180),
             'latitude' => $faker->latitude($min = -90, $max = 90),
+            'address' => $faker->address,
             'tags' => [
                 [
                     'id' => 1,
@@ -160,6 +163,7 @@ class CreateCampaign extends TestCase
             'hashtag' => 'duplicate',
             'longitude' => $faker->longitude($min = -180, $max = 180),
             'latitude' => $faker->latitude($min = -90, $max = 90),
+            'address' => $faker->address,
             'tags' => [
                 [
                     'id' => 1,
@@ -189,6 +193,7 @@ class CreateCampaign extends TestCase
 
     public function testCreateCampaignWithFiledsNullThenFail()
     {
+        $faker = \Faker\Factory::create();
         $user = factory(User::class)->create();
         $this->actingAs($user, 'api');
         $response = $this->json('POST', route('campaign.store'), [
@@ -199,6 +204,7 @@ class CreateCampaign extends TestCase
             'latitude' => null,
             'tags' => null,
             'settings' => null,
+            'address' => $faker->address,
         ], [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
         ]);
@@ -227,6 +233,7 @@ class CreateCampaign extends TestCase
             'longitude' => $faker->longitude($min = -180, $max = 180),
             'latitude' => $faker->latitude($min = -90, $max = 90),
             'tags' => [],
+            'address' => $faker->address,
             'settings' => [
                 [
                     'key' => 3,
@@ -260,6 +267,7 @@ class CreateCampaign extends TestCase
             'longitude' => 181,
             'latitude' => -91,
             'tags' => [],
+            'address' => $faker->address,
             'settings' => [
                 [
                     'key' => 3,

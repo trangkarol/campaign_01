@@ -38,6 +38,7 @@
     "vuex": "^2.3.1"
   },
   "dependencies": {
-    "photoswipe": "^4.1.2"
+    "photoswipe": "^4.1.2",
+    "vue2-highcharts": "^1.1.2"
   }
 }

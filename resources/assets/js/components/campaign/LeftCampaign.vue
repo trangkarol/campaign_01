@@ -3,7 +3,9 @@
         <div class="ui-block">
             <div class="ui-block-title">
                 <h6 class="title">{{ $t('campaigns.campaign-infor') }}</h6>
-                <a href="javascript:void(0)" class="more"><svg class="olymp-three-dots-icon"><use xlink:href="icons/icons.svg#olymp-three-dots-icon"></use></svg></a>
+                <a href="javascript:void(0)" class="more">
+                    <svg class="olymp-three-dots-icon"><use xlink:href="icons/icons.svg#olymp-three-dots-icon"></use></svg>
+                </a>
             </div>
             <div class="ui-block-content">
                 <ul class="widget w-personal-info item-block">
@@ -28,11 +30,11 @@
                     </li>
                     <li v-if="campaign.owner != null">
                         <span class="title">{{ $t('campaigns.email') }}:</span>
-                        <a href="javascript:void(0)" class="text">{{ campaign.owner.email }}</a>
+                        <a href="javascript:void(0)" class="text">{{ campaign.owner[0].email }}</a>
                     </li>
                     <li v-if="campaign.owner != null">
                         <span class="title">{{ $t('campaigns.phone') }}:</span>
-                        <a href="javascript:void(0)" class="text">{{ campaign.owner.phone }}</a>
+                        <a href="javascript:void(0)" class="text">{{ campaign.owner[0].phone }}</a>
                     </li>
                 </ul>
 
@@ -57,7 +59,9 @@
         <div class="ui-block">
             <div class="ui-block-title">
                 <h6 class="title">{{ $t('campaigns.location') }}</h6>
-                <a href="javascript:void(0)" class="more"><svg class="olymp-three-dots-icon"><use xlink:href="icons/icons.svg#olymp-three-dots-icon"></use></svg></a>
+                <a href="javascript:void(0)" class="more">
+                    <svg class="olymp-three-dots-icon"><use xlink:href="icons/icons.svg#olymp-three-dots-icon"></use></svg>
+                </a>
             </div>
 
             <div class="widget w-contacts">
@@ -104,7 +108,10 @@
         computed: {
             ...mapState('campaign', ['campaign']),
             positions() {
-                return { lat: parseFloat(this.campaign.latitude), lng: parseFloat(this.campaign.longitude) }
+                return {
+                    lat: parseFloat(this.campaign.latitude),
+                    lng: parseFloat(this.campaign.longitude)
+                }
             },
         }
     }

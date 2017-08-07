@@ -2,10 +2,16 @@
     <div class="btn-group bootstrap-select show-tick form-control style-2">
         <div class="dropdown-menu open" role="combobox">
             <div class="searchbox">
-                <input type="text" v-model="search" class="form-control" role="textbox" :placeholder="$t('messages.search')">
+                <input
+                    type="text"
+                    v-model="search"
+                    class="form-control"
+                    role="textbox"
+                    :placeholder="$t('messages.search')"
+                    @input="searchMembers">
             </div>
-            <ul class="dropdown-menu inner" role="listbox" aria-expanded="false">
-                <li class="member" v-for="member in filteredListMember">
+            <ul class="dropdown-menu scroll-member inner" role="listbox" aria-expanded="false">
+                <li class="member" v-for="member in members.data">
                     <router-link :to="{ name: 'user.timeline', params: { id: member.id }}">
                         <span class="text">
                             <div class="inline-items">
@@ -24,22 +30,89 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
-    data: () => ({
-        search : ''
-    }),
-    computed: {
-        ...mapState('campaign', ['campaign']),
-        filteredListMember() {
-            return this.campaign.members.filter(member => {
-                return member.name.toLowerCase().match(this.search.toLowerCase())
-            })
+    data() {
+        return {
+            search: '',
+            members: []
         }
+    },
+    created() {
+        this.searchMember({
+            campaignId: this.$route.params.id,
+            status: 1,
+            search: '',
+            pageNumberEvent: 1,
+            pageCurrent: 0
+        })
+        .then(member => {
+            this.members = []
+            this.members = member
+            console.log('plugin', this.members)
+
+        })
+        .catch(err => {
+            //
+        })
+    },
+    computed: {
+        ...mapState('campaign', [
+            'listMembers'
+        ]),
+    },
+    watchers: {
+        members() {
+
+        }
+    },
+    methods: {
+        ...mapActions('campaign', [
+            'loadMoreMembers',
+            'searchMember'
+        ]),
+        searchMembers: _.debounce(function (e) {
+            e.preventDefault()
+            this.searchMember({
+                campaignId: this.$route.params.id,
+                status: 1,
+                search: this.search,
+                pageNumberEvent: 1,
+                pageCurrent: 0
+            })
+            .then(data => {
+                this.members = []
+                this.members = data
+            })
+            .catch(err => {
+                //
+            })
+        }, 100),
     },
     mounted() {
         $(this.$el).selectpicker()
+        $('.scroll-member').scroll(() => {
+            if($('.scroll-member').scrollTop() + $('.scroll-member').innerHeight() >= $('.scroll-member')[0].scrollHeight) {
+                console.log('load more')
+                this.searchMember({
+                    campaignId: this.$route.params.id,
+                    status: 1,
+                    search: this.search,
+                    pageNumberEvent: this.members.last_page,
+                    pageCurrent: this.members.current_page
+                })
+                .then(member => {
+                    let list_members = this.members
+                    member.data = [...list_members.data, ...member.data]
+                    this.members = []
+                    this.members = member
+                })
+                .catch(err => {
+                    //
+                })
+            }
+        })
     }
 }
 </script>

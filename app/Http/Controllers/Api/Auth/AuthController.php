@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\PassportService;
 use App\Repositories\Contracts\UserInterface;
 use App\Models\User;
+use App\Models\Role;
 use App\Exceptions\Api\UnknowException;
 use App\Exceptions\Api\NotFoundException;
 use LRedis;
@@ -34,7 +35,11 @@ class AuthController extends ApiController
     {
         $data = $request->only('email', 'password');
 
-        $user = $this->repository->select($this->dataSelected)->where('email', $data['email'])->first();
+        $user = $this->repository->select($this->dataSelected)->where('email', $data['email'])
+            ->with(['roles' => function ($query) {
+                $query->where('type', Role::TYPE_SYSTEM);
+            }])
+            ->first();
 
         if (!$user) {
             throw new NotFoundException('Not Found user');

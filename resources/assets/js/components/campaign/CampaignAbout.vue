@@ -32,7 +32,13 @@ export default {
     methods: {
         ...mapActions('campaign', ['fetchData']),
         loadMore() {
-            var data = { campaignId: this.$route.params.id, events: this.events, pageNumberEvent: this.pageNumberEvent, pageCurrent: this.pageCurrentEvent }
+            var data = {
+                campaignId: this.$route.params.id,
+                events: this.events,
+                pageNumberEvent: this.pageNumberEvent,
+                pageCurrent: this.pageCurrentEvent
+            }
+
             this.fetchData(data)
         }
     },

@@ -205,7 +205,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
      * @param  array  $data
      * @return $campaign
     */
-    public function getCampaign($campaign, $roleIdOwner)
+    public function getCampaign($campaign, $userId)
     {
         $settings = $campaign->settings()->whereIn('key', config('settings.campaigns'))->get();
 
@@ -215,9 +215,10 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         $campaign['end_day'] = $settings->where('key', config('settings.campaigns.end_day'))->first('value');
         $campaign['timeout_campaign'] = $settings->where('key', config('settings.campaigns.timeout_campaign'))->first('value');
         // members in campaign
-        $campaign['members'] = $campaign->users;
-        $campaign['owner'] = $campaign['members']->where('pivot.role_id', $roleIdOwner)->first();
-        $campaign['memberIds'] = $campaign['members']->pluck('id')->all();
+        $campaign['check_status'] = $campaign->users()->wherePivot('user_id', $userId)->first();
+        $campaign['owner'] = $campaign->owner;
+        $campaign['check_moderators'] = $campaign->moderators()->wherePivot('user_id', $userId)->pluck('user_id')->all();
+        $campaign['check_owner'] = $campaign->owner()->wherePivot('user_id', $userId)->pluck('user_id')->all();
         // images campaign
         $campaign['campaign_images'] = $campaign->media()->first();
 
@@ -314,13 +315,19 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
      * @param  int $data, $status
      * @return boolen
      */
-    public function changeStatusUser($data, $status)
+    public function changeStatusUser($data)
     {
-        $data['campaign']->users()->updateExistingPivot($data['user_id'], ['status' => $status]);
-        $data['campaign']->activities()->create([
-            'user_id' => $data['user_id'],
-            'name' => Activity::JOIN,
-        ]);
+        if ($data['flag'] == Campaign::FLAG_APPROVE) {
+            $result = $data['campaign']->users()->updateExistingPivot($data['user_id'], ['status' => Campaign::APPROVED]);
+            $data['campaign']->activities()->create([
+                'user_id' => $data['user_id'],
+                'name' => Activity::JOIN,
+            ]);
+
+            return $result;
+        } else {
+            $data['campaign']->users()->detach($data['user_id']);
+        }
 
         return true;
     }
@@ -331,9 +338,39 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
      * @param  int $id
      * @return boolen
      */
-    public function getMembers($id)
+    public function getMembers($campaign, $status, $roleIdBlocked)
     {
-        return $this->findOrFail($id)->members()->where('status', User::ACTIVE);
+        return $campaign->users()
+           ->wherePivot('status', $status)
+           ->wherePivot('role_id', '!=', $roleIdBlocked)
+           ->orderBy('created_at', 'desc')
+           ->paginate(config('settings.paginate_default'));
+    }
+
+    /**
+     * search members of campaign
+     * @param  App\Models\Campaign $campaign
+     * @param  int $id
+     * @return boolen
+     */
+    public function searchMembers($campaign, $status, $search)
+    {
+        return $campaign->whereHas('users', function ($query) use ($status, $search) {
+            if (!is_null($search)) {
+                $query = $query->where('users.name', 'like', '%' . $search . '%');
+            }
+            $query->where('campaign_user.status', $status);
+        })->paginate(config('settings.paginate_default'));
+        // $user = $this->where('status', User::ACTIVE);
+
+        // if (!is_null($search)) {
+        //     $user = $user->where('name', 'like', '%' . $search . '%');
+        // }
+
+        // return $user->whereHas('campaigns', function ($query) use ($campaignId, $status) {
+        //     $query->where('campaign_id', $campaignId)
+        //         ->where('campaign_user.status', $status);
+        // })->paginate(config('settings.paginate_default'));
     }
 
     /**
@@ -362,8 +399,8 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     {
         return $campaign->events()->with(['actions' => function ($query) {
             $query->with(['user', 'media' => function ($subQuery) {
-                $subQuery->orderBy('created_at', 'desc')->first();
-            }])->orderBy('created_at', 'desc')->get();
+                $subQuery->where('type', Media::IMAGE)->orderBy('created_at', 'desc');
+            }])->orderBy('created_at', 'desc')->first();
         }])->orderBy('created_at', 'desc')->paginate(config('settings.paginate_default'));
     }
 
@@ -376,12 +413,48 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     public function getCampaignRelated($campaign, $userId)
     {
         $tagIds = $campaign->tags()->pluck('tag_id')->all();
+        $enday = Carbon::today()->format('Y-m-d');
 
-        return $this->whereHas('tags', function ($query) use ($tagIds) {
+        $listCampaigns =  $this->whereHas('tags', function ($query) use ($tagIds) {
             $query->whereIn('tag_id', $tagIds);
-        })->whereHas('settings', function ($query) {
-            $query->where('key', config('settings.campaigns.start_day'))->where('value', '>=', Carbon::now());
-        })->with('media', 'users', 'tags')
+        })
+        ->whereHas('settings', function ($query) use ($enday) {
+            $query->where('key', config('settings.campaigns.end_day'))
+                ->where('value', '<=', $enday);
+        })
+        ->where('status', Campaign::ACTIVE)
+        ->where('id', '!=', $campaign->id);
+
+        // get campaigns that user is login joined
+        $campaignIds = $listCampaigns->users->where('id', $userId)->pluck('pivot.campaign_id');
+
+        return $listCampaigns->whereNotIn('id', $campaignIds)->with('users', 'media', 'tags')
         ->paginate(config('settings.paginate_default'));
+    }
+
+    /**
+     * statistics memebers join to campaign
+     * @param  App\Models\Campaign $campaign
+     * @param  int $campaign
+     * @return mixed
+    */
+    public function statisticsMembers($campaign)
+    {
+        $members = $campaign->users;
+
+        // $ages = $members->each(function ($item, $key) {
+        //     $date = Carbon::parse($item->created_at);
+        //     $month = $date->month;
+        // });
+        // $ages = $campaign->users->groupBy(function ($date) {
+        //     // return Carbon::parse($date->created_at)->format('Y'); // grouping by years
+        //     //return Carbon::parse($date->created_at)->format('m'); // grouping by months
+        // });
+        // foreach ($members as $item) {
+        //     $date = Carbon::parse($item->created_at);
+        //     $month = $date->month;
+        // }
+
+        // dd($ages);
     }
 }
