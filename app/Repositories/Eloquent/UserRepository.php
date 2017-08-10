@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Campaign;
 use App\Models\Action;
-use App\Models\event;
+use App\Models\Event;
 use App\Repositories\Contracts\UserInterface;
 use App\Jobs\SendEmail;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -70,47 +70,67 @@ class UserRepository extends BaseRepository implements UserInterface
      * List all campaigns that the user owns
      * @return Illuminate\Pagination\Paginator
      */
-    public function ownedCampaign($id, $orderBy = 'created_at', $direction = 'desc')
+    public function ownedCampaign($id, $userId, $orderBy = 'created_at', $direction = 'desc')
     {
-        return $this->findOrFail($id)->campaigns()
+        $data = [];
+        $campaign = $this->findOrFail($id)->campaigns()
+            ->getLikes()
             ->with('users', 'owner', 'media')
-            ->wherePivot('role_id', app(RoleRepository::class)->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)->id)
+            ->wherePivot('role_id', app(RoleRepository::class)->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)->id);
+
+        $data['checkLiked'] = $this->checkLike($campaign, $userId)->all();
+        $data['campaign'] = $campaign
             ->orderBy($orderBy, $direction)
             ->simplePaginate(2);
+
+        return $data;
     }
 
     /**
      * List all campaigns that the user join
      * @return Illuminate\Pagination\Paginator
      */
-    public function joinedCampaign($id, $orderBy = 'created_at', $direction = 'desc')
+    public function joinedCampaign($id, $userId, $orderBy = 'created_at', $direction = 'desc')
     {
-        return $this->findOrFail($id)->campaigns()
+        $data = [];
+        $campaign = $this->findOrFail($id)->campaigns()
+            ->getLikes()
             ->with('users', 'owner', 'media')
             ->wherePivotIn('role_id', app(RoleRepository::class)->findRoleOrFail([
                 Role::ROLE_OWNER,
                 Role::ROLE_MODERATOR,
                 Role::ROLE_MEMBER,
-            ], Role::TYPE_CAMPAIGN)->pluck('id')->all())
+            ], Role::TYPE_CAMPAIGN)->pluck('id')->all());
+
+        $data['checkLiked'] = $this->checkLike($campaign, $userId)->all();
+
+        $data['campaign'] = $campaign
             ->orderBy($orderBy, $direction)
             ->simplePaginate(2);
+
+        return $data;
     }
 
-    public function getTimeline($user)
+    public function getTimeline($user, $userId)
     {
         $activities = $user->activities()
             ->with('activitiable.media')
+            ->getLikes()
+            ->getComments()
             ->whereIn('activitiable_type', [
                 Campaign::class,
                 Action::class,
                 Event::class,
-            ])
-            ->orderBy('id', 'DESC')
+            ])->orderBy('id', 'DESC')
             ->paginate(config('setting.pagination.timeline'));
+
+        $checkLiked = $this->checkLike($user->activities(), $user->id);
+        $activities = $activities;
 
         return [
             'currentPageUser' => $user,
             'listActivity' => $activities,
+            'checkLiked' => $checkLiked,
         ];
     }
 
@@ -121,14 +141,22 @@ class UserRepository extends BaseRepository implements UserInterface
      * @param  string $direction
      * @return Illuminate\Pagination\Paginator
      */
-    public function listFollowingCampaign($id, $orderBy = 'created_at', $direction = 'desc')
+    public function listFollowingCampaign($id, $userId, $orderBy = 'created_at', $direction = 'desc')
     {
-        return \App\Models\Campaign::with('users', 'owner', 'media')->whereHas('tags', function ($query) use ($id) {
-            $query->whereIn('campaign_tag.tag_id', \App\Models\User::findOrFail($id)->tags->pluck('id'));
-        })
+        $data = [];
+        $campaign = Campaign::with('users', 'owner', 'media')
+            ->getLikes()
+            ->whereHas('tags', function ($query) use ($id) {
+                $query->whereIn('campaign_tag.tag_id', \App\Models\User::findOrFail($id)->tags->pluck('id'));
+            });
+
+        $data['checkLiked'] = $this->checkLike($campaign, $userId)->all();
+        $data['campaign'] = $campaign
             ->distinct()
             ->orderBy($orderBy, $direction)
             ->simplePaginate(config('settings.pagination.following_campaign'));
+
+        return $data;
     }
 
     /**
@@ -192,7 +220,7 @@ class UserRepository extends BaseRepository implements UserInterface
             $user = $user->search($search, null, true);
         }
 
-        return $user->where('status', User::ACTIVE)
+        return $user//->where('status', User::ACTIVE)
             ->whereHas('campaigns', function ($query) use ($campaignId, $status, $roleId) {
                 $query = $query->where('campaign_id', $campaignId)
                     ->where('campaign_user.status', $status);

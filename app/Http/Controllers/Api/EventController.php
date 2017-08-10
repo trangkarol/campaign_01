@@ -78,6 +78,7 @@ class EventController extends ApiController
             'goalUpdates',
             'goalAdds'
         );
+
         $event = $this->eventRepository->findOrFail($id);
 
         if ($this->user->cannot('manage', $event)) {
@@ -104,23 +105,10 @@ class EventController extends ApiController
             throw new UnknowException('Error: Invalid parameter.');
         }
 
-        $event = $this->eventRepository->getEventExist($id);
+        $event = $this->eventRepository->findOrFail($id);
 
         return $this->doAction(function () use ($event, $request) {
             $this->compacts['event'] = $this->eventRepository->updateSettings($event, $request->setting);
-        });
-    }
-
-    public function like($id)
-    {
-        $event = $this->eventRepository->findOrFail($id);
-
-        if ($this->user->cannot('view', $event)) {
-            throw new Exception('Policy fail');
-        }
-
-        return $this->doAction(function () use ($event) {
-            $this->compacts['event'] = $this->eventRepository->createOrDeleteLike($event, $this->user->id);
         });
     }
 
@@ -134,17 +122,27 @@ class EventController extends ApiController
 
     public function show($id)
     {
-        return $this->doAction(function () use ($id) {
-            $event = $this->eventRepository->findOrFail($id);
-            $this->compacts['actions'] = $this->actionRepository->getActionPaginate($event->actions());
+        $event = $this->eventRepository->findOrFail($id);
+
+        if ($this->user->cannot('view', $event)) {
+            throw new UnknowException('Permission error: User can not edit this event.');
+        }
+
+        return $this->getData(function () use ($event) {
+
             $this->compacts['event'] = $this->eventRepository
-                ->where('id', $id)
+                ->getLikes()
+                ->getComments()
+                ->where('id', $event->id)
                 ->with([
                     'user',
                     'media',
                     'settings',
                 ])
                 ->get();
+
+            $this->compacts['actions'] = $this->actionRepository->getActionPaginate($event->actions(), $this->user->id);
+
             $this->compacts['goals'] = $event
                 ->goals()
                 ->select('id', 'donation_type_id', 'goal')
@@ -155,22 +153,9 @@ class EventController extends ApiController
                     'donationType.quality',
                 ])
                 ->get();
+
             $this->compacts['manage'] = $this->user->can('manage', $event);
-        });
-    }
-
-    public function getComment(Request $request)
-    {
-        $event = $request->event;
-
-        if ($event instanceof Illuminate\Database\Eloquent\Model) {
-            return $this->getData(function () use ($event) {
-                $this->compacts['comments'] = $event->comments;
-            });
-        }
-
-        return $this->getData(function () use ($event) {
-            $this->compacts['comments'] = [];
+            $this->compacts['checkLikeEvent'] = $this->eventRepository->checkLike($event, $this->user->id);
         });
     }
 

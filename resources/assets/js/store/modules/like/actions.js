@@ -1,5 +1,5 @@
 import * as types from './mutation-types';
-import { post } from '../../../helpers/api'
+import { get, post } from '../../../helpers/api'
 
 export const setLike = ({ commit }, data) => {
     commit(types.SET_LIKE, data)
@@ -13,10 +13,11 @@ export const likeActivity = ({ commit }, data) => {
                     commit(types.LIKE_ACTIVITY, {
                         like: res.data.like,
                         modelId: data.modelId,
-                        model: data.model,
+                        flag: data.flag,
                         user: data.user,
-                        commentTotal: data.commentTotal
+                        numberOfLikes: res.data.numberOfLikes
                     })
+
                     resolve(res.data.http_status.status)
                 }
             })
@@ -26,17 +27,26 @@ export const likeActivity = ({ commit }, data) => {
     })
 };
 
-export const showUsersLiked = ({ commit }, data) => {
-    commit(types.SHOW_MODAL, data)
-};
-
-export const hideUsersLiked = ({ commit }) => {
-    commit(types.HIDE_MODAL)
+export const getListMemberLiked = ({ commit }, data) => {
+    if ((parseInt(data.pageCurrent) + 1) <= data.lastPage) {
+        return new Promise((resolve, reject) => {
+            get(`list-members/${data.modelId}/${data.model}?page=${(parseInt(data.pageCurrent) + 1)}`)
+                .then(res => {
+                    commit(types.LIST_MEMBERS, {
+                        member: res.data.list_member,
+                        modelId: data.modelId,
+                        flag: data.model,
+                    })
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
 };
 
 export default {
     setLike,
     likeActivity,
-    showUsersLiked,
-    hideUsersLiked
+    getListMemberLiked
 };

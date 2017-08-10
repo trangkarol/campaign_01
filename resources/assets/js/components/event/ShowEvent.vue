@@ -41,23 +41,25 @@
                                 </div>
                             </div>
                             <p class="title-event">{{ event.title }}</p>
-                            <like :type="'likeInfo'"
-                                :checkLike="event.checkLike"
-                                :likes="event.likes"
-                                :model="'event'"
-                                :modelId="event.id"
-                            ></like>
                             <div class="control-block-button post-control-button">
-                                <a href="javascript:void(0)" :class=" { btn : true, 'btn-control' : true, liked : isLiked }">
-                                    <svg class="olymp-like-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-like-post-icon"></use></svg>
-                                </a>
+                                <master-like
+                                    :likes="event.likes"
+                                    :checkLiked="checkLiked"
+                                    :flag="'event'"
+                                    :type="'like-infor'"
+                                    :modelId="event.id"
+                                    :numberOfComments="event.number_of_comments"
+                                    :numberOfLikes="event.number_of_likes">
+                                </master-like>
                                 <a href="javascript:void(0)" class="btn btn-control">
                                     <svg class="olymp-share-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-share-icon"></use></svg>
                                 </a>
                             </div>
                         </article>
+
                         <comment
                             :comments="event.comments"
+                            :numberOfComments="event.number_of_comments"
                             :model-id ="event.id"
                             :flag="model"
                             :classListComment="'list-comment-event'"
@@ -107,10 +109,10 @@
     import { mapState, mapActions } from 'vuex'
     import ShowText from '../libs/ShowText.vue'
     import Comment from '../comment/Comment.vue'
-    import Like from '../user/timeline/Like.vue'
     import { get, del } from '../../helpers/api'
     import noty from '../../helpers/noty'
     import Message from '../libs/Modal.vue'
+    import MasterLike from '../like/MasterLike.vue'
 
     export default {
         data :() => ({
@@ -126,6 +128,7 @@
         computed : {
             ...mapState('event', [
                 'event',
+                'checkLiked'
             ]),
             ...mapState('auth', {
                 user: state => state.user
@@ -207,13 +210,13 @@
             SliderItem,
             ShowText,
             Comment,
-            Like,
-            Message
+            Message,
+            MasterLike
         }
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .wrap-event {
         z-index: 20 !important;
         margin-top: 10px;

@@ -8,7 +8,7 @@ interface EventInterface extends RepositoryInterface
 
     public function update($event, $inputs);
 
-    public function getEvent($campaign);
+    public function getEvent($campaign, $userId);
 
     public function createOrDeleteLike($event, $userId);
 }

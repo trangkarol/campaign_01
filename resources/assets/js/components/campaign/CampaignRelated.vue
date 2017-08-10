@@ -4,10 +4,9 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div class="tab-pane active" id="album-page" role="tabpanel">
+                    <div class="photo-album-wrapper" v-if="campaignRelated.total > 0">
 
-                    <div class="photo-album-wrapper" v-if="capaignRelated.total > 0">
-
-                        <div class="photo-album-item-wrap col-4-width" v-for="campaign in capaignRelated.data">
+                        <div class="photo-album-item-wrap col-4-width" v-for="campaign in campaignRelated.data">
                             <div class="photo-album-item" data-mh="album-item">
                                 <div class="photo-item" v-if="campaign.media.length > 0">
                                     <router-link :to="{ name: 'campaign.timeline', params: { id: campaign.id }}"
@@ -125,11 +124,13 @@ import noty from '../../helpers/noty'
 import Modal from '../libs/Modal.vue'
 
 export default {
-    data: () => ({
-        capaignRelated: [],
-        flagComfirm: false,
-        campaignIdCurrent: 0
-    }),
+    data() {
+        return {
+            campaignRelated: [],
+            flagComfirm: false,
+            campaignIdCurrent: 0
+        }
+    },
     created() {
         this.getCampaignRelated(this.pageId)
     },
@@ -137,11 +138,13 @@ export default {
         this.swiper()
     },
     methods: {
-        ...mapActions('campaign', ['attendCampaign']),
+        ...mapActions('campaign', [
+            'attendCampaign'
+        ]),
         getCampaignRelated(campaignId) {
             get(`campaign/campaign-related/${campaignId}`)
                 .then(res => {
-                    this.capaignRelated = res.data.campaign_related
+                    this.campaignRelated = res.data.campaign_related
                 })
                 .catch(err => {
                     //
@@ -156,9 +159,6 @@ export default {
         },
         cancel() {
             this.flagComfirm = false
-        },
-        loadMore() {
-            console.log('load more', this.flagComfirm)
         },
         timeAgo(time) {
             return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()

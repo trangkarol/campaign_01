@@ -34,10 +34,32 @@ class CommentRepository extends BaseRepository implements CommentInterface
         return $comment;
     }
 
+    public function updateComment($data, $comment, $user)
+    {
+        $comment->update($data);
+
+        Event::fire('add.activity', [
+            [
+                'model' => $comment,
+                'user_id' => $user->id,
+                'action' => Activity::UPDATE
+            ]
+        ]);
+
+        return $comment;
+    }
+
     public function getComment($modelId)
     {
-        return $this->with('user')->where('parent_id', config('settings.comment_parent'))
-            ->where('commentable_id', $modelId)->orderBy('created_at', 'desc')
+        return $this->with(['user', 'likes.user',
+            'subComment' => function ($subQuery) {
+                $subQuery->with('user', 'likes.user')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(config('settings.paginate_comment'), ['*'], 1);
+            }])
+            ->where('parent_id', config('settings.comment_parent'))
+            ->where('commentable_id', $modelId)
+            ->orderBy('created_at', 'desc')
             ->paginate(config('settings.paginate_comment'));
     }
 
@@ -51,12 +73,21 @@ class CommentRepository extends BaseRepository implements CommentInterface
            ->paginate(config('settings.paginate_comment'));
     }
 
-    public function delete($comment)
+    public function deleteComment($comment, $user)
     {
         $comment->activities()->delete();
         $comment->likes()->delete();
         $comment->subComment()->delete();
+        $comment->delete();
 
-        return $comment->delete();
+        Event::fire('add.activity', [
+            [
+                'model' => $comment,
+                'user_id' => $user->id,
+                'action' => Activity::DELETE
+            ]
+        ]);
+
+        return true;
     }
 }

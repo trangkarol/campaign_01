@@ -1,7 +1,6 @@
 export default {
     like: [],
-    checkLiked: [],
-    showModal: false,
-    listUserliked: [],
+    checkLike: [],
+    listMember: [],
     commentTotal: []
 }

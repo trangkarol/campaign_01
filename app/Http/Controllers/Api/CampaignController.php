@@ -157,11 +157,11 @@ class CampaignController extends ApiController
         }
 
         $roleIdBlocked = $this->roleRepository->findRoleOrFail(Role::ROLE_BLOCKED, Role::TYPE_CAMPAIGN)->id;
-        $userId = $this->user->id;
 
-        return $this->getData(function () use ($campaign, $userId, $roleIdBlocked) {
-            $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events());
-            $this->compacts['show_campaign'] = $this->campaignRepository->getCampaign($campaign, $userId);
+        return $this->getData(function () use ($campaign, $roleIdBlocked) {
+            $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events(), $this->user->id);
+            $this->compacts['checkLiked'] = $this->eventRepository->checkLike($campaign->events(), $this->user->id);
+            $this->compacts['show_campaign'] = $this->campaignRepository->getCampaign($campaign, $this->user->id);
             $this->compacts['members'] = $this->campaignRepository->getMembers($campaign, Campaign::APPROVED, $roleIdBlocked);
         });
     }
@@ -194,13 +194,15 @@ class CampaignController extends ApiController
     public function getListEvent($id)
     {
         $campaign = $this->campaignRepository->findOrFail($id);
+        $userId = $this->user->id;
 
         if ($this->user->cannot('view', $campaign)) {
             throw new NotFoundException('You do not have authorize to see this campaign', UNAUTHORIZED);
         }
 
-        return $this->getData(function () use ($campaign) {
-            $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events());
+        return $this->getData(function () use ($campaign, $userId) {
+            $this->compacts['events'] = $this->eventRepository->getEvent($campaign->events(), $userId);
+            $this->compacts['checkLiked'] = $this->eventRepository->checkLike($campaign->events(), $userId);
         });
     }
 
@@ -363,8 +365,8 @@ class CampaignController extends ApiController
 
         return $this->getData(function () use ($campaign) {
             $eventIds = $campaign->events()->pluck('id')->all();
-            $actions = $this->actionRepository->whereIn('event_id', $eventIds);
-            $this->compacts['list_photos'] = $this->actionRepository->getActionPhotos($actions);
+
+            $this->compacts['list_photos'] = $this->actionRepository->getActionPhotos($eventIds, $this->user->id);
         });
     }
 
@@ -376,14 +378,13 @@ class CampaignController extends ApiController
     public function getCampaignRelated($id)
     {
         $campaign = $this->campaignRepository->findOrFail($id);
-        $userId = $this->user->id;
 
         if ($this->user->cannot('view', $campaign)) {
             throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
         }
 
-        return $this->doAction(function () use ($campaign, $userId) {
-            $this->compacts['campaign_related'] = $this->campaignRepository->getCampaignRelated($campaign, $userId);
+        return $this->doAction(function () use ($campaign) {
+            $this->compacts['campaign_related'] = $this->campaignRepository->getCampaignRelated($campaign, $this->user->id);
         });
     }
 }

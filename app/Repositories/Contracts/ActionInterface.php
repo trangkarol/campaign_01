@@ -6,8 +6,9 @@ interface ActionInterface extends RepositoryInterface
 {
     public function createOrDeleteLike($action, $userId);
 
-    public function getActionPhotos($actions);
-
     public function deleteFromEvent($event);
 
+    public function getActionPhotos($eventIds, $userId);
+
+    public function showAction($action, $userId);
 }

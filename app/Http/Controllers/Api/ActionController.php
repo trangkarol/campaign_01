@@ -31,24 +31,6 @@ class ActionController extends ApiController
         $this->eventRepository = $eventRepository;
     }
 
-    /**
-     * Like or unlike action
-     *
-     * @return Model if create or bool if delete
-     */
-    public function like($id)
-    {
-        $action = $this->actionRepository->findOrFail($id);
-
-        if ($this->user->cannot('view', $action)) {
-            throw new Exception('Policy fail');
-        }
-
-        return $this->doAction(function () use ($action) {
-            $this->compacts['action'] = $this->actionRepository->createOrDeleteLike($action, $this->user->id);
-        });
-    }
-
     public function update(ActionRequest $request, $id)
     {
         $inputs['data_action'] = $request->only('caption', 'description');
@@ -118,6 +100,19 @@ class ActionController extends ApiController
 
         return $this->doAction(function () use ($action) {
             $this->compacts['actions'] = $this->actionRepository->delete($action);
+        });
+    }
+
+    public function show($id)
+    {
+        $action = $this->actionRepository->findOrFail($id);
+
+        if ($this->user->cant('view', $action)) {
+            throw new UnknowException('Permission error: User can not see this action.');
+        }
+
+        return $this->doAction(function () use ($action) {
+            $this->compacts['actions'] = $this->actionRepository->showAction($action, $this->user->id);
         });
     }
 }

@@ -36,7 +36,20 @@ class ActionPolicy extends BasePolicy
 
     public function comment(User $user, Action $action)
     {
-        $roleBlockId = Role::where('name', Role::ROLE_BLOCKED)->first(['id']);
+        $roleBlockId = Role::where('name', Role::ROLE_BLOCKED)->first()->pluck('id');
+
+        $userInCampaign = $action->event->campaign->users()
+            ->wherePivot('status', Campaign::APPROVED)
+            ->wherePivot('role_id', '<>', $roleBlockId)
+            ->pluck('user_id')
+            ->all();
+
+        return in_array($user->id, $userInCampaign);
+    }
+
+    public function like(User $user, Action $action)
+    {
+        $roleBlockId = Role::where('name', Role::ROLE_BLOCKED)->first()->pluck('id');
 
         $userInCampaign = $action->event->campaign->users()
             ->wherePivot('status', Campaign::APPROVED)

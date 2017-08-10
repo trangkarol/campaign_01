@@ -75,5 +75,12 @@
     "search_all": "Search all",
     "stt": "No.",
     "name-member": "Name member",
-    "role": "Role"
+    "role": "Role",
+    "created": "created",
+    "updated": "updated",
+    "deleted": "deleted",
+    "joined": "joined",
+    "campaign": "campaign",
+    "event": "event",
+    "action": "action"
 }

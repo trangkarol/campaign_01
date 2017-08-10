@@ -73,4 +73,6 @@ interface RepositoryInterface
     public function select($columns = ['*']);
 
     public function createByRelationship($method, $inputs, $option = false);
+
+    public function checkLike($model, $userId);
 }

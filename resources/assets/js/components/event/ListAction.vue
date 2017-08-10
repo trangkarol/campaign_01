@@ -8,7 +8,7 @@
         </div>
         <div class="row">
             <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="ui-block" v-for="(action, index) in actions.data" v-if="!(index % 2)">
+                <div class="ui-block" v-for="(action, index) in actions.list_action.data" v-if="!(index % 2)">
                     <article class="hentry post has-post-thumbnail thumb-full-width">
                         <div class="post__author author vcard inline-items">
                             <img :src="action.user.image_thumbnail" alt="author">
@@ -62,19 +62,17 @@
                             :hide="$t('events.show_less')">
                         </show-text>
 
-                        <like :type="'likeInfo'"
-                            :checkLike="action.checkLike"
-                            :likes="action.likes"
-                            :model="'action'"
-                            :modelId="action.id"
-                        ></like>
-
                         <div class="control-block-button post-control-button">
-                            <a href="javascript:void(0)" class="btn btn-control">
-                                <svg class="olymp-like-post-icon">
-                                    <use xlink:href="/frontend/icons/icons.svg#olymp-like-post-icon"></use>
-                                </svg>
-                            </a>
+                            <master-like
+                                :likes="action.likes"
+                                :checkLiked="actions.checkLikeAction"
+                                :flag="'action'"
+                                :type="'like-infor'"
+                                :modelId="action.id"
+                                :numberOfComments="action.number_of_comments"
+                                :numberOfLikes="action.number_of_likes"
+                                >
+                            </master-like>
                             <a href="javascript:void(0)" class="btn btn-control">
                                 <svg class="olymp-comments-post-icon">
                                     <use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use>
@@ -90,7 +88,7 @@
                 </div>
             </div>
             <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="ui-block" v-for="(action, index) in actions.data" v-if="index % 2">
+                <div class="ui-block" v-for="(action, index) in actions.list_action.data" v-if="index % 2">
                     <article class="hentry post has-post-thumbnail thumb-full-width">
                         <div class="post__author author vcard inline-items">
                             <img :src="action.user.image_thumbnail" alt="author">
@@ -143,18 +141,18 @@
                             :show="$t('events.show_more')"
                             :hide="$t('events.show_less')">
                         </show-text>
-
-                        <like :type="'likeInfo'"
-                            :checkLike="action.checkLike"
-                            :likes="action.likes"
-                            :model="'action'"
-                            :modelId="action.id"
-                        ></like>
-
                         <div class="control-block-button post-control-button">
-                            <a href="javascript:void(0)" class="btn btn-control">
-                                <svg class="olymp-like-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-like-post-icon"></use></svg>
-                            </a>
+                            <master-like
+                                :likes="action.likes"
+                                :checkLiked="actions.checkLikeAction"
+                                :flag="'action'"
+                                :type="'like-infor'"
+                                :modelId="action.id"
+                                :numberOfComments="action.number_of_comments"
+                                :numberOfLikes="action.number_of_likes"
+                                >
+                            </master-like>
+
                             <a href="javascript:void(0)" class="btn btn-control">
                                 <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
                             </a>
@@ -181,7 +179,7 @@
                 </a>
             </div>
         </message>
-        <action-detail :showAction.sync="showAction" :dataAction = "dataAction"></action-detail>
+        <action-detail :showAction.sync="showAction" :dataAction = "dataAction" :checkLikeActions ="actions.checkLikeAction" ></action-detail>
         <update-action :showUpdate.sync="showUpdate" v-if="showUpdate" :dataAction = "dataAction"></update-action>
     </div>
 </template>
@@ -191,7 +189,7 @@
     import ShowText from '../libs/ShowText.vue'
     import ActionDetail from './ActionDetail.vue'
     import UpdateAction from './UpdateAction.vue'
-    import Like from '../user/timeline/Like.vue'
+    import MasterLike from '../like/MasterLike.vue'
     import Message from '../libs/Modal.vue'
     import { del } from '../../helpers/api'
     import noty from '../../helpers/noty'
@@ -202,6 +200,7 @@
             showAction: false,
             showUpdate: false,
             dataAction: {},
+            checkLikeActions: [],
             isShowDelete: false,
             actionId: null
         }),
@@ -220,7 +219,7 @@
             }),
 
             isEmpty() {
-                return !this.actions.data.length
+                return !this.actions.list_action.data.length
             }
         },
 
@@ -229,7 +228,7 @@
                 if ($(document).height() - $(window).height() < $(window).scrollTop() + 1) {
                     this.load_action({
                         event_id: this.pageId,
-                        actions: this.actions,
+                        actions: his.actions.list_action,
                         flag_search: this.flag_search,
                         key: this.key_search
                     })
@@ -297,13 +296,13 @@
             ShowText,
             ActionDetail,
             UpdateAction,
-            Like,
+            MasterLike,
             Message
         }
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .list-action {
         .load-search {
             position: absolute;

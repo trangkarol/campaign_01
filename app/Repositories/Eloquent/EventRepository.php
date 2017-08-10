@@ -158,21 +158,13 @@ class EventRepository extends BaseRepository implements EventInterface
         return true;
     }
 
-    public function getEventExist($id)
+    public function getEvent($event, $userId)
     {
-        $event = $this->find($id);
-
-        if (!$event) {
-            throw new UnknowException('Error: Event is not found.');
-        }
-
-        return $event;
-    }
-
-    public function getEvent($event)
-    {
-        return $event->with('media', 'user')->orderBy('created_at', 'desc')
-           ->paginate(config('settings.paginate_event'));
+        return $event->with('media', 'user')
+            ->getLikes()
+            ->getComments()
+            ->orderBy('created_at', 'desc')
+            ->paginate(config('settings.paginate_event'));
     }
 
     public function createOrDeleteLike($event, $userId)

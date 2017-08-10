@@ -28,7 +28,7 @@ class UserController extends ApiController
     protected $tagRepository;
     protected $roleRepository;
     private $redis;
-    CONST READ = 0;
+    const READ = 0;
 
     public function __construct(
         UserInterface $userRepository,
@@ -170,7 +170,7 @@ class UserController extends ApiController
     public function listOwnedCampaign($id)
     {
         return $this->getData(function () use ($id) {
-            $this->compacts['data'] = $this->repository->ownedCampaign($id);
+            $this->compacts['data'] = $this->repository->ownedCampaign($id, $this->user->id);
         });
     }
 
@@ -181,7 +181,7 @@ class UserController extends ApiController
     public function listJoinedCampaign($id)
     {
         return $this->getData(function () use ($id) {
-            $this->compacts['data'] = $this->repository->joinedCampaign($id);
+            $this->compacts['data'] = $this->repository->joinedCampaign($id, $this->user->id);
         });
     }
 
@@ -262,7 +262,7 @@ class UserController extends ApiController
     public function listFollowingCampaign($id)
     {
         return $this->doAction(function () use ($id) {
-            $this->compacts['data'] = $this->repository->listFollowingCampaign($id);
+            $this->compacts['data'] = $this->repository->listFollowingCampaign($id, $this->user->id);
         });
     }
 
@@ -306,7 +306,7 @@ class UserController extends ApiController
         }
 
         return $this->doAction(function () use ($user) {
-            $this->compacts['data'] = $this->repository->getTimeline($user);
+            $this->compacts['data'] = $this->repository->getTimeline($user, $this->user->id);
         });
     }
 
@@ -329,6 +329,7 @@ class UserController extends ApiController
                 ->lists('id')
                 ->all();
             $this->compacts['groups'] = $this->user->campaigns()
+                ->getLikes()
                 ->wherePivot('status', Campaign::APPROVED)
                 ->wherePivotIn('role_id', $roleIds)
                 ->where('campaigns.status', Campaign::ACTIVE)

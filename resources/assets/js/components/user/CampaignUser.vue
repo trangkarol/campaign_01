@@ -78,18 +78,18 @@
                         <router-link :to="{ name: 'campaign.timeline', params: { slug: campaign.slug }}" class="btn btn-md-2 btn-border-think c-grey btn-transparent custom-color">{{ $t('user.button.read_more') }}</router-link>
 
 
-                        <like :type="'likeInfo'"
-                            :checkLike="campaign.checkLike"
-                            :likes="campaign.likes"
-                            :model="'campaign'"
-                            :modelId="campaign.id"
-                        ></like>
-
                         <div class="control-block-button post-control-button">
 
-                            <a href="#" class="btn btn-control">
-                                <svg class="olymp-like-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-like-post-icon"></use></svg>
-                            </a>
+                            <master-like
+                                :likes="campaign.likes"
+                                :checkLiked="checkLiked"
+                                :flag="'campaign'"
+                                :type="'like-infor'"
+                                :modelId="campaign.id"
+                                :numberOfComments="campaign.number_of_comments"
+                                :numberOfLikes="campaign.number_of_likes"
+                                >
+                            </master-like>
 
                             <a href="#" class="btn btn-control">
                                 <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
@@ -115,7 +115,7 @@
 
 <script>
 import axios from 'axios'
-import Like from './timeline/Like.vue'
+import MasterLike from '../like/MasterLike.vue'
 
 export default {
     data() {
@@ -124,13 +124,14 @@ export default {
             page: 0,
             hasData: true,
             loading: false,
+            checkLiked: [],
         }
     },
     created() {
         this.fetchData()
     },
     components: {
-        Like
+        MasterLike
     },
     mounted() {
         $(window).scroll(() => {
@@ -148,10 +149,11 @@ export default {
             this.loading = true
             axios.get(`/api/user/${this.pageId}/${this.$route.params.path}/?page=${this.page}`)
                 .then(res => {
-                    if (!res.data.data.data.length) {
+                    if (!res.data.data.campaign.data.length) {
                         this.hasData = false
                     }
-                    this.data = this.data.concat(res.data.data.data)
+                    this.data = this.data.concat(res.data.data.campaign.data)
+                    this.checkLiked = res.data.data.checkLiked
                 })
             this.loading = false
         },

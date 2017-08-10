@@ -33,23 +33,12 @@ class CommentController extends ApiController
             throw new UnknowException('Event_id is null');
         }
 
-        $data['parent_id'] = $parentId;
+        $commentClass = new \ReflectionClass($this->commentRepository);
+        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($flag . 'Repository'))->findOrFail($modelId);
 
+        $data['parent_id'] = $parentId;
         $data['content'] = $request->content;
         $data['user_id'] = $this->user->id;
-
-        if ($flag) {
-            switch ($flag) {
-                case 'event':
-                    $model = $this->eventRepository->findOrFail($modelId);
-                    break;
-                case 'action':
-                    $model = $this->actionRepository->findOrFail($modelId);
-                    break;
-                default:
-                    $model = '';
-            }
-        }
 
         if ($this->user->cant('comment', $model)) {
             throw new UnknowException('Permission error: User can not create comment in this post.');
@@ -57,35 +46,81 @@ class CommentController extends ApiController
 
         return $this->doAction(function () use ($data, $model) {
             $this->compacts['createComment'] = $this->commentRepository->createComment($data, $model);
+
+            if ($this->compacts['createComment']->parent_id == config('settings.comment_parent')) {
+                $numberComment = $model->number_of_comments + 1;
+                $model->update([
+                    'number_of_comments' => $numberComment
+                ]);
+            } else {
+                $comment = $this->commentRepository->findOrFail($this->compacts['createComment']->parent_id);
+                $numberComment = $comment->number_of_comments + 1;
+                $comment->update([
+                    'number_of_comments' => $numberComment
+                ]);
+            }
+
+            $this->compacts['numberComment'] = $numberComment;
         });
     }
 
-    public function update(CommentRequest $request, $id)
+    public function updateComment($id, $flag, CommentRequest $request)
     {
         $data = $request->only('content');
         $comment = $this->commentRepository->findOrFail($id);
         $modelId = $comment->commentable_id;
 
-        if ($this->user->cant('update', $comment)) {
+        $commentClass = new \ReflectionClass($this->commentRepository);
+        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($flag . 'Repository'))->findOrFail($comment->commentable_id);
+        $user = $this->user;
+
+        if ($user->cant('update', $comment)) {
             throw new UnknowException('Permission error: User can not edit this comment.');
         }
 
-        return $this->doAction(function () use ($id, $data) {
-            $this->compacts['updateComment'] = $this->commentRepository->update($id, $data);
+        return $this->doAction(function () use ($id, $data, $comment, $model, $user) {
+            $this->compacts['updateComment'] = $this->commentRepository->updateComment($data, $comment, $user);
+
+            if ($comment->parent_id == config('settings.comment_parent')) {
+                $numberComment = $model->number_of_comments;
+            } else {
+                $numberComment = $comment->number_of_comments;
+            }
+
+            $this->compacts['numberComment'] = $numberComment;
         });
     }
 
     public function destroy($id, Request $request)
     {
         $comment = $this->commentRepository->findOrFail($id);
-        $modelId = $request->modelId;
+        $data = $request->only('modelId', 'flag');
+        $user = $this->user;
 
-        if ($this->user->cant('delete', $comment)) {
+        $commentClass = new \ReflectionClass($this->commentRepository);
+        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($data['flag'] . 'Repository'))->findOrFail($data['modelId']);
+
+        if ($user->cant('delete', $comment)) {
             throw new UnknowException('Permission error: User can not edit this comment.');
         }
 
-        return $this->doAction(function () use ($comment) {
-            $this->compacts['deleteComment'] = $this->commentRepository->delete($comment);
+        return $this->doAction(function () use ($comment, $model, $user) {
+            $this->compacts['deleteComment'] = $this->commentRepository->deleteComment($comment, $user);
+
+            if ($comment->parent_id == 0) {
+                $numberComment = $model->number_of_comments - 1;
+                $model->update([
+                    'number_of_comments' => $numberComment
+                ]);
+            } else {
+                $parentComment = $this->commentRepository->findOrFail($comment->parent_id);
+                $numberComment = $parentComment->number_of_comments - 1;
+                $parentComment->update([
+                    'number_of_comments' => $numberComment
+                ]);
+            }
+
+            $this->compacts['numberComment'] = $numberComment;
         });
     }
 

@@ -70,7 +70,7 @@
                     <div id="map">
                         <gmap-map
                             :center="positions"
-                            :zoom="6"
+                            :zoom="15"
                             map-type-id="terrain"
                             style="width: 100%; height: 200px"
                             >

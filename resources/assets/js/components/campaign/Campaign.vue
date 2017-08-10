@@ -11,6 +11,7 @@
     import HeaderCampaign from './HeaderCampaign.vue'
     import { mapActions } from 'vuex'
     import slug from '../../helpers/mixin/getFullSlug'
+
     export default {
         mixins: [slug],
         data() {
@@ -30,7 +31,7 @@
         methods: {
             ...mapActions('campaign', [
                 'campaignDetail',
-            ])
+            ]),
         },
         components: {
            HeaderCampaign

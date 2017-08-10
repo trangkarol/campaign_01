@@ -84,17 +84,30 @@
                                 </show-text>
                             </span>
                         </p>
-                        <like :type="'likeInfo'"
-                            :checkLike="dataAction.checkLike"
+
+                        <master-like
                             :likes="dataAction.likes"
-                            :model="'action'"
+                            :checkLiked="checkLikeActions"
+                            :flag="'action'"
+                            :type="'like'"
                             :modelId="dataAction.id"
-                        ></like>
+                            :numberOfComments="dataAction.number_of_comments"
+                            :numberOfLikes="dataAction.number_of_likes"
+                            :showMore="true"
+                            >
+                        </master-like>
 
                         <div class="control-block-button post-control-button">
-                            <a href="javascript:void(0)" class="btn btn-control">
-                                <svg class="olymp-like-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-like-post-icon"></use></svg>
-                            </a>
+                            <master-like
+                                :likes="dataAction.likes"
+                                :checkLiked="checkLikeActions"
+                                :flag="'action'"
+                                :type="'like-infor'"
+                                :modelId="dataAction.id"
+                                :numberOfComments="dataAction.number_of_comments"
+                                :numberOfLikes="dataAction.number_of_likes"
+                                >
+                            </master-like>
 
                             <a href="javascript:void(0)" class="btn btn-control">
                                 <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
@@ -107,12 +120,14 @@
                         </div>
 
                     </article>
+
                     <comment
                         :comments="dataAction.comments"
+                        :numberOfComments="dataAction.number_of_comments"
                         :model-id ="dataAction.id"
-                        :flag="model"
-                        :classListComment="'list-comment-action'"
-                        :classFormComment="'input-comment-action'">
+                        :flag="'action'"
+                        :classListComment="''"
+                        :classFormComment="''">
                     </comment>
 
                 </div>
@@ -126,12 +141,13 @@
     import { mapState, mapActions } from 'vuex'
     import ShowText from '../libs/ShowText.vue'
     import Comment from '../comment/Comment.vue'
-    import Like from '../user/timeline/Like.vue'
+    import MasterLike from '../like/MasterLike.vue'
 
     export default {
         props: [
             'showAction',
             'dataAction',
+            'checkLikeActions',
         ],
 
         data() {
@@ -261,12 +277,12 @@
         components: {
             ShowText,
             Comment,
-            Like
+            MasterLike
         }
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .background-modal {
         position: fixed;
         top: 0;

@@ -8,11 +8,11 @@ interface UserInterface extends RepositoryInterface
 
     public function register($inputs, $roleId);
 
-    public function ownedCampaign($id, $orderBy = 'created_at', $direction = 'desc');
+    public function ownedCampaign($id, $userId, $orderBy = 'created_at', $direction = 'desc');
 
-    public function joinedCampaign($id, $orderBy = 'created_at', $direction = 'desc');
+    public function joinedCampaign($id, $userId, $orderBy = 'created_at', $direction = 'desc');
 
-    public function listFollowingCampaign($id, $orderBy = 'created_at', $direction = 'desc');
+    public function listFollowingCampaign($id, $userId, $orderBy = 'created_at', $direction = 'desc');
 
     public function listFollowingTag($id, $orderBy = 'created_at', $direction = 'desc');
 

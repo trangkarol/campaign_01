@@ -7,4 +7,8 @@ interface CommentInterface extends RepositoryInterface
     public function createComment($data, $model);
 
     public function getComment($modelId);
+
+    public function updateComment($data, $comment, $user);
+
+    public function deleteComment($comment, $user);
 }

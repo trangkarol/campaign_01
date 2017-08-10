@@ -152,4 +152,17 @@ class CampaignPolicy extends BasePolicy
 
         return false;
     }
+
+    public function like(User $user, Campaign $campaign)
+    {
+        $roleBlockId = Role::where('name', Role::ROLE_BLOCKED)->first()->pluck('id');
+
+        $userInCampaign = $campaign->users()
+            ->wherePivot('status', Campaign::APPROVED)
+            ->wherePivot('role_id', '<>', $roleBlockId)
+            ->pluck('user_id')
+            ->all();
+
+        return in_array($user->id, $userInCampaign);
+    }
 }

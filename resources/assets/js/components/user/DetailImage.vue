@@ -98,7 +98,7 @@
     }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
     .show-detail-image {
         top: 0;
         left: 0;

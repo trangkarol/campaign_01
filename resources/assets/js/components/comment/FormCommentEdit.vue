@@ -25,6 +25,7 @@ export default {
     props: [
         'parentComment',
         'flagEdit',
+        'flag',
         'classFormComment'
     ],
     created() {
@@ -37,18 +38,21 @@ export default {
         }),
     },
     methods: {
-        ...mapActions('comment', ['editComment']),
-        editComments(e) {
+        ...mapActions('comment', [
+            'editComment'
+        ]),
+        editComments: _.debounce(function (e) {
             if (e.keyCode === 13 && !e.shiftKey) {
-                if (this.comment.content !== '') {
+                if (this.comment.content.trim() != '') {
                     let data = {
                         comment: this.comment,
                         commentId: this.parentComment.id,
                         commentParentId: this.parentComment.parent_id,
+                        flag: this.flag,
                         modelId: this.parentComment.commentable_id,
                         flagAction: this.flagAction
                     }
-
+                    console.log('data', data)
                     this.editComment(data)
                     .then(status => {
                         status && this.$emit('changeFlagEdit')
@@ -61,7 +65,7 @@ export default {
                     noty({ text: message, force: true, container: false })
                 }
             }
-        },
+        }, 100),
         changeContent() {
             this.comment.content = this.parentComment.content
         },

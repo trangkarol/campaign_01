@@ -214,7 +214,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .list-image {
         margin-top: 20px;
         > div {

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Traits\Eloquent\CommentLike as CommentLike;
 
 class Comment extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes, CommentLike;
 
     public function __construct($attributes = [])
     {
@@ -19,15 +20,15 @@ class Comment extends BaseModel
         'user_id',
         'content',
         'parent_id',
+        'number_of_comments',
+        'number_of_likes',
         'commentable_id',
         'commentable_type',
     ];
 
     protected $dates = ['deleted_at'];
-    
+
     protected $appends = [
-        'sub_comment',
-        'likes',
         'user',
         'checkLike',
     ];
@@ -55,18 +56,6 @@ class Comment extends BaseModel
     public function subComment()
     {
         return $this->hasMany(Comment::class, 'parent_id', 'id');
-    }
-
-    public function getSubCommentAttribute()
-    {
-        return $this->subComment()->with('user')
-           ->orderBy('created_at', 'desc')
-           ->paginate(config('settings.paginate_comment'), ['*'], 1);
-    }
-
-    public function getLikesAttribute()
-    {
-        return $this->likes()->with('user')->paginate(config('settings.pagination.like'), ['*'], 1);
     }
 
     public function getUserAttribute()

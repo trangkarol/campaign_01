@@ -4,6 +4,7 @@ export default {
     listActivity: {
         data: [],
     },
+    checkLiked: [],
     loading: false,
     listPhoto: [],
     listFriend: [],

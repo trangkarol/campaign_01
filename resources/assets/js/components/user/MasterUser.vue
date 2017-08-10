@@ -1,26 +1,5 @@
 <template>
     <div>
-        <div class="modal fade show" id="create-friend-group-add-friends" v-if="showModal && listUserliked.length">
-            <div class="modal-dialog ui-block window-popup create-friend-group create-friend-group-add-friends">
-                <a href="javascript:void(0)" @click="hideUsersLiked" class="close icon-close" data-dismiss="modal" aria-label="Close">
-                    <svg class="olymp-close-icon">
-                        <use xlink:href="/frontend/icons/icons.svg#olymp-close-icon"></use>
-                    </svg>
-                </a>
-                <div class="ui-block-title">
-                    <i class="fa fa-heart" aria-hidden="true"></i>
-                    <h6 class="title">The users liked this activity ({{ listUserliked.length }})</h6>
-                </div>
-                <div class="list-user-liked ui-block-content">
-                    <ul>
-                        <li v-for="(user, index) in listUserliked">
-                            <img :src="user.user.url_file"></img>
-                            {{ user.user.name }}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
         <!-- Top Header -->
         <div class="container">
             <div class="row">
@@ -339,7 +318,11 @@
             }
         },
         methods: {
-            ...mapActions('auth', ['updateHeaderPhoto', 'changeAvatar', 'uploadImage']),
+            ...mapActions('auth', [
+                'updateHeaderPhoto',
+                'changeAvatar',
+                'uploadImage'
+            ]),
             ...mapActions('like', ['hideUsersLiked']),
             ...mapActions('user', ['getUser']),
             ...mapMutations('user', {
@@ -438,7 +421,7 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .author-thumb {
         >img {
             max-height: 100%;

@@ -8,6 +8,7 @@ export default {
         state.event.manage = dataEvent.manage
         state.actions = dataEvent.actions
         state.dataGoals = dataEvent.goals
+        state.checkLiked = dataEvent.checkLikeEvent
     },
 
     [types.LOAD_ACTION](state, dataAction) {

@@ -378,11 +378,16 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
      */
     public function listPhotos($campaign)
     {
-        return $campaign->events()->with(['actions' => function ($query) {
-            $query->with(['user', 'media' => function ($subQuery) {
-                $subQuery->where('type', Media::IMAGE)->orderBy('created_at', 'desc');
-            }])->orderBy('created_at', 'desc')->first();
-        }])->orderBy('created_at', 'desc')->paginate(config('settings.paginate_default'));
+        return $campaign->events()
+            ->with(['actions' => function ($query) {
+                $query->with(['user', 'media' => function ($subQuery) {
+                    $subQuery->where('type', Media::IMAGE)
+                         ->orderBy('created_at', 'desc');
+                }])
+                ->orderBy('created_at', 'desc')->first();
+            }])
+            ->orderBy('created_at', 'desc')
+            ->paginate(config('settings.paginate_default'));
     }
 
     /**
@@ -399,18 +404,21 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         $listCampaigns = $this->whereHas('tags', function ($query) use ($tagIds) {
             $query->whereIn('tag_id', $tagIds);
         })
-        ->whereHas('settings', function ($query) use ($enday) {
-            $query->where('key', config('settings.campaigns.end_day'))
-                ->where('value', '<=', $enday);
-        })
-        ->where('status', Campaign::ACTIVE)
-        ->where('id', '!=', $campaign->id);
+        ->where('campaigns.status', Campaign::ACTIVE)
+        ->where('campaigns.id', '!=', $campaign->id);
 
-        // get campaigns that user is login joined
-        $campaignIds = $listCampaigns->users->where('id', $userId)->pluck('pivot.campaign_id');
+        $campaignIds = $listCampaigns->whereHas('users', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->get()->pluck('id')->all();
 
-        return $listCampaigns->whereNotIn('id', $campaignIds)->with('users', 'media', 'tags')
-        ->paginate(config('settings.paginate_default'));
+        return $this
+            ->whereHas('tags', function ($query) use ($tagIds) {
+                $query->whereIn('tag_id', $tagIds);
+            })
+            ->where('campaigns.status', Campaign::ACTIVE)
+            ->where('campaigns.id', '!=', $campaign->id)
+            ->whereNotIn('id', $campaignIds)
+            ->paginate(config('settings.paginate_default'));
     }
 
     public function searchCampaign($page, $quantity, $keyword)

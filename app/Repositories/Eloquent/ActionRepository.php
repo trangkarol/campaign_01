@@ -37,6 +37,20 @@ class ActionRepository extends BaseRepository implements ActionInterface
         return $action->likes()->where('user_id', $userId)->first()->forceDelete();
     }
 
+    public function showAction($action, $userId)
+    {
+        $data = [];
+        $actions = $this->model->where('id', $action->id)
+            ->getLikes()
+            ->getComments()
+            ->with('user', 'media');
+
+        $data['list_action'] = $actions->first();
+        $data['checkLikeAction'] = $this->checkLike($action, $userId);
+
+        return $data;
+    }
+
     public function update($action, $inputs)
     {
         if (!empty($inputs['upload'])) {
@@ -63,12 +77,20 @@ class ActionRepository extends BaseRepository implements ActionInterface
         return true;
     }
 
-    public function getActionPaginate($action)
+    public function getActionPaginate($action, $userId)
     {
-        return $action
+        $data = [];
+
+        $data['list_action'] = $action
+            ->getLikes()
+            ->getComments()
             ->with('user', 'media')
             ->orderBy('created_at', 'DESC')
             ->paginate(config('settings.actions.paginate_in_event'));
+
+        $data['checkLikeAction'] = $this->checkLike($action, $userId);
+
+        return $data;
     }
 
     public function searchAction($eventId, $key)
@@ -81,15 +103,24 @@ class ActionRepository extends BaseRepository implements ActionInterface
             ->paginate(config('settings.actions.paginate_in_event'));
     }
 
-    public function getActionPhotos($actions)
+    public function getActionPhotos($eventIds, $userId)
     {
-        return $actions
-            ->with('likes.user', 'media')
+        $actions = $this->model
+            ->whereIn('event_id', $eventIds)
+            ->getLikes()
+            ->getComments()
+            ->with('user', 'media')
             ->whereHas('media', function ($query) {
-                $query->where('type', Media::IMAGE)->orderBy('created_at', 'desc');
-            })
-            ->orderBy('created_at', 'DESC')
+                $query->where('type', Media::IMAGE)
+                    ->orderBy('created_at', 'desc');
+            });
+
+        $dataAction['list_action'] = $actions->orderBy('created_at', 'DESC')
             ->paginate(config('settings.pagination.action'));
+
+        $dataAction['checkLikeAction'] = $this->checkLike($actions, $userId);
+
+        return $dataAction;
     }
 
     public function delete($action)

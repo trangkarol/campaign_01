@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Traits\Eloquent\CommentLike as CommentLike;
 
 class Event extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes, CommentLike;
 
     public function __construct($attributes = [])
     {
@@ -23,13 +24,13 @@ class Event extends BaseModel
         'longitude',
         'latitude',
         'address',
+        'number_of_comments',
+        'number_of_likes',
     ];
 
     protected $dates = ['deleted_at'];
+
     protected $appends = [
-        'comments',
-        'likes',
-        'checkLike',
         'slug',
     ];
 
@@ -81,24 +82,6 @@ class Event extends BaseModel
     public function comments()
     {
         return $this->morphMany(Comment::class, 'commentable');
-    }
-
-    public function getCommentsAttribute()
-    {
-        return $this->comments()->with('user')
-            ->where('parent_id', config('settings.comment_parent'))
-            ->orderBy('created_at', 'desc')
-            ->paginate(config('settings.paginate_comment'), ['*'], 1);
-    }
-
-    public function getLikesAttribute()
-    {
-        return $this->likes()->with('user')->paginate(config('settings.pagination.like'), ['*'], 1);
-    }
-
-    public function getCheckLikeAttribute()
-    {
-        return !is_null($this->likes()->where('user_id', \Auth::guard('api')->user()->id)->first());
     }
 
     public function expenses()

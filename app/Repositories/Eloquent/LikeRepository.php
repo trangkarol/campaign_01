@@ -15,7 +15,7 @@ class LikeRepository extends BaseRepository implements LikeInterface
         return Like::class;
     }
 
-    public function likeOrUnlike($model)
+    public function likeOrUnlike($model, $userId)
     {
         if (!$this->user || !$model) {
             return false;
@@ -37,13 +37,17 @@ class LikeRepository extends BaseRepository implements LikeInterface
             return $like->setAttribute('user', $this->user);
         }
 
-        $this->where('user_id', $this->user->id)
+        $like = $model->likes()->where('user_id', $this->user->id)->first();
+        $like->activities()->delete();
+
+        return $like->forceDelete();
+    }
+
+    public function getListMemberLiked($model)
+    {
+        return $this->with('user')
             ->where('likeable_id', $model->id)
             ->where('likeable_type', get_class($model))
-            ->activities()
-            ->first()
-            ->delete();
-
-        return $model->likes()->where('user_id', $this->user->id)->first()->forceDelete();
+            ->paginate(config('settings.paginate_default'));
     }
 }

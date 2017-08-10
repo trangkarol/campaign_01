@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Nicolaslopezj\Searchable\SearchableTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Traits\Eloquent\CommentLike as CommentLike;
 use Carbon\Carbon;
 
 class Campaign extends BaseModel
 {
-    use SoftDeletes, SearchableTrait;
-
+    use SoftDeletes, CommentLike, SearchableTrait;
     const BLOCK = 0;
     const ACTIVE = 1;
     const APPROVING = 0;
@@ -38,8 +38,6 @@ class Campaign extends BaseModel
     protected $dates = ['deleted_at'];
 
     protected $appends = [
-        'likes',
-        'checkLike',
         'slug',
     ];
 
@@ -140,36 +138,6 @@ class Campaign extends BaseModel
     public function getCreatedAtAttribute($date)
     {
         return Carbon::parse($date)->diffForHumans();
-    }
-
-    public function isMember()
-    {
-        $roleId = Role::where('name', Role::ROLE_MEMBER)->first()->id;
-
-        return $this->users()
-            ->wherePivot('role_id', $roleId)
-            ->wherePivot('status', static::APPROVED)
-            ->wherePivot('user_id', \Auth::guard('api')->user()->id);
-    }
-
-    public function isOwner()
-    {
-        $roleId = Role::where('name', Role::ROLE_OWNER)->first()->id;
-
-        return $this->users()
-            ->wherePivot('role_id', $roleId)
-            ->wherePivot('status', static::APPROVED)
-            ->wherePivot('user_id', \Auth::guard('api')->user()->id);
-    }
-
-    public function getLikesAttribute()
-    {
-        return $this->likes()->with('user')->paginate(config('settings.pagination.like'), ['*'], 1);
-    }
-
-    public function getCheckLikeAttribute()
-    {
-        return !is_null($this->likes()->where('user_id', \Auth::guard('api')->user()->id)->first());
     }
 
     public function getSlugAttribute()

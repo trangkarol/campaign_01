@@ -54,7 +54,6 @@ export default {
                         flag: this.flag,
                         comment: this.comment,
                         flagAction: this.flagAction,
-                        commentTotal: this.paginates[this.modelId].total
                     })
                     .then(status => {
                         this.comment.content = ''

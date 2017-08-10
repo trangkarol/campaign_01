@@ -5,6 +5,7 @@ export default {
         memberIds: [],
     },
     events: [],
+    checkLiked: [],
     tags: [],
     loading: true,
     listPhotos: [],

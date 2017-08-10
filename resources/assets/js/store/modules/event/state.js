@@ -7,4 +7,5 @@ export default {
     load_search: false,
     load_paginate: false,
     detailEvent: [],
+    checkLiked: []
 }

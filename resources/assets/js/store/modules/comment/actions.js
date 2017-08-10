@@ -1,4 +1,5 @@
 import * as types from './mutation-types';
+// import { SET_LIKE } from '../like/mutation-types';
 import { post, patch, del, get } from '../../../helpers/api'
 
 export const changeComment = ({ commit }, comments) => {
@@ -15,15 +16,16 @@ export const addComment = ({ commit, rootState }, data) => {
                         commit(types.PARENT_COMMENT, {
                             comments: res.data.createComment,
                             modelId: data.modelId,
+                            numberComment: res.data.numberComment,
                             flag: data.flag,
-                            flagAction: data.flagAction
+                            flagAction: data.flagAction,
+                            rootStateLike: rootState
                         })
-
-                        rootState.like.commentTotal['event' + data.modelId] = data.commentTotal + 1
                     } else {
                         commit(types.SUB_COMMENT, {
                             comments: res.data.createComment,
                             modelId: data.modelId,
+                            numberComment: res.data.numberComment,
                             flag: data.flag,
                             flagAction: data.flagAction
                         })
@@ -38,21 +40,26 @@ export const addComment = ({ commit, rootState }, data) => {
     })
 };
 
-export const editComment = ({ commit }, data) => {
+export const editComment = ({ commit, rootState }, data) => {
     return new Promise((resolve, reject) => {
-        patch(`comment/${data.commentId}`, data.comment)
+        post(`comment/update-comment/${data.commentId}/${data.flag}`, data.comment)
             .then(res => {
                 if (res.data.http_status.status) {
                     if (data.commentParentId == 0) { //when comment is parent
                         commit(types.PARENT_COMMENT, {
                             comments: res.data.updateComment,
                             modelId: data.modelId,
-                            flagAction: data.flagAction
+                            numberComment: res.data.numberComment,
+                            flag: data.flag,
+                            flagAction: data.flagAction,
+                            rootStateLike: rootState
                         })
                     } else {
                         commit(types.SUB_COMMENT, {
                             comments: res.data.updateComment,
                             modelId: data.modelId,
+                            numberComment: res.data.numberComment,
+                            flag: data.flag,
                             flagAction: data.flagAction
                         })
                     }
@@ -66,13 +73,16 @@ export const editComment = ({ commit }, data) => {
     })
 };
 
-export const deleteComment = ({ commit }, data) => {
+export const deleteComment = ({ commit, rootState }, data) => {
     return new Promise((resolve, reject) => {
-        del(`comment/${data.commentId}`, { modelId: data.modelId })
+        del(`comment/${data.commentId}`, { modelId: data.modelId, flag: data.flag })
             .then(res => {
                 if (res.data.http_status.status) {
+                    data.numberComment = res.data.numberComment
+
                     if (data.commentParentId == 0) { //when comment is parent
-                        commit(types.DELETE_PARENT_COMMENT, data)
+                        data.rootStateLike = rootState
+                            commit(types.DELETE_PARENT_COMMENT, data)
                     } else {
                         commit(types.DELETE_SUB_COMMENT, data)
                     }
@@ -91,12 +101,17 @@ export const loadMoreParentComment = ({ commit, rootState }, data) => {
         return new Promise((resolve, reject) => {
             get(`comment/${data.modelId}?page=${(parseInt(data.pageCurrent) + 1)}`)
                 .then(res => {
-                    commit(types.LOAD_MORE_PARENT_COMMENT, { comments: res.data.loadMore.data, modelId: data.modelId })
+                    commit(types.LOAD_MORE_PARENT_COMMENT, {
+                        comments: res.data.loadMore,
+                        modelId: data.modelId,
+                        flag: data.flag
+                    })
 
                     for (let comment of res.data.loadMore.data) {
-                        rootState.like.like['comment' + comment.id] = comment.likes
-                        rootState.like.checkLiked['comment' + comment.id] = comment.checkLike
+                        rootState.like.like['comment'][comment.id] = comment.likes
+                        rootState.like.checkLike['comment'][comment.id] = comment.checkLike
                     }
+
                     resolve(res.data.http_status.status)
                 })
                 .catch(err => {
@@ -114,13 +129,15 @@ export const loadMoreSubComment = ({ commit, rootState }, data) => {
                     commit(types.LOAD_MORE_SUB_COMMENT, {
                         comments: res.data.subComment,
                         modelId: data.modelId,
+                        flag: data.flag,
                         commentParentId: data.commentParentId
                     })
 
                     for (let subComment of res.data.subComment.data) {
-                        rootState.like.like['comment' + subComment.id] = subComment.likes
-                        rootState.like.checkLiked['comment' + subComment.id] = subComment.checkLike
+                        rootState.like.like['comment'][subComment.id] = subComment.likes
+                        rootState.like.checkLike['comment'][subComment.id] = subComment.checkLike
                     }
+
                     resolve(res.data.http_status.status)
                 })
                 .catch(err => {

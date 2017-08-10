@@ -9,7 +9,8 @@ export const getUser = ({ commit, rootState }, id) => {
             .then(res => {
                 commit(types.SET_CURRENT_PAGE_USER, {
                     currentPageUser: res.data.data.currentPageUser,
-                    listActivity: res.data.data.listActivity
+                    listActivity: res.data.data.listActivity,
+                    checkLiked: res.data.data.checkLiked
                 })
                 commit(types.SET_LOADING, false)
                 resolve(res.data.data.currentPageUser)
@@ -28,7 +29,10 @@ export const loadMore = ({ commit, rootState }, data) => {
         return new Promise((resolve, reject) => {
             get(`user/${data.id}?page=${data.infoPaginate.current_page + 1}`)
                 .then(res => {
-                    commit(types.SET_LIST_ACTIVITY, res.data.data.listActivity)
+                    commit(types.SET_LIST_ACTIVITY, {
+                        listActivity: res.data.data.listActivity,
+                        checkLiked: res.data.data.checkLiked
+                    })
                     commit(types.SET_LOADING, false)
                     resolve(res.data.data.currentPageUser)
                 })

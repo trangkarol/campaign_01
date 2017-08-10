@@ -53,6 +53,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
         Route::post('like/{modelId}/{flag}', 'LikeController@like')->name('like');
         Route::delete('delete-photo/{mediaId}', 'UserController@deletePhoto')->name('delete-photo');
         Route::get('search/{page}/{quantity}/{type}/{keyword}', 'CampaignController@search')->name('search');
+        Route::get('list-members/{modelId}/{flag}', 'LikeController@getListMemberLiked');
 
         Route::group(['as' => 'user.'], function () {
             Route::group(['prefix' => 'settings'], function () {
@@ -76,7 +77,6 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
         });
 
         Route::group(['prefix' => '/campaign', 'as' => 'campaign.'], function () {
-            Route::post('like/{campaignId}', 'CampaignController@like')->name('like');
             Route::patch('change-role', 'CampaignController@changeMemberRole')->name('change-role');
             Route::patch('remove-user', 'CampaignController@removeUser')->name('remove-user');
             Route::patch('change-owner', 'CampaignController@changeOwner')->name('change-owner');
@@ -110,12 +110,14 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::get('list/{eventId}', 'ActionController@listAction');
             Route::get('search/{eventId}', 'ActionController@searchAction');
             Route::post('create', 'ActionController@store')->name('create');
+            Route::get('{id}', 'ActionController@show');
         });
 
-        Route::resource('/comment', 'CommentController', ['only' => ['update', 'destroy', 'show']]);
+        Route::resource('/comment', 'CommentController', ['only' => ['destroy', 'show']]);
 
         Route::group(['prefix' => '/comment', 'as' => 'comment.'], function () {
             Route::post('/create-comment/{modelId}/{parentId}/{flag}', 'CommentController@createComment')->name('create');
+            Route::post('/update-comment/{id}/{flag}', 'CommentController@updateComment')->name('update');
             Route::get('/sub-comment/{parentId}', 'CommentController@getSubComment');
         });
 

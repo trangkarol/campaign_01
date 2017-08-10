@@ -5,6 +5,7 @@ export default {
         state.campaign = data.show_campaign.campaign
         state.listMembers.members = data.members
         state.events = data.events
+        state.checkLiked = data.checkLiked
         state.pageNumberEvent = data.events.last_page
         state.pageCurrentEvent = data.events.current_page
         state.tags = data.show_campaign.tags
@@ -34,6 +35,7 @@ export default {
         list_members.members.data = $.grep(list_members.members.data, function (user) {
             return user.id != data.id;
         });
+
         list_members.members.total -= 1
         state.listMembers = list_members
 

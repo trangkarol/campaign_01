@@ -164,7 +164,7 @@ class CommentTest extends TestCase
 
         $commented = $event->comments()->create($comment);
 
-        $response = $this->json('PATCH', route('comment.update', ['comment' => $commented->id]), [
+        $response = $this->json('POST', route('comment.update', ['comment' => $commented->id, 'flag' => 'event']), [
             'content' => $faker->sentence(10),
         ], [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
@@ -208,7 +208,7 @@ class CommentTest extends TestCase
 
         $commented = $event->comments()->create($comment);
 
-        $response = $this->json('PATCH', route('comment.update', ['comment' => $commented->id]), [
+        $response = $this->json('POST', route('comment.update', ['comment' => $commented->id, 'flag' => 'event']), [
             'content' => $faker->sentence(10),
         ], [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
@@ -246,8 +246,9 @@ class CommentTest extends TestCase
 
         $commented = $event->comments()->create($comment);
 
-        $response = $this->json('PATCH', route('comment.destroy', ['comment' => $commented->id]), [
-            'content' => $faker->sentence(10),
+        $response = $this->json('DELETE', route('comment.destroy', ['comment' => $commented->id]), [
+            'modelId' => $event->id,
+            'flag' => 'event',
         ], [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
         ]);
@@ -290,8 +291,9 @@ class CommentTest extends TestCase
 
         $commented = $event->comments()->create($comment);
 
-        $response = $this->json('PATCH', route('comment.destroy', ['comment' => $commented->id]), [
-            'content' => $faker->sentence(10),
+        $response = $this->json('DELETE', route('comment.destroy', ['comment' => $commented->id]), [
+            'modelId' => $event->id,
+            'flag' => 'event',
         ], [
             'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
         ]);

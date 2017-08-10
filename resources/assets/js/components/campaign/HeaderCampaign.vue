@@ -21,42 +21,37 @@
                                         <ul class="profile-menu">
                                             <li>
                                                 <router-link
-                                                    :to="{ name: 'campaign.timeline',
-                                                    params: { id: campaign.id }}"
+                                                    :to="{ name: 'campaign.timeline' }"
                                                     :class="checkActiveUrl('campaign.timeline')">
                                                     {{ $t('campaigns.timeline') }}
                                                 </router-link>
                                             </li>
                                             <li>
                                                 <router-link
-                                                    :to="{ name: 'campaign.about',
-                                                    params: { id: campaign.id }}"
+                                                    :to="{ name: 'campaign.about' }"
                                                     :class="checkActiveUrl('campaign.about')">
                                                     {{ $t('campaigns.about') }}
                                                 </router-link>
                                             </li>
                                             <li>
                                                 <router-link
-                                                    :to="{ name: 'campaign.photo',
-                                                    params: { id: campaign.id }}"
+                                                    :to="{ name: 'campaign.photo' }"
                                                     :class="checkActiveUrl('campaign.photo')">
                                                     {{ $t('campaigns.photos') }}
                                                 </router-link>
                                             </li>
                                             <li>
                                                 <router-link
-                                                    :to="{ name: 'campaign.campaign_related',
-                                                    params: { id: campaign.id }}"
+                                                    :to="{ name: 'campaign.campaign_related' }"
                                                     :class="checkActiveUrl('campaign.campaign_related')">
                                                     {{ $t('campaigns.campaign-related') }}
                                                 </router-link>
                                             </li>
                                             <li v-if="checkPermission || checkAdmin">
                                                 <router-link
-                                                    :to="{ name: 'campaign.member_request',
-                                                    params: { id: campaign.id }}"
+                                                    :to="{ name: 'campaign.member_request' }"
                                                     :class="checkActiveUrl('campaign.member_request')">
-                                                    {{ $t('campaigns.manager-campaign') }}
+                                                    {{ $t('campaigns.campaign-management') }}
                                                 </router-link>
                                             </li>
                                         </ul>
@@ -64,11 +59,15 @@
                                 </div>
                                 <div class="control-block-button">
                                     <a href="javascript:void(0)" class="btn btn-control bg-primary">
-                                        <svg class="olymp-star-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use></svg>
+                                        <svg class="olymp-star-icon">
+                                            <use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use>
+                                        </svg>
                                     </a>
 
                                     <a href="javascript:void(0)" class="btn btn-control bg-purple">
-                                        <svg class="olymp-chat---messages-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-chat---messages-icon"></use></svg>
+                                        <svg class="olymp-chat---messages-icon">
+                                            <use xlink:href="/frontend/icons/icons.svg#olymp-chat---messages-icon"></use>
+                                        </svg>
                                     </a>
 
                                 </div>
