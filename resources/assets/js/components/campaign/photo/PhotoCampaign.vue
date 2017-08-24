@@ -54,10 +54,10 @@
                                     <div class="swiper-container" data-slide="fade">
                                         <div class="swiper-wrapper">
                                             <div class="swiper-slide">
-                                                <ul class="friends-harmonic" v-if="photo.number_of_likes > 0">
+                                                <ul class="friends-harmonic" >
                                                     <li v-for="(like, index) in photo.likes" v-if="index <= 6">
                                                         <router-link
-                                                            :to="{ name: 'user.timeline', params: { id: like.user.id }}"
+                                                            :to="{ name: 'user.timeline', params: { slug: like.user.id }}"
                                                             class="h6 post__author-name fn">
                                                             <img :src="like.user.image_thumbnail" :alt="like.user.name">
                                                         </router-link>

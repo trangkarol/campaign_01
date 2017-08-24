@@ -6,7 +6,8 @@
             modelId: modelId,
             user: user,
             flag: flag,
-            numberOfLikes: like[flag][modelId].numberOfLikes
+            numberOfLikes: like[flag][modelId].numberOfLikes,
+            deleteDate: like[flag][modelId].deleteDate
         })">
         <svg class="olymp-like-post-icon">
             <use xlink:href="/frontend/icons/icons.svg#olymp-like-post-icon"></use>

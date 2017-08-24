@@ -35,6 +35,7 @@
                 flag: this.flag,
                 numberOfLikes: this.numberOfLikes,
                 numberOfComments: this.numberOfComments,
+                deleteDate: this.deleteDate
             })
         },
         props: {
@@ -45,7 +46,8 @@
             type: '',
             numberOfLikes: 0,
             numberOfComments: 0,
-            showMore: true
+            showMore: true,
+            deleteDate: null
         },
         methods: {
             ...mapActions('like', [

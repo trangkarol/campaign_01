@@ -27,21 +27,19 @@
                     <li v-for="member in members.data">
                         <div class="author-thumb">
                             <router-link
-                                :to="{ name: 'user.timeline',
-                                params: { id: member.id }}">
+                                :to="{ name: 'user.timeline', params: { slug: member.id }}">
                                 <img :src="member.image_thumbnail" :alt="member.name" style="height: 40px; with:40px;">
                             </router-link>
                         </div>
                         <div class="notification-event">
                             <router-link
-                                :to="{ name: 'user.timeline',
-                                params: { id: member.id }}"
+                                :to="{ name: 'user.timeline', params: { slug: member.id }}"
                                 class="h6 notification-friend">
                                 {{ member.name }}
                             </router-link>
                             <span class="chat-message-item">{{ timeAgo(member.created_at) }}</span>
                         </div>
-                        <span class="notification-icon">
+                        <span class="notification-icon" v-if="member.deleted_at == null">
                             <a href="javascript:void(0)" @click="approveMembers(member.id)" class="accept-request">
                                 <span class="icon-add">
                                     <svg class="olymp-happy-face-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-happy-face-icon"></use></svg>
@@ -86,11 +84,12 @@
             },
             listMembers(campaignId) {
                 this.getListMembers({ campaignId: campaignId, status: 0 })
-                    .then(res => {
-                        this.members = res
+                    .then(data => {
+                        this.members = data
                     })
                     .catch(err => {
-                        this.$router.push({ name: 'campaign.timeline', params: { id: this.pageId }})
+                        const message = this.$i18n.t('messages.message-fail')
+                        noty({ text: message, force: true, container: false })
                     })
             },
             searchMembers: _.debounce(function (e) {
@@ -133,7 +132,6 @@
                                 this.changeDataMember(this.members.data, userId)
                             })
                             .catch(err => {
-                                console.log(err)
                                 const message = this.$i18n.t('messages.message-fail')
                                 noty({ text: message, force: true, container: false })
                             })

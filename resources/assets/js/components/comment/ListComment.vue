@@ -24,14 +24,14 @@
             <li v-for="(comment, index) in comments[flag][modelId]" class="has-children comment">
                 <div class="post__author author vcard inline-items" v-if="comment.user != null">
                     <router-link
-                        :to="{ name: 'user.timeline', params: { id: comment.user.id }}"
+                        :to="{ name: 'user.timeline', params: { slug: comment.user.id }}"
                         class="h6 post__author-name fn">
                         <img :src="comment.user.image_thumbnail" :alt="comment.user.name">
                     </router-link>
 
                     <div class="author-date">
                         <router-link
-                            :to="{ name: 'user.timeline', params: { id: comment.user.id }}"
+                            :to="{ name: 'user.timeline', params: { slug: comment.user.id }}"
                             class="h6 post__author-name fn">
                             {{ comment.user.name }}
                         </router-link>
@@ -43,7 +43,7 @@
                             </timeago>
                         </div>
                     </div>
-                    <div class="more" v-if="comment.user.id == user.id">
+                    <div class="more" v-if="comment.user.id == user.id && comment.deleted_at == null">
                         <svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg>
                         <ul class="more-dropdown" >
                             <li>
@@ -92,7 +92,8 @@
                     :type="'like'"
                     :modelId="comment.id"
                     :numberOfLikes="comment.number_of_likes"
-                    :showMore="false">
+                    :showMore="false"
+                    :deleteDate="comment.deleted_at">
                 </master-like>
 
                 <a href="javascript:void(0)"
@@ -123,7 +124,7 @@
                     <li class="view-more"
                         v-if="comment.sub_comment.data.length <=  comment.number_of_comments &&
                             flagReply == comment.id && comment.number_of_comments > 2">
-                        <a href="javascript:void(0)" class="more-comments"
+                        <a href="javascript:void(0)" class="morpCame-comments"
                             @click="handelLoadMoreSubComment({
                                 commentParentId: comment.id,
                                 modelId: modelId,
@@ -138,13 +139,13 @@
                     <li v-for="subComment in comment.sub_comment.data" v-if="flagReply == comment.id">
                         <div class="post__author author vcard inline-items">
 
-                            <router-link :to="{ name: 'user.timeline', params: { id: subComment.user.id }}"
+                            <router-link :to="{ name: 'user.timeline', params: { slug: subComment.user.id }}"
                                 class="h6 post__author-name fn">
                                 <img :src="subComment.user.image_thumbnail" :alt="subComment.user.name">
                             </router-link>
 
                             <div class="author-date">
-                                <router-link :to="{ name: 'user.timeline', params: { id: subComment.user.id }}"
+                                <router-link :to="{ name: 'user.timeline', params: { slug: subComment.user.id }}"
                                     class="h6 post__author-name fn">
                                     {{ subComment.user.name }}
                                 </router-link>
@@ -206,7 +207,8 @@
                             :checkLiked="subComment.checkLike"
                             :modelId="subComment.id"
                             :numberOfLikes="subComment.number_of_likes"
-                            :showMore="false">
+                            :showMore="false"
+                            :deleteDate="subComment.deleted_at">
                         </master-like>
                     </li>
                 </ul>
@@ -215,7 +217,7 @@
                     :comment-parent-id="comment.id"
                     :flag="flag"
                     :classFormComment="''"
-                    v-if="flagReply == comment.id">
+                    v-if="flagReply == comment.id && comment.deleted_at == null">
                 </form-comment>
             </li>
         </ul>

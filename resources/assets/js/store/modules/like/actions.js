@@ -6,25 +6,28 @@ export const setLike = ({ commit }, data) => {
 };
 
 export const likeActivity = ({ commit }, data) => {
-    return new Promise((resolve, reject) => {
-        post(`like/${data.modelId}/${data.model}`)
-            .then(res => {
-                if (res.data.http_status.status) {
-                    commit(types.LIKE_ACTIVITY, {
-                        like: res.data.like,
-                        modelId: data.modelId,
-                        flag: data.flag,
-                        user: data.user,
-                        numberOfLikes: res.data.numberOfLikes
-                    })
+    if (data.deleteDate == null) {
+        return new Promise((resolve, reject) => {
+            post(`like/${data.modelId}/${data.model}`)
+                .then(res => {
+                    if (res.data.http_status.status) {
+                        commit(types.LIKE_ACTIVITY, {
+                            like: res.data.like,
+                            modelId: data.modelId,
+                            flag: data.flag,
+                            user: data.user,
+                            numberOfLikes: res.data.numberOfLikes,
+                            deleteDate: data.deleteDate
+                        })
 
-                    resolve(res.data.http_status.status)
-                }
-            })
-            .catch(err => {
-                reject(err)
-            })
-    })
+                        resolve(res.data.http_status.status)
+                    }
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
 };
 
 export const getListMemberLiked = ({ commit }, data) => {

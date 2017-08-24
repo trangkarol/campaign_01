@@ -6,7 +6,6 @@
                     <div class="ui-block-title search_action">
                         <div class="search row">
                             <div class="col-md-6">
-
                                  <input
                                     v-model="search"
                                     @input="searchMembers"
@@ -51,13 +50,13 @@
                                 <td>
                                     <div class="author-thumb">
                                         <router-link
-                                            :to="{ name: 'user.timeline', params: { id: member.id }}">
+                                            :to="{ name: 'user.timeline', params: { slug: member.id }}">
                                             <img :src="member.image_thumbnail" :alt="member.name" style="height: 40px; with:40px;">
                                         </router-link>
                                     </div>
                                     <div class="name-member">
                                         <router-link
-                                            :to="{ name: 'user.timeline', params: { id: member.id }}"
+                                            :to="{ name: 'user.timeline', params: { slug: member.id }}"
                                             class="h6 notification-friend">
                                             {{ member.name }}
                                         </router-link>
@@ -77,13 +76,15 @@
                                         <label v-else-if="role.id != 3 && member.campaigns[0].pivot.role_id != 3">
                                             <input type="hidden"
                                                 v-if="role.id == member.campaigns[0].pivot.role_id"
-                                                :value="roleCurrent[member.id] = member.campaigns[0].pivot.role_id">
+                                                :value="roleCurrent[member.id] = role.id">
                                             <input type="radio"
                                                 :name="member.name + member.id"
-                                                :id="member.name + member.id"
                                                 :value="role.id"
-                                                @change="blockMembers(member)"
-                                                v-model="changeRole[member.id] = member.campaigns[0].pivot.role_id"
+                                                :data-id="role.id"
+                                                :data-user-id="member.id"
+                                                :data-deleted="member.deleted_at"
+                                                @change="changeRoleMember"
+                                                :checked="member.campaigns[0].pivot.role_id === role.id"
                                                 :disabled="member.campaigns[0].pivot.role_id == 3 || member.id == user.id">
                                             {{ role.name }}
                                         </label>
@@ -148,7 +149,8 @@
                     this.roles = data.roles
                 })
                 .catch(err => {
-                    this.$router.push({ name: 'campaign.timeline', params: { id: this.pageId }})
+                    const message = this.$i18n.t('messages.message-fail')
+                    noty({ text: message, force: true, container: false })
                 })
             },
             searchMembers: _.debounce(function (e) {
@@ -170,37 +172,53 @@
                 })
             }, 100),
 
-            blockMembers(member) {
+            changeRoleMember(e) {
                 let campaignId = this.pageId
-                var n = new Noty({
-                    type: 'alert',
-                    text: this.$i18n.t('messages.comfirm-block-member'),
-                    layout: 'center',
-                    modal: true,
-                    buttons: [
-                        Noty.button(this.$i18n.t('form.button.agree'), 'btn-upper btn btn-primary btn--half-width', () => {
-                            n.close();
-                            this.changeMemberRole({
-                                campaignId: campaignId,
-                                userId: member.id,
-                                roleId: this.changeRole[member.id]
-                            })
-                            .then(status => {
-                                const message = this.$i18n.t('messages.message-success')
-                                noty({ text: message, force: true, type: 'success', container: false })
-                            })
-                            .catch(err => {
-                                const message = this.$i18n.t('messages.message-fail')
-                                noty({ text: message, force: true, container: false })
-                            })
-                        }, { id: 'button1', 'data-status': 'ok' }),
+                let target = $(e.currentTarget)
+                let userId = target.attr('data-user-id')
+                let deleteDate = target.attr('data-deleted')
+                console.log('dsdsd', deleteDate)
+                if (deleteDate == null) {
+                    var n = new Noty({
+                        type: 'alert',
+                        text: this.$i18n.t('messages.comfirm-block-member'),
+                        layout: 'center',
+                        closeWith: 'button',
+                        modal: true,
+                        buttons: [
+                            Noty.button(this.$i18n.t('form.button.agree'), 'btn-upper btn btn-primary btn--half-width', () => {
+                                n.close();
+                                this.changeMemberRole({
+                                    campaignId: campaignId,
+                                    userId: userId,
+                                    roleId: target.attr('data-id')
+                                })
+                                .then(status => {
+                                    const message = this.$i18n.t('messages.message-success')
+                                    noty({ text: message, force: true, type: 'success', container: false })
+                                })
+                                .catch(err => {
+                                    const message = this.$i18n.t('messages.message-fail')
+                                    noty({ text: message, force: true, container: false })
+                                    target.prop('checked', false)
+                                })
+                            }, { id: 'button1', 'data-status': 'ok' }),
 
-                        Noty.button(this.$i18n.t('form.button.cancel'), 'btn-upper btn btn-secondary btn--half-width', () => {
-                            n.close();
-                            this.changeRole[member.id] = member.campaigns[0].pivot.role_id
-                        })
-                    ]
-                }).show();
+                            Noty.button(this.$i18n.t('form.button.cancel'), 'btn-upper btn btn-secondary btn--half-width', () => {
+                                target.prop('checked', false)
+                                this.members.data.forEach( (item, index) => {
+                                    if (item.id == userId) {
+                                        item.campaigns[0].pivot.role_id = []
+                                        item.campaigns[0].pivot.role_id = this.roleCurrent[userId]
+                                    }
+                                })
+
+                                n.close();
+                            })
+                        ]
+                    }).show();
+                }
+
             },
         },
         mounted() {

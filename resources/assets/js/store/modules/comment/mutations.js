@@ -45,6 +45,7 @@ export default {
             if (data.flagAction == 'edit') {
                 let dataComment = $.map(comments[data.flag][data.modelId], function (item, index) {
                     if (item.id == data.comments.id) {
+
                         return data.comments;
                     }
 
@@ -72,8 +73,8 @@ export default {
         //change comment total at model
         let commentTotal = data.rootStateLike.like.commentTotal
         commentTotal[data.flag][data.modelId] = data.numberComment
-        data.rootStateLike.like.commentTotal[data.flag] = []
-        data.rootStateLike.like.commentTotal[data.flag] = commentTotal
+        data.rootStateLike.like.commentTotal = []
+        data.rootStateLike.like.commentTotal = commentTotal
     },
 
     [types.SUB_COMMENT](state, data) {

@@ -30,12 +30,12 @@ export default {
        comment: { content: '' },
        flagAction: 'create'
     }),
-    props: [
-        'modelId',
-        'commentParentId',
-        'flag',
-        'classFormComment'
-    ],
+    props: {
+        modelId: 0,
+        commentParentId: 0,
+        flag: '',
+        classFormComment: 0
+    },
     computed: {
         ...mapState('auth', {
             authenticated: state => state.authenticated,

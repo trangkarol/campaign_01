@@ -94,7 +94,7 @@
                             :numberOfComments="dataAction.number_of_comments"
                             :numberOfLikes="dataAction.number_of_likes"
                             :showMore="true"
-                            >
+                            :deleteDate="dataAction.deleted_at">
                         </master-like>
 
                         <div class="control-block-button post-control-button">
@@ -106,7 +106,7 @@
                                 :modelId="dataAction.id"
                                 :numberOfComments="dataAction.number_of_comments"
                                 :numberOfLikes="dataAction.number_of_likes"
-                                >
+                                :deleteDate="dataAction.deleted_at">
                             </master-like>
 
                             <a href="javascript:void(0)" class="btn btn-control">
@@ -127,7 +127,8 @@
                         :model-id ="dataAction.id"
                         :flag="'action'"
                         :classListComment="''"
-                        :classFormComment="''">
+                        :classFormComment="''"
+                        :deleteDate="dataAction.deleted_at">
                     </comment>
 
                 </div>

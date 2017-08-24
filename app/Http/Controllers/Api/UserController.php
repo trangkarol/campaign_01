@@ -422,4 +422,19 @@ class UserController extends ApiController
             }
         });
     }
+
+    public function listClosedCampaign($id)
+    {
+        $roleIds = $this->roleRepository->whereIn('name', [
+                Role::ROLE_OWNER,
+                Role::ROLE_MODERATOR,
+            ])->where('type', Role::TYPE_CAMPAIGN)->get()
+            ->pluck('id')->all();
+
+        $user = $this->repository->findOrFail($id);
+        //policy
+        return $this->getData(function () use ($user, $roleIds) {
+            $this->compacts['closed_campaign'] = $this->repository->closedCampaign($user, $roleIds);
+        });
+    }
 }

@@ -82,7 +82,7 @@ export const getListMembers = ({ commit }, data) => {
     return new Promise((resolve, reject) => {
         get(`campaign/members/${data.campaignId}/${data.status}`)
             .then(res => {
-                resolve(res.data)
+                resolve(res.data.members)
             })
             .catch(err => {
                 reject(err)
@@ -149,6 +149,18 @@ export const changeMemberRole = ({ commit }, data) => {
     })
 };
 
+export const openCampaign = ({ commit }, data) => {
+    return new Promise((resolve, reject) => {
+        post(`campaign/open/${data.campaignId}`)
+            .then(res => {
+                resolve(res.data)
+            })
+            .catch(err => {
+                reject(err)
+            })
+    })
+};
+
 export const setDetailcampaign = ({ commit }, data) => {
     commit(types.SET_DETAIL_CAMPAIGN, data)
 };
@@ -164,5 +176,6 @@ export default {
     changeStatusMember,
     loadMoreMembers,
     searchMember,
-    changeMemberRole
+    changeMemberRole,
+    openCampaign
 };

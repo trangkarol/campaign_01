@@ -39,6 +39,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
         Route::get('following-campaign', 'UserController@listFollowingCampaign')->name('following-campaign');
         Route::get('following-tag', 'UserController@listFollowingTag')->name('following-tag');
         Route::get('get-user', 'UserController@getUser')->name('user');
+        Route::get('list-close-campaign', 'UserController@listClosedCampaign');
     });
 
     Route::resource('tag', 'TagController', ['only' => ['index', 'show']]);
@@ -63,6 +64,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
                 Route::post('header-photo', 'UserController@updateHeaderPhoto')->name('header');
                 Route::post('upload-files/{path}', 'UserController@uploadImages')->name('upload');
             });
+
             Route::get('homepage', 'ActivityController@getHomePage')->name('homepage');
             Route::patch('follow/{id}', 'UserController@follow')->name('follow');
             Route::patch('follow-tag/{id}', 'UserController@followTag')->name('follow-tag');
@@ -91,6 +93,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::get('search-members/{campaignId}/{status}', 'CampaignController@searchMembers');
             Route::get('{id}/statistic', 'CampaignController@statistic')->name('campaign-statistic');
             Route::get('events-closed/{campaignId}', 'CampaignController@getEventsClosed');
+            Route::post('open/{id}', 'CampaignController@openCampaign');
         });
 
         Route::resource('campaign', 'CampaignController', ['only' => ['store', 'update', 'destroy', 'show', 'edit']]);

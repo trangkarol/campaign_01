@@ -174,7 +174,7 @@
                             container: false,
                             type: 'success'
                         })
-                        this.$router.push({ name: 'campaign.events_closed', params: { slug: this.event.campaign_id }})
+                        // this.$router.push({ name: 'campaign.events_closed', params: { slug: this.event.campaign_id }})
                     })
                     .catch(res => {
                         noty({

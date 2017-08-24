@@ -71,5 +71,8 @@
     "actions": "Actions",
     "manage_events": "Manage Events",
     "prev_page": "Previous Page",
-    "next_page": "Next Page"
+    "next_page": "Next Page",
+    "close_campaign": "Close campaign",
+    "manage_campaigns": "Manage Campaign",
+    "open_campaign": "Open Campaign"
 }

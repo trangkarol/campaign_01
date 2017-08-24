@@ -31,4 +31,8 @@ interface UserInterface extends RepositoryInterface
     public function markRead($typeNoty, $user);
 
     public function deleteNotification($id, $user, $type);
+
+    public function closedCampaign($user, $roleIdManagement);
+
+    public function deleteFromCampaign($campaign);
 }

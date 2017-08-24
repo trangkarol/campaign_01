@@ -8,9 +8,10 @@
                     modelId: modelId,
                     user: user,
                     flag: flag,
-                    numberOfLikes: like[flag][modelId].numberOfLikes
+                    numberOfLikes: like[flag][modelId].numberOfLikes,
+                    deleteDate: like[flag][modelId].deleteDate
                 })">
-                <svg class="olymp-heart-icon">
+                <svg    class="olymp-heart-icon">
                      <use xlink:href="/frontend/icons/icons.svg#olymp-heart-icon"
                         :class="{ fill: checkLike[flag][modelId] }">
                     </use>
@@ -108,13 +109,13 @@ export default {
         flag: '',
         numberOfLikes: 0,
         numberOfComments: 0,
-        showMore: true
+        showMore: true,
     },
     computed: {
         ...mapState('like', [
             'like',
             'commentTotal',
-            'checkLike'
+            'checkLike',
         ]),
         ...mapState('auth', {
             user: state => state.user

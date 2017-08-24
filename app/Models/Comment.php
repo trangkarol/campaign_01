@@ -24,6 +24,7 @@ class Comment extends BaseModel
         'number_of_likes',
         'commentable_id',
         'commentable_type',
+        'deleted_at'
     ];
 
     protected $dates = ['deleted_at'];

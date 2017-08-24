@@ -22,12 +22,18 @@ class EventRepository extends BaseRepository implements EventInterface
         return Event::class;
     }
 
-    public function delete($eventIds)
+    public function delete($events)
     {
-        if (!$eventIds) {
-            $events = $this->model->whereIn('id', $eventIds);
-            $events->goals()->delete();
-            $events->action()->delete();
+        if (!empty($events)) {
+            $events->each(function ($event) {
+                $event->goals()->delete();
+                $event->donations()->delete();
+                $event->settings()->delete();
+                $event->media()->delete();
+                $event->likes()->delete();
+                $event->activities()->delete();
+                $event->comments()->delete();
+            });
 
             return $events->delete();
         }
@@ -160,7 +166,9 @@ class EventRepository extends BaseRepository implements EventInterface
 
     public function getEvent($event, $userId)
     {
-        return $event->with('media', 'user')
+        return $event->withTrashed()->with(['media' => function ($query) {
+            $query->withTrashed();
+        }, 'user'])
             ->getLikes()
             ->getComments()
             ->orderBy('created_at', 'desc')
@@ -198,5 +206,22 @@ class EventRepository extends BaseRepository implements EventInterface
         }
 
         return false;
+    }
+
+    public function openFromCampaign($events)
+    {
+        if (!empty($events)) {
+            $events->each(function ($event) {
+               $event->goals()->restore();
+                $event->donations()->restore();
+                $event->settings()->restore();
+                $event->media()->restore();
+                $event->likes()->restore();
+                $event->activities()->restore();
+                $event->comments()->restore();
+            });
+
+            return $events->restore();
+        }
     }
 }

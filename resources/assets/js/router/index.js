@@ -49,6 +49,7 @@ import CampaignStatistic from '../components/campaign/Statistic.vue'
 import UpdateCampaign from '../components/campaign/owner/UpdateCampaign.vue'
 import UpdateEvent from '../components/event/create/UpdateEvent.vue'
 import Search from '../components/user/Search.vue'
+import ListCampaignClose from '../components/user/ListCampaignClose.vue'
 import InfoEvent from '../components/event/InfoEvent.vue'
 import HomePage from '../components/home/HomePage.vue'
 
@@ -80,6 +81,7 @@ const router = [
                 { path: 'photo', component: Photo, name: 'user.photo' },
                 { path: 'about', component: About, name: 'user.about' },
                 { path: 'video', component: Video, name: 'user.video' },
+                { path: 'list-campaign-close', component: ListCampaignClose, name: 'user.list_campaign_close' },
                 { path: ':path', component: CampaignUser, name: 'user.campaign' },
             ]
         },

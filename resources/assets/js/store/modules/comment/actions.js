@@ -11,7 +11,7 @@ export const addComment = ({ commit, rootState }, data) => {
             .then(res => {
                 if (res.data.http_status.status) {
 
-                    if (!data.commentParentId) { //when comment is parent
+                    if (data.commentParentId == 0) {
                         commit(types.PARENT_COMMENT, {
                             comments: res.data.createComment,
                             modelId: data.modelId,
@@ -20,7 +20,7 @@ export const addComment = ({ commit, rootState }, data) => {
                             flagAction: data.flagAction,
                             rootStateLike: rootState
                         })
-                    } else {
+                    } else {//when comment is parent
                         commit(types.SUB_COMMENT, {
                             comments: res.data.createComment,
                             modelId: data.modelId,
@@ -44,7 +44,7 @@ export const editComment = ({ commit, rootState }, data) => {
         post(`comment/update-comment/${data.commentId}/${data.flag}`, data.comment)
             .then(res => {
                 if (res.data.http_status.status) {
-                    if (!data.commentParentId) { //when comment is parent
+                    if (data.commentParentId == 0) { //when comment is parent
                         commit(types.PARENT_COMMENT, {
                             comments: res.data.updateComment,
                             modelId: data.modelId,
@@ -79,7 +79,7 @@ export const deleteComment = ({ commit, rootState }, data) => {
                 if (res.data.http_status.status) {
                     data.numberComment = res.data.numberComment
 
-                    if (!data.commentParentId) { //when comment is parent
+                    if (data.commentParentId == 0) { //when comment is parent
                         data.rootStateLike = rootState
                             commit(types.DELETE_PARENT_COMMENT, data)
                     } else {

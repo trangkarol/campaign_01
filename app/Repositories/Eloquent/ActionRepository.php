@@ -82,11 +82,12 @@ class ActionRepository extends BaseRepository implements ActionInterface
         $data = [];
 
         $data['list_action'] = $action
+            ->withTrashed()
             ->getLikes()
             ->getComments()
             ->with([
                 'user',
-                'media' => function($query) {
+                'media' => function ($query) {
                     $query->withTrashed();
                 },
             ])
@@ -103,7 +104,7 @@ class ActionRepository extends BaseRepository implements ActionInterface
         return $this->model
             ->with([
                 'user',
-                'media' => function($query) {
+                'media' => function ($query) {
                     $query->withTrashed();
                 },
             ])
@@ -117,16 +118,19 @@ class ActionRepository extends BaseRepository implements ActionInterface
     public function getActionPhotos($eventIds, $userId)
     {
         $actions = $this->model
+            ->withTrashed()
             ->whereIn('event_id', $eventIds)
             ->getLikes()
             ->getComments()
-            ->with('user', 'media')
+            ->with(['user', 'media' => function ($query) {
+                $query->withTrashed();
+            }])
             ->whereHas('media', function ($query) {
-                $query->where('type', Media::IMAGE)
+                $query->withTrashed()->where('type', Media::IMAGE)
                     ->orderBy('created_at', 'desc');
             });
 
-        $dataAction['list_action'] = $actions->orderBy('created_at', 'DESC')
+        $dataAction['list_action'] = $actions->groupBy('created_at')->orderBy('created_at', 'DESC')
             ->paginate(config('settings.pagination.action'));
 
         $dataAction['checkLikeAction'] = $this->checkLike($actions, $userId);
@@ -134,15 +138,35 @@ class ActionRepository extends BaseRepository implements ActionInterface
         return $dataAction;
     }
 
-    public function delete($action)
+    public function deleteAction($eventIds)
     {
-        if ($action) {
-            $action->comments()->forceDelete();
-            $action->likes()->forceDelete();
-            $action->media()->forceDelete();
-            $action->activities()->forceDelete();
+        if (!is_null($eventIds)) {
+            $actions = $this->model->whereIn('event_id', $eventIds);
+            $actions->get()->each(function ($action) {
+                $action->comments()->delete();
+                $action->likes()->delete();
+                $action->media()->delete();
+                $action->activities()->delete();
+            });
 
-            return $action->forceDelete();
+            return $actions->delete();
+        }
+
+        return false;
+    }
+
+    public function openAction($eventIds)
+    {
+        if (!is_null($eventIds)) {
+            $actions = $this->model->whereIn('event_id', $eventIds);
+            $actions->get()->each(function ($action) {
+                $action->comments()->restore();
+                $action->likes()->restore();
+                $action->media()->restore();
+                $action->activities()->restore();
+            });
+
+            return $actions->restore();
         }
 
         return false;

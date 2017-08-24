@@ -45,7 +45,8 @@
         "following_campaign": "Following Campaigns",
         "joined_campaign": "Joined Campaigns",
         "owned_campaign": "Owned Campaigns",
-        "account_setting": "Account Settings"
+        "account_setting": "Account Settings",
+        "list_campaign_close": "List Campaign Close"
     },
     "button": {
         "read_more": "Read more"

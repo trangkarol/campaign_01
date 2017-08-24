@@ -196,9 +196,6 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
 
     public function delete($campaign)
     {
-        $campaign->donations()->delete();
-        $campaign->tags()->detach();
-        $campaign->users()->detach();
         $campaign->media()->delete();
         $campaign->likes()->delete();
         $campaign->settings()->delete();
@@ -206,15 +203,24 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         return $campaign->delete();
     }
 
+    public function openCampaign($campaign)
+    {
+        $campaign->media()->restore();
+        $campaign->likes()->restore();
+        $campaign->settings()->restore();
+
+        return $campaign->restore();
+    }
+
     /**
-     * get campaign.
+     * get campaign.P
      *
      * @param  array  $data
      * @return $campaign
     */
     public function getCampaign($campaign, $userId)
     {
-        $settings = $campaign->settings()->whereIn('key', config('settings.campaigns'))->get();
+        $settings = $campaign->settings()->withTrashed()->whereIn('key', config('settings.campaigns'))->get();
 
         $campaign['status'] = $settings->where('key', config('settings.campaigns.status'))->first();
         $campaign['limit'] = $settings->where('key', config('settings.campaigns.limit'))->first('value');
@@ -227,11 +233,11 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         $campaign['check_moderators'] = $campaign->moderators()->wherePivot('user_id', $userId)->pluck('user_id')->all();
         $campaign['check_owner'] = $campaign->owner()->wherePivot('user_id', $userId)->pluck('user_id')->all();
         // images campaign
-        $campaign['campaign_images'] = $campaign->media()->first();
+        $campaign['campaign_images'] = $campaign->media()->withTrashed()->first();
 
         return [
             'campaign' => $campaign,
-            'tags' => $campaign->tags()->get(['name'])->flatten(),
+            'tags' => $campaign->tags()->withTrashed()->get(['name'])->flatten(),
         ];
     }
 
@@ -382,10 +388,13 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
             ->with(['actions' => function ($query) {
                 $query->with(['user', 'media' => function ($subQuery) {
                     $subQuery->where('type', Media::IMAGE)
-                         ->orderBy('created_at', 'desc');
+                        ->groupBy('created_at')
+                        ->orderBy('created_at', 'desc');
                 }])
+                ->groupBy('created_at')
                 ->orderBy('created_at', 'desc')->first();
             }])
+            ->groupBy('created_at')
             ->orderBy('created_at', 'desc')
             ->paginate(config('settings.paginate_default'));
     }
@@ -411,14 +420,23 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
             $query->where('user_id', $userId);
         })->get()->pluck('id')->all();
 
-        return $this
+        $data = [];
+
+        $campaign = $campaignCheckLike = $this
             ->whereHas('tags', function ($query) use ($tagIds) {
                 $query->whereIn('tag_id', $tagIds);
             })
+            ->getLikes()
             ->where('campaigns.status', Campaign::ACTIVE)
             ->where('campaigns.id', '!=', $campaign->id)
-            ->whereNotIn('id', $campaignIds)
+            ->whereNotIn('id', $campaignIds);
+
+        $data['campaign'] = $campaign->with('media')
             ->paginate(config('settings.paginate_default'));
+
+        $data['checkLiked'] = $this->checkLike($campaignCheckLike, $userId);
+
+        return $data;
     }
 
     public function searchCampaign($page, $quantity, $keyword)
@@ -447,30 +465,29 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         $users['chart_label'] = $userStatistic->pluck('date');
         $users['chart_data'] = $userStatistic->pluck('user_count');
 
-        $events['count'] = $campaign->events()->count();
-        $events['finished'] = $campaign->events()->whereHas('settings', function ($query) {
+        $events['count'] = $campaign->events()->withTrashed()->count();
+        $events['finished'] = $campaign->events()->withTrashed()->whereHas('settings', function ($query) {
             $query->where([
                 ['key', '=', config('settings.events.end_day')],
                 ['value', '<', Carbon::now()],
             ]);
         })->count();
-        $events['upcoming'] = $campaign->events()->whereHas('settings', function ($query) {
+        $events['upcoming'] = $campaign->events()->withTrashed()->whereHas('settings', function ($query) {
             $query->where([
                 ['key', '=', config('settings.events.start_day')],
                 ['value', '>', Carbon::now()],
             ]);
         })->count();
-        $events['ongoing'] = $campaign->events()->count() - ($events['finished'] + $events['upcoming']);
-        $eventStatistic = $campaign->events()
+        $events['ongoing'] = $campaign->events()->withTrashed()->count() - ($events['finished'] + $events['upcoming']);
+        $eventStatistic = $campaign->events()->withTrashed()
             ->select(\DB::raw('count(*) as event_count, date(events.created_at) as date'))
             ->groupBy('date')
             ->get();
         $events['chart_label'] = $eventStatistic->pluck('date');
         $events['chart_data'] = $eventStatistic->pluck('event_count');
-
-        $actions['count'] = $campaign->actions->count();
-        $actions['today_count'] = $campaign->actions->where('actions.created_at', '>=', Carbon::today())->count();
-        $actionStatistic = $campaign->actions()
+        $actions['count'] = $campaign->actions()->withTrashed()->count();
+        $actions['today_count'] = $campaign->actions()->withTrashed()->where('actions.created_at', '>=', Carbon::today())->count();
+        $actionStatistic = $campaign->actions()->withTrashed()
             ->select(\DB::raw('count(*) as action_count, date(actions.created_at) as date'))
             ->groupBy('date')
             ->get();

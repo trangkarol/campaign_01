@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <div class="ui-block" v-if="checkPermission || checkAdmin">
+        <div class="ui-block" v-if="(checkPermission || checkAdmin) && campaign.deleted_at == null">
             <div class="ui-block-title">
                 <router-link
                     :to="{ name: 'event.create', params: { campaign_id: campaign.id }}"
@@ -42,7 +42,7 @@
                     </li>
                     <li class="all-users" v-if="listPhotos.list_action.total > 8">
                         <router-link
-                            :to="{ name: 'campaign.photo', params: { id: campaign.id }}">
+                            :to="{ name: 'campaign.photo', params: { slug: campaign.id }}">
                             + {{ remainingData(listPhotos.list_action.total) }}
                         </router-link>
                     </li>
@@ -81,56 +81,55 @@
                 </ul>
 
                 <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color c-grey full-width"
-                    v-if="checkJoinCampaign == 1 && !checkPermission"
+                    v-if="checkJoinCampaign == 1 && !checkPermission && campaign.deleted_at == null"
                     @click="comfirmJoinCampaign()">{{ $t('campaigns.join-now') }}</a>
 
                 <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color c-grey full-width"
-                    v-if="checkJoinCampaign == 3 && !checkOwner"
+                    v-if="checkJoinCampaign == 3 && !checkOwner && campaign.deleted_at == null"
                     @click="comfirmLeaveCampaign()" >
                     {{ $t('campaigns.leave') }}</a>
 
                 <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color c-grey full-width"
-                    v-if="checkJoinCampaign == 2 && !checkOwner">
+                    v-if="checkJoinCampaign == 2 && !checkOwner && campaign.deleted_at == null">
                     {{ $t('campaigns.aproving') }}</a>
             </div>
         </div>
-        <!-- form comfirm join campaign -->
-        <modal :show.sync="flag_confirm_join">
-            <h5 class="exclamation-header" slot="header">
-                {{ $t('messages.comfirm-join-campaign') }}
-            </h5>
-            <div class="body-modal" slot="main">
-                <a href="javascript:void(0)"
-                    class="btn btn-breez col-lg-3 col-md-6 col-sm-12 col-xs-12"
-                    @click="joinCampaigns">
-                    {{ $t('form.button.agree') }}
-                </a>
-                <a href="javascript:void(0)"
-                    class="btn btn-secondary col-lg-3 col-md-6 col-sm-12 col-xs-12"
-                    @click="cancelJoinCampaign">
-                    {{ $t('form.button.cancel') }}
-                </a>
-            </div>
-        </modal>
 
-        <!-- form comfirm leave campaign -->
-        <modal :show.sync="flag_confirm_leave">
-            <h5 class="exclamation-header" slot="header">
-                {{ $t('messages.comfirm-leave-campaign') }}
-            </h5>
-            <div class="body-modal" slot="main">
-                <a href="javascript:void(0)"
-                    class="btn btn-breez col-lg-3 col-md-6 col-sm-12 col-xs-12"
-                    @click="leaveCampaigns">
-                    {{ $t('form.button.agree') }}
+        <div class="ui-block" v-if="checkPermission || checkAdmin">
+            <div class="ui-block-title">
+                <a href="javascript:void(0)"class="btn btn-md-2 btn-border-think custom-color c-grey full-width" v-if="campaign.deleted_at == null" @click="comfirmCloseCampaign">
+                    {{ $t('campaigns.close_campaign') }}
                 </a>
-                <a href="javascript:void(0)"
-                    class="btn btn-secondary col-lg-3 col-md-6 col-sm-12 col-xs-12"
-                    @click="cancelLeaveCampaign">
-                    {{ $t('form.button.cancel') }}
+                <a href="javascript:void(0)"class="btn btn-md-2 btn-border-think custom-color c-grey full-width" v-else @click="comfirmOpenCampaign">
+                    {{ $t('campaigns.open_campaign') }}
                 </a>
             </div>
-        </modal>
+        </div>
+        <!-- form comfirm close campaign -->
+        <message-comfirm
+            :show.sync="flag_confirm_close"
+            :messages="$t('messages.comfirm-close-campaign')"
+            @handelMethod="closeCampaigns">
+        </message-comfirm>
+        <!-- form comfirm open campaign -->
+        <message-comfirm
+            :show.sync="flag_confirm_open"
+            :messages="$t('messages.comfirm_open_campaign')"
+            @handelMethod="agreeOpen">
+        </message-comfirm>
+        <!-- form comfirm join campaign -->
+        <message-comfirm
+            :show.sync="flag_confirm_join"
+            :messages="$t('messages.comfirm-join-campaign')"
+            @handelMethod="joinCampaigns">
+        </message-comfirm>
+        <!-- form comfirm join campaign -->
+        <message-comfirm
+            :show.sync="flag_confirm_leave"
+            :messages="$t('messages.comfirm-leave-campaign')"
+            @handelMethod="leaveCampaigns">
+        </message-comfirm>
+
     </div>
 </template>
 
@@ -151,9 +150,10 @@
 
 <script>
     import { mapState, mapActions, mapGetters } from 'vuex'
-    import Modal from '../libs/Modal.vue'
     import noty from '../../helpers/noty'
     import Member from './Member.vue'
+    import MessageComfirm from '../libs/MessageComfirm.vue'
+    import { del } from '../../helpers/api'
 
     export default {
         created() {
@@ -162,7 +162,9 @@
         data: () => ({
             flag_confirm_join: false,
             flag_confirm_leave: false,
-            flag_show_list_member : false
+            flag_show_list_member : false,
+            flag_confirm_close: false,
+            flag_confirm_open: false
         }),
         computed: {
             ...mapGetters('campaign', [
@@ -192,7 +194,9 @@
         methods: {
             ...mapActions('campaign', [
                 'attendCampaign',
-                'getlistPhotos'
+                'getlistPhotos',
+                'openCampaign',
+                'campaignDetail'
             ]),
             showListMember() {
                 this.flag_show_list_member = true
@@ -203,11 +207,11 @@
             comfirmLeaveCampaign() {
                 this.flag_confirm_leave = true
             },
-            cancelJoinCampaign() {
-                this.flag_confirm_join = false
+            comfirmCloseCampaign() {
+                this.flag_confirm_close = true
             },
-            cancelLeaveCampaign() {
-                this.flag_confirm_leave = false
+            comfirmOpenCampaign() {
+                this.flag_confirm_open = true
             },
             joinCampaigns() {
                 this.attendCampaign({
@@ -253,11 +257,56 @@
                     });
 
                 return checkStatus
-            }
+            },
+            closeCampaigns() {
+                del(`campaign/${this.campaign.id}`)
+                    .then(res => {
+                        this.flag_confirm_close = false
+                        const message = this.$i18n.t('messages.close_campaign_success')
+                        noty({ text: message, force: true, type: 'success', container: false })
+
+                        this.$router.push({ name: 'user.list_campaign_close', params: {
+                            slug: this.user.id
+                        }})
+                    })
+                    .catch(err => {
+                        this.flag_confirm_close = false
+                        const message = this.$i18n.t('messages.close_campaign_fail')
+                        noty({ text: message, force: true, container: false })
+                    })
+            },
+
+            agreeOpen() {
+                this.openCampaign({ campaignId: this.campaign.id })
+                    .then(res => {
+                        this.campaignDetail(this.pageId)
+                            .then(status => {
+                                //
+                            })
+                            .catch( err => {
+                                if (err.response.data.http_status.code == 404 ||
+                                    err.response.data.http_status.code == 401) {
+                                    this.$router.push({ name: 'not_found' })
+                                }
+                            })
+                    })
+                    .catch(err => {
+                        this.flag_confirm_open = false
+                        noty({
+                            text: err.response.data.http_status.messages,
+                            force: true,
+                            container: false
+                        })
+                    })
+
+                    this.flag_confirm_open = false
+            },
+
         },
         components: {
            Modal,
-           Member
+           Member,
+           MessageComfirm
         }
     }
 </script>

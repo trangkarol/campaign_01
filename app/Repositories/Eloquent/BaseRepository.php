@@ -381,8 +381,9 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function checkLike($model, $userId)
     {
-        return $model->whereHas('likes', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
+        return $model->withTrashed()->whereHas('likes', function ($query) use ($userId) {
+            $query->withTrashed()
+                ->where('user_id', $userId);
         })->get()->pluck('id');
     }
 }

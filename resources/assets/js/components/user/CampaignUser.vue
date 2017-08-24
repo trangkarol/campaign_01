@@ -75,11 +75,11 @@
 
                         <p>{{ shorten(strip(campaign.description), 200) }}</p>
 
-                        <router-link :to="{ name: 'campaign.timeline', params: { slug: campaign.slug }}" class="btn btn-md-2 btn-border-think c-grey btn-transparent custom-color">{{ $t('user.button.read_more') }}</router-link>
-
+                        <router-link :to="{ name: 'campaign.timeline', params: { slug: campaign.slug }}"
+                            class="btn btn-md-2 btn-border-think c-grey btn-transparent custom-color">
+                            {{ $t('user.button.read_more') }}</router-link>
 
                         <div class="control-block-button post-control-button">
-
                             <master-like
                                 :likes="campaign.likes"
                                 :checkLiked="checkLiked"

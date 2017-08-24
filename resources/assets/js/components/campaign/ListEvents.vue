@@ -50,7 +50,7 @@
                     :numberOfComments="event.number_of_comments"
                     :numberOfLikes="event.number_of_likes"
                     :showMore="true"
-                    >
+                    :deleteDate="event.deleted_at">
                 </master-like>
 
                 <div class="control-block-button post-control-button">
@@ -61,7 +61,8 @@
                         :type="'like-infor'"
                         :modelId="event.id"
                         :numberOfComments="event.number_of_comments"
-                        :numberOfLikes="event.number_of_likes">
+                        :numberOfLikes="event.number_of_likes"
+                        :deleteDate="event.deleted_at">
                     </master-like>
 
                     <a href="javascript:void(0)" class="btn btn-control">
@@ -81,7 +82,8 @@
                 :model-id ="event.id"
                 :flag="model"
                 :classListComment="''"
-                :classFormComment="''">
+                :classFormComment="''"
+                :deleteDate="event.deleted_at">
             </comment>
         </div>
     </div>

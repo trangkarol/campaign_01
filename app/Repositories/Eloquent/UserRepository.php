@@ -14,6 +14,7 @@ use App\Exceptions\Api\UnknowException;
 use App\Traits\Common\UploadableTrait;
 use App\Notifications\MakeFriend;
 use Notification;
+use Carbon\Carbon;
 
 class UserRepository extends BaseRepository implements UserInterface
 {
@@ -225,14 +226,14 @@ class UserRepository extends BaseRepository implements UserInterface
 
         return $user->where('status', User::ACTIVE)
             ->whereHas('campaigns', function ($query) use ($campaignId, $status, $roleId) {
-                $query = $query->where('campaign_id', $campaignId)
+                $query = $query->withTrashed()->where('campaign_id', $campaignId)
                     ->where('campaign_user.status', $status);
 
                 if ($roleId != config('settings.search_default')) {
                     $query = $query->where('campaign_user.role_id', $roleId);
                 }
             })->with(['campaigns' => function ($query) use ($campaignId) {
-                $query->where('campaign_id', $campaignId);
+                $query->withTrashed()->where('campaign_id', $campaignId);
             }])->paginate(config('settings.paginate_default'));
     }
 
@@ -323,5 +324,45 @@ class UserRepository extends BaseRepository implements UserInterface
             }),
             'totalUser' => $resutUser->count(),
         ];
+    }
+
+    public function closedCampaign($user, $roleIdManagement)
+    {
+        return $user->campaigns()->with(['media' => function ($query) {
+            $query->withTrashed();
+        }])->onlyTrashed()
+        ->with('owner')
+        ->wherePivotIn('role_id', $roleIdManagement)
+        ->withTrashed()
+        ->groupBy('campaigns.deleted_at')
+        ->orderBy('campaigns.deleted_at', 'DESC')->paginate(config('settings.paginate_default'));
+    }
+
+    public function deleteFromCampaign($campaign)
+    {
+        if (!is_null($campaign)) {
+            $currentDay = Carbon::Now();
+
+            $campaign->users()->get()->each(function ($user) use ($campaign, $currentDay) {
+                $user->campaigns()->updateExistingPivot($campaign->id, ['deleted_at' => $currentDay]);
+            });
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function openFromCampaign($campaign)
+    {
+        if (!is_null($campaign)) {
+            $campaign->users()->get()->each(function ($user) use ($campaign) {
+                $user->campaigns()->updateExistingPivot($campaign->id, ['deleted_at' => null]);
+            });
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -32,6 +32,7 @@ export default {
         }
 
         state.like[data.flag][data.modelId]['numberOfLikes'] = data.numberOfLikes
+        state.like[data.flag][data.modelId]['deleteDate'] = data.deleteDate
         state.commentTotal[data.flag][data.modelId] = data.numberOfComments
     },
 

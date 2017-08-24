@@ -32,8 +32,12 @@
                                             <li>
                                                 <router-link :to="{ name: 'user.photo', params: { userId }}">{{ $t('user.friend.photo') }}</router-link>
                                             </li>
-                                            <li>
+                                           <!--  <li>
                                                 <router-link :to="{ name: 'user.video', params: { userId }}">{{ $t('user.friend.video') }}</router-link>
+                                            </li> -->
+                                            <li>
+                                                <router-link :to="{ name: 'user.list_campaign_close' }">
+                                                    {{ $t('user.label.list_campaign_close') }}</router-link>
                                             </li>
                                             <li>
                                                 <div class="more">

@@ -12,7 +12,7 @@
             </div>
             <ul class="dropdown-menu scroll-member inner" role="listbox" aria-expanded="false">
                 <li class="member" v-for="member in members.data">
-                    <router-link :to="{ name: 'user.timeline', params: { id: member.id }}">
+                    <router-link :to="{ name: 'user.timeline', params: { slug: member.id }}">
                         <span class="text">
                             <div class="inline-items">
                                 <div class="author-thumb">
