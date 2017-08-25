@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Traits\Eloquent\CommentLike;
 
-class Activity extends Model
+class Activity extends BaseModel
 {
+    use CommentLike;
+
     const CREATE = 'create';
     const UPDATE = 'update';
     const DELETE = 'delete';
@@ -21,6 +23,8 @@ class Activity extends Model
         'name',
         'activitiable_id',
         'activitiable_type',
+        'number_of_comments',
+        'number_of_likes',
     ];
 
     public function user()
@@ -31,5 +35,15 @@ class Activity extends Model
     public function activitiable()
     {
         return $this->morphTo();
+    }
+
+    public function likes()
+    {
+        return $this->morphMany(Like::class, 'likeable');
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }

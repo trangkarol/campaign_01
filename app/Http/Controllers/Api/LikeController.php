@@ -14,14 +14,14 @@ class LikeController extends ApiController
 
     public function __construct(LikeInterface $likeRepository)
     {
-        parent::__construct($likeRepository);
+        parent::__construct();
         $this->likeRepository = $likeRepository;
     }
 
     public function like($modelId, $flag)
     {
         $likeClass = new \ReflectionClass($this->likeRepository);
-        $model = app($likeClass->getNamespaceName() . '\\' . ucfirst($flag . 'Repository'))->findOrFail($modelId);
+        $model = app($likeClass->getNamespaceName() . '\\' . ucfirst($flag . 'Interface'))->findOrFail($modelId);
 
         if (!$modelId) {
             throw new UnknowException('modelId is null');
@@ -51,7 +51,7 @@ class LikeController extends ApiController
     public function getListMemberLiked($modelId, $flag)
     {
         $likeClass = new \ReflectionClass($this->likeRepository);
-        $model = app($likeClass->getNamespaceName() . '\\' . ucfirst($flag . 'Repository'))->findOrFail($modelId);
+        $model = app($likeClass->getNamespaceName() . '\\' . ucfirst($flag . 'Interface'))->findOrFail($modelId);
 
         if ($this->user->cant('like', $model)) {
             throw new UnknowException('Permission error: User can not see this members liked in this post.');

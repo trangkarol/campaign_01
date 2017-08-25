@@ -34,7 +34,7 @@ class CommentController extends ApiController
         }
 
         $commentClass = new \ReflectionClass($this->commentRepository);
-        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($flag . 'Repository'))->findOrFail($modelId);
+        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($flag . 'Interface'))->findOrFail($modelId);
 
         $data['parent_id'] = $parentId;
         $data['content'] = $request->content;
@@ -71,7 +71,7 @@ class CommentController extends ApiController
         $modelId = $comment->commentable_id;
 
         $commentClass = new \ReflectionClass($this->commentRepository);
-        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($flag . 'Repository'))->findOrFail($comment->commentable_id);
+        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($flag . 'Interface'))->findOrFail($comment->commentable_id);
 
         if ($this->user->cant('update', $comment)) {
             throw new UnknowException('Permission error: User can not edit this comment.');
@@ -96,7 +96,7 @@ class CommentController extends ApiController
         $data = $request->only('modelId', 'flag');
 
         $commentClass = new \ReflectionClass($this->commentRepository);
-        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($data['flag'] . 'Repository'))->findOrFail($data['modelId']);
+        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($data['flag'] . 'Interface'))->findOrFail($data['modelId']);
 
         if ($this->user->cant('delete', $comment)) {
             throw new UnknowException('Permission error: User can not edit this comment.');

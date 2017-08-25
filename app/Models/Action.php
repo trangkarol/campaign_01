@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Nicolaslopezj\Searchable\SearchableTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Traits\Eloquent\CommentLike as CommentLike;
+use App\Traits\Eloquent\CommentLike;
 
 class Action extends BaseModel
 {

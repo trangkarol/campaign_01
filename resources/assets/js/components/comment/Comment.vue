@@ -21,12 +21,18 @@ import FormComment from './FormComment.vue'
 
 export default {
     created() {
-        this.changeComment({ comments: this.comments, modelId: this.modelId })
+        this.changeComment({
+            comments: this.comments,
+            modelId: this.modelId,
+            flag: this.flag,
+            numberOfComments: this.numberOfComments,
+        })
     },
     props: [
         'comments',
         'modelId',
         'flag',
+        'numberOfComments',
         'classListComment',
         'classFormComment'
     ],
@@ -34,7 +40,10 @@ export default {
         //
     },
     methods: {
-        ...mapActions('comment', ['getComment', 'changeComment']),
+        ...mapActions('comment', [
+            'getComment',
+            'changeComment'
+        ]),
     },
     components: {
         ListComment,

@@ -2,7 +2,7 @@
     <div id="newsfeed-items-grid" v-if="events != null">
         <div class="ui-block" v-for="event in events.data">
             <article class="hentry post">
-                <div class="post__author author vcard inline-items">
+                <div class="post__author author vcard inline-items" v-if="event.media != null">
                     <router-link :to="{ name: 'event.index', params: { slug: event.slug }}">
                         <img :src="event.media[0].image_thumbnail" :alt="event.name">
                     </router-link>
@@ -41,22 +41,28 @@
                     :number_char_show=200>
                 </show-text>
 
-                <like :type="'likeInfo'"
-                    :checkLike="event.checkLike"
+                <master-like
                     :likes="event.likes"
-                    :model="'event'"
+                    :checkLiked="checkLiked"
+                    :flag="model"
+                    :type="'like'"
                     :modelId="event.id"
-                    :numberOfComments="event.comments.total">
-                </like>
+                    :numberOfComments="event.number_of_comments"
+                    :numberOfLikes="event.number_of_likes"
+                    :showMore="true"
+                    >
+                </master-like>
 
                 <div class="control-block-button post-control-button">
-                    <like :type="'like'"
-                        :checkLike="event.checkLike"
+                    <master-like
                         :likes="event.likes"
-                        :model="'event'"
+                        :checkLiked="checkLiked"
+                        :flag="model"
+                        :type="'like-infor'"
                         :modelId="event.id"
-                        :numberOfComments="event.comments.total"
-                    ></like>
+                        :numberOfComments="event.number_of_comments"
+                        :numberOfLikes="event.number_of_likes">
+                    </master-like>
 
                     <a href="javascript:void(0)" class="btn btn-control">
                         <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
@@ -71,6 +77,7 @@
 
             <comment
                 :comments="event.comments"
+                :numberOfComments="event.number_of_comments"
                 :model-id ="event.id"
                 :flag="model"
                 :classListComment="''"
@@ -85,7 +92,7 @@ import { mapState, mapGetters } from 'vuex'
 import axios from 'axios'
 import Comment from '../comment/Comment.vue'
 import ShowText from '../libs/ShowText.vue'
-import Like from '../user/timeline/Like.vue'
+import MasterLike from '../like/MasterLike.vue'
 
 export default {
     data: () => ({
@@ -99,7 +106,8 @@ export default {
         ...mapState('campaign', [
             'campaign',
             'events',
-            'loading'
+            'loading',
+            'checkLiked'
         ]),
         ...mapState('auth', {
             authenticated: state => state.authenticated,
@@ -109,7 +117,7 @@ export default {
     components: {
         Comment,
         ShowText,
-        Like
+        MasterLike
     }
 }
 </script>

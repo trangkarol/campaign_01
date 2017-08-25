@@ -3,38 +3,49 @@
        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active" id="album-page" role="tabpanel">
+                <div class="tab-pane active" id="album-page" role="tabpanel" v-if="listPhotos.list_action">
 
-                    <div class="photo-album-wrapper" v-if="listPhotos.total > 0">
+                    <div class="photo-album-wrapper" v-if="listPhotos.list_action.total > 0">
 
-                        <div class="photo-album-item-wrap col-4-width" v-for="photo in listPhotos.data">
+                        <div class="photo-album-item-wrap col-4-width" v-for="photo in listPhotos.list_action.data">
                             <div class="photo-album-item" data-mh="album-item">
-                                <div class="photo-item" v-if="photo.media.length > 0">
+                                <div class="photo-item" v-if="photo.media != null">
 
-                                    <a href="javascript:void(0)" @click="detailAction(photo)">
+                                    <a href="javascript:void(0)">
                                         <img :src="photo.media[0].image_small" alt="photo">
                                     </a>
 
                                     <div class="overlay overlay-dark"></div>
-                                    <a href="javascript:void(0)" @click="detailAction(photo)" class="more"><svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg></a>
-                                    <a href="javascript:void(0)" class="post-add-icon" @click="detailAction(photo)">
-                                        <svg class="olymp-heart-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-heart-icon"></use></svg>
-                                        <span >{{ photo.likes.length }}</span>
-                                    </a>
+                                    <a href="javascript:void(0)" class="more"><svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg></a>
+
+                                    <master-like
+                                        :likes="photo.likes"
+                                        :checkLiked="listPhotos.checkLikeAction"
+                                        :flag="'action'"
+                                        :type="'like'"
+                                        :modelId="photo.id"
+                                        :numberOfComments="photo.number_of_comments"
+                                        :numberOfLikes="photo.number_of_likes"
+                                        :class="'post-add-icon'"
+                                        :showMore="false">
+                                    </master-like>
+
                                     <a href="javascript:void(0)"
                                         data-toggle="modal"
                                         data-target="#open-photo-popup-v2"
                                         class="full-block"
-                                        @click="detailAction(photo, user)">
+                                        @click="detailAction(photo)">
                                     </a>
                                 </div>
 
                                 <div class="content">
                                     <show-text
+                                        :type="false"
                                         :text="photo.caption"
-                                        :show_char=70
+                                        :show_char=300
                                         :show="$t('events.show_more')"
                                         :hide="$t('events.show_less')"
+                                        :number_char_show=200
                                         class="title p">
                                     </show-text>
 
@@ -43,7 +54,7 @@
                                     <div class="swiper-container" data-slide="fade">
                                         <div class="swiper-wrapper">
                                             <div class="swiper-slide">
-                                                <ul class="friends-harmonic" >
+                                                <ul class="friends-harmonic" v-if="photo.number_of_likes > 0">
                                                     <li v-for="(like, index) in photo.likes" v-if="index <= 6">
                                                         <router-link
                                                             :to="{ name: 'user.timeline', params: { id: like.user.id }}"
@@ -51,8 +62,10 @@
                                                             <img :src="like.user.image_thumbnail" :alt="like.user.name">
                                                         </router-link>
                                                     </li>
-                                                    <li v-if="memberLength(photo.likes) > 0">
-                                                        <a href="#" class="all-users">+{{ memberLength(photo.likes) }}</a>
+                                                    <li v-if="photo.number_of_likes > 6">
+                                                        <a href="javascript:void(0)" class="all-users">
+                                                            +{{ memberLength(photo.number_of_likes) }}
+                                                        </a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -60,11 +73,11 @@
                                             <div class="swiper-slide">
                                                 <div class="friend-count" data-swiper-parallax="-500">
                                                     <a href="javascript:void(0)" class="friend-count-item"   >
-                                                        <div class="h6">{{ photo.media.length }}</div>
+                                                        <div class="h6" v-if="photo.media != null">{{ photo.media.length }}</div>
                                                         <div class="title">Photos</div>
                                                     </a>
                                                     <a href="javascript:void(0)" class="friend-count-item">
-                                                        <div class="h6">{{ photo.comments.total }}</div>
+                                                        <div class="h6">{{ photo.number_of_comments }}</div>
                                                         <div class="title">Comments</div>
                                                     </a>
                                                 </div>
@@ -86,7 +99,11 @@
             </div>
 
         </div>
-        <action-detail :showAction.sync = "showAction" :dataAction = "dataAction"></action-detail>
+        <action-detail
+            :showAction.sync="showAction"
+            :dataAction="dataAction"
+            :checkLikeAction="listPhotos.checkLikeAction">
+        </action-detail>
     </div>
 </template>
 
@@ -95,6 +112,7 @@ import { mapState, mapActions } from 'vuex'
 import axios from 'axios'
 import ShowText from '../../libs/ShowText.vue'
 import ActionDetail from '../../event/ActionDetail.vue'
+import MasterLike from '../../like/MasterLike.vue'
 
 export default {
     created() {
@@ -108,7 +126,9 @@ export default {
         dataAction: {}
     }),
     computed: {
-        ...mapState('campaign', [ 'listPhotos']),
+        ...mapState('campaign', [
+            'listPhotos'
+        ]),
         ...mapState('auth', {
             authenticated: state => state.authenticated,
             user: state => state.user
@@ -122,13 +142,16 @@ export default {
         })
     },
     methods: {
-        ...mapActions('campaign', ['getlistPhotos', 'loadMorePhotos']),
+        ...mapActions('campaign', [
+            'getlistPhotos',
+            'loadMorePhotos'
+        ]),
         timeAgo(time) {
             return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
         },
         memberLength(members) {
-            if (members.length > 6) {
-                return members.length -6
+            if (members > 6) {
+                return members -6
             }
 
             return 0
@@ -205,21 +228,24 @@ export default {
         loadMore() {
             var data = {
                 campaignId: this.pageId,
-                currentPage: this.listPhotos.current_page,
-                lastPage: this.listPhotos.last_page
+                currentPage: this.listPhotos.list_action.current_page,
+                lastPage: this.listPhotos.list_action.last_page
             }
 
             this.loadMorePhotos(data)
         },
-        detailAction(data, user) {
+        beforeDestroy() {
+            $(window).off()
+        },
+        detailAction(data) {
             this.showAction = true
-            data.user = user
             this.dataAction = data
         }
     },
     components: {
         ShowText,
-        ActionDetail
+        ActionDetail,
+        MasterLike
     }
 }
 </script>

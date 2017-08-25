@@ -33,16 +33,18 @@
                     <svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg>
                 </a>
             </div>
-            <div class="ui-block-content">
-
-                <ul class="widget w-last-photo js-zoom-gallery" v-if="listPhotos.total > 0">
-                    <li v-for="photo in listPhotos.data" >
-                        <a href="#" v-if="photo.media != null">
+            <div class="ui-block-content" v-if="listPhotos.list_action">
+                <ul class="widget w-last-photo js-zoom-gallery" v-if="listPhotos.list_action.total > 0">
+                    <li v-for="(photo, index) in listPhotos.list_action.data" v-if="photo.media != null && index < 8">
+                        <a :href="photo.media[0].image_small">
                             <img :src="photo.media[0].image_small" alt="photo">
                         </a>
                     </li>
-                    <li class="all-users" v-if="listPhotos.total > 8">
-                        <a href="javascript:void(0)">+ {{ remainingData(listPhotos.total) }}</a>
+                    <li class="all-users" v-if="listPhotos.list_action.total > 8">
+                        <router-link
+                            :to="{ name: 'campaign.photo', params: { id: campaign.id }}">
+                            + {{ remainingData(listPhotos.list_action.total) }}
+                        </router-link>
                     </li>
                 </ul>
             </div>
@@ -67,7 +69,7 @@
                                         <img :src="member.image_thumbnail" :alt="member.name">
                                     </router-link>
                                 </li>
-                                <li class="all-users" v-if="listMembers.members.total >= 10">
+                                <li class="all-users" v-if="listMembers.members.total > 10">
                                     <a href="javascript:void(0)" @click="showListMember">
                                         + {{ remainingMembers }}
                                     </a>
@@ -208,7 +210,10 @@
                 this.flag_confirm_leave = false
             },
             joinCampaigns() {
-                this.attendCampaign({ campaignId: this.campaign.id, flag: 'join' })
+                this.attendCampaign({
+                    campaignId: this.campaign.id,
+                    flag: 'join'
+                })
                     .then(status => {
                         this.flag_confirm_join = false
                         const message = this.$i18n.t('messages.join_campaign_success')
@@ -221,7 +226,10 @@
                     })
             },
             leaveCampaigns() {
-                this.attendCampaign({ campaignId: this.campaign.id, flag: 'leave' })
+                this.attendCampaign({
+                    campaignId: this.campaign.id,
+                    flag: 'leave'
+                })
                     .then(status => {
                         this.flag_confirm_leave = false
                         const message = this.$i18n.t('messages.leave_campaign_success')

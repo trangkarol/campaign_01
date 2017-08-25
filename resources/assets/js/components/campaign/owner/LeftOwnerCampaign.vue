@@ -4,7 +4,7 @@
             <div class="your-profile">
                 <div class="ui-block-title-small ui-block-title">
                     <i class="fa fa-list-alt" aria-hidden="true"></i>
-                    <h6 class="">{{ $t('campaigns.manager-campaign') }}</h6>
+                    <h6 class="">{{ $t('campaigns.campaign-management') }}</h6>
                 </div>
 
                 <div class="ui-block-title">
