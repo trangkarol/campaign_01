@@ -98,7 +98,7 @@ export const deleteComment = ({ commit, rootState }, data) => {
 export const loadMoreParentComment = ({ commit, rootState }, data) => {
     if (data.lastPage >= (parseInt(data.pageCurrent) + 1)) {
         return new Promise((resolve, reject) => {
-            get(`comment/${data.modelId}?page=${(parseInt(data.pageCurrent) + 1)}`)
+            get(`comment/${data.modelId}/${data.flag}?page=${(parseInt(data.pageCurrent) + 1)}`)
                 .then(res => {
                     commit(types.LOAD_MORE_PARENT_COMMENT, {
                         comments: res.data.loadMore,

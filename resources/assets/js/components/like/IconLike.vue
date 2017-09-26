@@ -107,8 +107,12 @@ export default {
                 })
             })
             .catch(err => {
-                const message = this.$i18n.t('messages.join_campaign_fail')
-                noty({ text: message, force: true, container: false })
+                if (err.response.data.http_status.code == 401) {
+                    noty({
+                            text: this.permission,
+                            force: true, container: false
+                        })
+                }
             })
         }
     },

@@ -7,7 +7,9 @@ export const setLike = ({ commit }, data) => {
 };
 
 export const likeActivity = ({ commit }, data) => {
+     console.log('sdsds', data.deleteDate)
     if (data.deleteDate == null) {
+        console.log('sdsds')
         return new Promise((resolve, reject) => {
             post(`like/${data.modelId}/${data.model}`)
                 .then(res => {
@@ -23,18 +25,11 @@ export const likeActivity = ({ commit }, data) => {
                         resolve(res.data)
                 })
                 .catch(err => {
-                    if (err.response.data.http_status.code == 401) {
-                        noty({
-                            text: data.permission,
-                            force: true, container: false
-                        })
-                    }
                     reject(err)
                 })
         })
     } else {
-        const message = data.messages
-        noty({ text: message, force: true, container: false })
+        noty({ text: data.messages, force: true, container: false })
     }
 };
 

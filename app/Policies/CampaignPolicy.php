@@ -35,13 +35,13 @@ class CampaignPolicy extends BasePolicy
             return false;
         }
 
-        $public = $campaign->settings()
+        $public = $campaign->settings()->withTrashed()
             ->where('key', config('settings.campaigns.status'))
             ->where('value', config('settings.value_of_settings.status.public'))
             ->get()
             ->isNotEmpty();
 
-        $private = $campaign->settings()
+        $private = $campaign->settings()->withTrashed()
             ->where('key', config('settings.campaigns.status'))
             ->where('value', config('settings.value_of_settings.status.private'))
             ->get()
@@ -229,5 +229,12 @@ class CampaignPolicy extends BasePolicy
     public function member(User $user, Campaign $campaign)
     {
         return $campaign->users->contains('id', $user->id);
+    }
+
+    public function changeRole(User $user, Campaign $campaign)
+    {
+        return $campaign->getUserByRole([Role::ROLE_OWNER, Role::ROLE_MODERATOR])
+            ->pluck('user_id')
+            ->contains($user->id);
     }
 }

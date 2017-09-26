@@ -250,9 +250,11 @@ class CampaignController extends ApiController
         $data = $request->only('campaignId', 'userId', 'roleId');
         $campaign = $this->campaignRepository->findOrFail($data['campaignId']);
 
+        if ($this->user->cannot('changeRole', $campaign)) {
+            throw new NotFoundException('You do not have authorize to change role this campaign', UNAUTHORIZED);
+        }
 
         return $this->doAction(function () use ($data, $campaign) {
-            $this->authorize('manage', $campaign);
             $this->campaignRepository->changeMemberRole($campaign, $data['userId'], $data['roleId']);
         });
     }
@@ -296,18 +298,19 @@ class CampaignController extends ApiController
         });
     }
 
-    public function members($campaignId, $status)
+    public function members($campaignId, $status, Request $request)
     {
         $campaign = $this->campaignRepository->withTrashed()->findOrFail($campaignId);
+        $data = $request->only('search', 'roleId');
         $roleIdBlocked = $this->roleRepository->findRoleOrFail(Role::ROLE_BLOCKED, Role::TYPE_CAMPAIGN)->id;
 
         if ($this->user->cannot('permission', $campaign)) {
-            throw new UnknowException('You do not have authorize to manage this campaign', UNAUTHORIZED);
+            throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
         }
 
-        return $this->getData(function () use ($campaign, $status, $roleIdBlocked) {
+        return $this->getData(function () use ($campaignId, $status, $data) {
             $this->compacts['roles'] = $this->roleRepository->getRoles(Role::TYPE_CAMPAIGN);
-            $this->compacts['members'] = $this->campaignRepository->getMembers($campaign, $status, $roleIdBlocked);
+            $this->compacts['members'] = $this->userRepository->searchMembers($campaignId, $status, $data['search'], $data['roleId']);
         });
     }
 
@@ -317,7 +320,7 @@ class CampaignController extends ApiController
         $data = $request->only('search', 'roleId');
         $roleIdBlocked = $this->roleRepository->findRoleOrFail(Role::ROLE_BLOCKED, Role::TYPE_CAMPAIGN)->id;
 
-        if ($this->user->cannot('view', $campaign)) {
+        if ($this->user->cannot('member', $campaign)) {
             throw new UnknowException('You do not have authorize to see this campaign', UNAUTHORIZED);
         }
 

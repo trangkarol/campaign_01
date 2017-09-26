@@ -69,7 +69,7 @@ export default {
                     noty({ text: message, force: true, container: false })
                 }
             }
-        }, 100),
+        }, 400),
         input(e) {
             e.target.style.height = "5px";
             e.target.style.height = (e.target.scrollHeight)+"px";
