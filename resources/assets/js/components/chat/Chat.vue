@@ -194,16 +194,18 @@ export default {
                                 }
                             }
 
-                            if (this.paginate) {
-                                this.scrollTopBoxChat()
-                            } else {
-                                setTimeout(() => {
-                                    const heightBoxChatAfter = this.getScrollHeight()
-                                    this.scrollTopBoxChat(heightBoxChatAfter - heightBoxChatBefore)
-                                }, 0)
-                            }
+                            this.$nextTick(function () {
+                                if (this.paginate) {
+                                    setTimeout(() => {
+                                        const heightBoxChatAfter = this.getScrollHeight()
+                                        this.scrollTopBoxChat(heightBoxChatAfter - heightBoxChatBefore)
+                                    }, 0)
+                                } else {
+                                    this.scrollTopBoxChat()
+                                }
 
-                            this.paginate = res.data.paginate
+                                this.paginate = res.data.paginate
+                            })
                         }
 
                         this.continue = res.data.continue

@@ -65,7 +65,9 @@
                                                         <use xlink:href="/frontend/icons/icons.svg#olymp-happy-face-icon"></use>
                                                     </svg>
                                                 </a>
-                                                <a href="#" class="btn btn-control bg-purple">
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-control bg-purple"
+                                                    @click="addChatComponent(user)">
                                                     <svg class="olymp-chat---messages-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-chat---messages-icon"></use></svg>
                                                     <div class="ripple-container"></div>
                                                 </a>
@@ -107,6 +109,7 @@
     import noty from '../../helpers/noty'
     import { get, patch, post } from '../../helpers/api'
     import Noty from 'noty'
+    import { EventBus } from '../../EventBus.js'
     export default {
         data: () => ({
             searchKey: '',
@@ -286,6 +289,17 @@
                     });
                     initIterator++;
                 });
+            },
+            addChatComponent(user) {
+                EventBus.$emit('addChatComponent', {
+                    id: user.id,
+                    name: user.name,
+                    singleChat: true,
+                    slug: this.replaceSpace(user.name + '-' + user.id)
+                })
+            },
+            replaceSpace(str) {
+                return str.replace(' ', '-').toLowerCase()
             }
         }
     }
