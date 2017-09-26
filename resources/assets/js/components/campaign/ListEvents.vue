@@ -63,10 +63,22 @@
                         <a href="javascript:void(0)" class="btn btn-control">
                             <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
                         </a>
-
-                        <a href="javascript:void(0)" class="btn btn-control">
-                            <svg class="olymp-share-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-share-icon"></use></svg>
-                        </a>
+                        <plugin-sidebar>
+                            <template scope="props" slot="sharing-social">
+                                <share-social-network
+                                    :url="{
+                                        name: 'event.index',
+                                        params: {
+                                            slug: event.campaign_id,
+                                            slugEvent: event.slug
+                                        }
+                                    }"
+                                    :title="event.title"
+                                    :description="event.description"
+                                    :isSocialSharing="props.isPopupShare">
+                                </share-social-network>
+                            </template>
+                        </plugin-sidebar>
                     </div>
                 </article>
                 <comment
@@ -100,6 +112,8 @@ import Comment from '../comment/Comment.vue'
 import ShowText from '../libs/ShowText.vue'
 import MasterLike from '../like/MasterLike.vue'
 import ListImage from '../home/ListImage.vue'
+import ShareSocialNetwork from '../libs/ShareSocialNetwork.vue'
+import PluginSidebar from '../libs/PluginSidebar.vue'
 
 export default {
     data()
@@ -151,7 +165,9 @@ export default {
         Comment,
         ShowText,
         MasterLike,
-        ListImage
+        ListImage,
+        ShareSocialNetwork,
+        PluginSidebar
     },
     sockets: {
         createEventSuccess: function (data) {

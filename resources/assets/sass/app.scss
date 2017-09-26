@@ -235,3 +235,62 @@ a {
         }
     }
 }
+
+.box-btn-share {
+    &:before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 100%;
+        z-index: 2;
+        margin-left: -10px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent #fff transparent;
+    }
+    position: relative;
+    z-index: 1;
+    .position {
+        position: absolute;
+        display: flex;
+        width: 189px;
+        justify-content: space-between;
+        left: -154px;
+        color: #1b1b1b;
+        font-weight: 500;
+        background-color: #fff;
+        padding: 10px 3px 5px 7px;
+        box-shadow: 0 3px 0 rgba(0,0,0,0.1), 0 0 3px rgba(0,0,0,0.2);
+        border-radius: 6px;
+        .text-share {
+            line-height: 36px;
+        }
+        .flex-social {
+            display: flex;
+            .btn-social {
+                display: inline-block;
+                margin-right: 5px;
+                &.btn-control {
+                    &.has-i {
+                        font-size: unset;
+                        i {
+                            font-size: 15px;
+                        }
+                    }
+                    &.bg-facebook {
+                        background-color: #2f5b9d;
+                    }
+                    &.bg-twitter {
+                        background-color: #38bff1;
+                    }
+                    &.bg-google {
+                        background-color: #E24F48;
+                    }
+                }
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

@@ -12,6 +12,7 @@ import * as configPlugin from './config'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import VueTimeago from 'vue-timeago'
 import Master from './components/Master.vue'
+import SocialSharing from 'vue-social-sharing';
 
 // import editor quill
 import VueQuillEditor from 'vue-quill-editor'
@@ -46,6 +47,9 @@ const i18n = new VueI18n({
 })
 
 const router = makeRouter(routes)
+
+// Register sharing social network
+Vue.use(SocialSharing);
 
 Vue.mixin({
     computed: {

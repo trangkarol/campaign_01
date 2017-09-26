@@ -67,6 +67,22 @@
                                     :deleteDate="event.deleted_at"
                                     :roomLike="`campaign${event.campaign_id}`">
                                 </master-like>
+                                <plugin-sidebar>
+                                    <template scope="props" slot="sharing-social">
+                                        <share-social-network
+                                            :url="{
+                                                name: 'event.index',
+                                                params: {
+                                                    slug: event.campaign_id,
+                                                    slugEvent: event.slug
+                                                }
+                                            }"
+                                            :title="event.title"
+                                            :description="event.description"
+                                            :isSocialSharing="props.isPopupShare">
+                                        </share-social-network>
+                                    </template>
+                                </plugin-sidebar>
                             </div>
                         </article>
 
@@ -117,6 +133,8 @@
     import noty from '../../helpers/noty'
     import Message from '../libs/MessageComfirm.vue'
     import MasterLike from '../like/MasterLike.vue'
+    import ShareSocialNetwork from '../libs/ShareSocialNetwork.vue'
+    import PluginSidebar from '../libs/PluginSidebar.vue'
 
     export default {
         data: () => ({
@@ -219,7 +237,9 @@
             ShowText,
             Comment,
             Message,
-            MasterLike
+            MasterLike,
+            ShareSocialNetwork,
+            PluginSidebar
         }
     }
 </script>

@@ -95,11 +95,16 @@
                                         <use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use>
                                     </svg>
                                 </a>
-                                <a href="javascript:void(0)" class="btn btn-control">
-                                    <svg class="olymp-share-icon">
-                                        <use xlink:href="/frontend/icons/icons.svg#olymp-share-icon"></use>
-                                    </svg>
-                                </a>
+                                <plugin-sidebar>
+                                    <template scope="props" slot="sharing-social">
+                                        <share-social-network
+                                            :url="url(activity.activitiable_type, activity.activitiable)"
+                                            :title="activity.activitiable.title"
+                                            :description="activity.activitiable.description"
+                                            :isSocialSharing="props.isPopupShare">
+                                        </share-social-network>
+                                    </template>
+                                </plugin-sidebar>
                             </div>
                         </article>
                         <comment
@@ -148,12 +153,14 @@
     import ActionDetail from '../event/ActionDetail.vue'
     import sideWaypoint from '../../helpers/mixin/sideWaypoint'
     import ShowText from '../libs/ShowText.vue'
+    import ShareSocialNetwork from '../libs/ShareSocialNetwork.vue'
+    import PluginSidebar from '../libs/PluginSidebar.vue'
 
     export default {
         data: () => ({
             showAction: false,
             dataAction: {},
-            checkLikeAction: {},
+            checkLikeAction: {}
         }),
         computed: {
             ...mapState('user', [
@@ -248,7 +255,9 @@
             MasterLike,
             Comment,
             ActionDetail,
-            ShowText
+            ShowText,
+            ShareSocialNetwork,
+            PluginSidebar
         },
     }
 </script>

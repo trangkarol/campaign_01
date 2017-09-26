@@ -80,10 +80,16 @@
                                 <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
                             </a>
 
-                            <a href="#" class="btn btn-control">
-                                <svg class="olymp-share-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-share-icon"></use></svg>
-                            </a>
-
+                            <plugin-sidebar>
+                                <template scope="props" slot="sharing-social">
+                                    <share-social-network
+                                        :url="{ name: 'campaign.timeline', params: { slug: campaign.slug }}"
+                                        :title="campaign.title"
+                                        :description="shorten(strip(campaign.description), 200)"
+                                        :isSocialSharing="props.isPopupShare">
+                                    </share-social-network>
+                                </template>
+                            </plugin-sidebar>
                         </div>
 
                     </article>
@@ -101,6 +107,8 @@
 <script>
 import axios from 'axios'
 import MasterLike from '../like/MasterLike.vue'
+import ShareSocialNetwork from '../libs/ShareSocialNetwork.vue'
+import PluginSidebar from '../libs/PluginSidebar.vue'
 
 export default {
     data() {
@@ -116,7 +124,9 @@ export default {
         this.fetchData()
     },
     components: {
-        MasterLike
+        MasterLike,
+        ShareSocialNetwork,
+        PluginSidebar
     },
     mounted() {
         $(window).scroll(() => {
