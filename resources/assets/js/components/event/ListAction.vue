@@ -10,6 +10,10 @@
             <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="ui-block" v-for="(action, index) in actions.list_action.data" v-if="!(index % 2)">
                     <article class="hentry post has-post-thumbnail thumb-full-width">
+                        <span class="btn-next-without olymp-popup-right-arrow action-expense" v-if="action.expense_id">
+                            <i class="fa fa-usd" aria-hidden="true">
+                            </i>
+                        </span>
                         <div class="post__author author vcard inline-items">
                             <img :src="action.user.image_thumbnail" alt="author">
                             <div class="author-date">
@@ -59,7 +63,8 @@
                             href="javascript:void(0)"
                             data-toggle="modal"
                             data-target="#blog-post-popup"
-                            class="h2 post-title">
+                            class="h2 post-title"
+                            @click="detailAction(action.id)">
                             {{ showTextExpense(action.caption) }}
                         </a>
                         <show-text
@@ -100,6 +105,10 @@
             <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="ui-block" v-for="(action, index) in actions.list_action.data" v-if="index % 2">
                     <article class="hentry post has-post-thumbnail thumb-full-width">
+                        <span class="btn-next-without olymp-popup-right-arrow action-expense" v-if="action.expense_id">
+                            <i class="fa fa-usd" aria-hidden="true">
+                            </i>
+                        </span>
                         <div class="post__author author vcard inline-items">
                             <img :src="action.user.image_thumbnail" alt="author">
                             <div class="author-date">
@@ -149,7 +158,8 @@
                             href="javascript:void(0)"
                             data-toggle="modal"
                             data-target="#blog-post-popup"
-                            class="h2 post-title">
+                            class="h2 post-title"
+                            @click="detailAction(action.id)">
                             {{ showTextExpense(action.caption) }}
                         </a>
                         <show-text
@@ -476,6 +486,20 @@
                 margin: 10px 0;
                 line-height: 20px;
                 text-align: justify;
+            }
+        }
+        .action-expense {
+            position: absolute;
+            top: 14px;
+            left: 0px;
+            width: 30px;
+            height: 30px;
+            background-color: #9a9fbf;
+            border-radius: 50%;
+            text-align: center;
+            i {
+                color: white;
+                font-size: 30px;
             }
         }
     }

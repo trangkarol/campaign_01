@@ -58,25 +58,12 @@
                                     </time>
                                 </div>
                             </div>
-
-                            <div class="more"><svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg>
-                                <ul class="more-dropdown">
-                                    <li>
-                                        <a href="javascript:void(0)" v-if="user.id === dataAction.user_id">
-                                            {{ $t('actions.edit_action') }}
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)" v-if="user.id === dataAction.user_id">
-                                            {{ $t('actions.delete_action') }}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
 
                         <p>
-                            <span class="ui-block-title">
+                            <span class="ui-block-title about-action">
+                                <p v-if="!dataAction.expense_id" class='caption-of-action'>{{ dataAction.caption }}</p>
+                                <p v-else class='caption-of-action'>{{ showTextExpense(dataAction.caption) }}</p>
                                 <show-text
                                     :text="dataAction.description"
                                     :show_char=500
@@ -85,7 +72,6 @@
                                 </show-text>
                             </span>
                         </p>
-                        <p>{{ roomLike }}</p>
 
                         <master-like
                             :likes="dataAction.likes"
@@ -283,6 +269,14 @@
                         $(".list-comment-action")[0].scrollTop = $(".list-comment-action")[0].scrollHeight;
                     }
                 })
+            },
+
+            showTextExpense(data) {
+                var caption = JSON.parse(data);
+
+                return `${caption.cost} ${caption.nameQuality} ${caption.typeName}
+                    ${this.$i18n.t('actions.is_used')} ${this.$i18n.t('actions.at')}
+                    ${moment(caption.expenseTime, 'YYYY-MM-DD').format('DD/MM/YYYY')}`
             }
         },
 
@@ -331,6 +325,17 @@
             overflow-y: scroll;
             &::-webkit-scrollbar {
                 display: none;
+            }
+        }
+
+        .about-action {
+            .caption-of-action {
+                display: block;
+                font-size: 25px;
+                font-weight: 500;
+            }
+            span {
+                display: block;
             }
         }
     }

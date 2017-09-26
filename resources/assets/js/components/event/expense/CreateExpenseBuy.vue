@@ -178,9 +178,15 @@
         }),
 
         watch: {
-            time() {
-                this.newExpense.expense.time = moment(this.time).format('YYYY-MM-DD')
-            }
+          time() {
+              var arrayTime = this.time.split('/')
+
+              if (arrayTime[2].length == 4) {
+                  this.newExpense.expense.time = this.time.split('/').reverse().join('-')
+              } else {
+                  this.newExpense.expense.time = this.time.split('/').join('-')
+              }
+          }
         },
 
         computed: {
