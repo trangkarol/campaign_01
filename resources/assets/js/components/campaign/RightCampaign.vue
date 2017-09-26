@@ -7,6 +7,17 @@
                     class="btn-join btn btn-md-2 btn-border-think bg-blue full-width">
                     {{ $t('campaigns.create-event') }}
                 </router-link>
+                <a href="javascript:void(0)"
+                    class="btn marginless btn-md-2 btn-border-think custom-color bg-grey full-width"
+                    v-if="!campaign.deleted_at"
+                    @click="comfirmCloseCampaign">
+                    {{ $t('campaigns.close_campaign') }}
+                </a>
+                <a href="javascript:void(0)"
+                    class="btn marginless btn-md-2 btn-border-think custom-color bg-primary full-width"
+                    v-else @click="comfirmOpenCampaign">
+                    {{ $t('campaigns.open_campaign') }}
+                </a>
             </div>
         </div>
 
@@ -107,22 +118,6 @@
         </div>
         <!-- invite user to join campaign -->
         <invite-member v-if="checkInvite()"></invite-member>
-        <!-- close campaign -->
-        <div class="ui-block" v-if="checkPermission || checkAdmin">
-            <div class="ui-block-title">
-                <a href="javascript:void(0)"
-                    class="btn btn-md-2 btn-border-think custom-color bg-grey full-width"
-                    v-if="!campaign.deleted_at"
-                    @click="comfirmCloseCampaign">
-                    {{ $t('campaigns.close_campaign') }}
-                </a>
-                <a href="javascript:void(0)"
-                    class="btn btn-md-2 btn-border-think custom-color bg-primary full-width"
-                    v-else @click="comfirmOpenCampaign">
-                    {{ $t('campaigns.open_campaign') }}
-                </a>
-            </div>
-        </div>
         <!-- form comfirm close campaign -->
         <message-comfirm
             :show.sync="flag_confirm_close"
@@ -373,5 +368,8 @@
         .w-pool {
             margin-bottom: 20px;
         }
+    }
+    .marginless {
+        margin-left: 0;
     }
 </style>

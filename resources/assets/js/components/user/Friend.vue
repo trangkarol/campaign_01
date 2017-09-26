@@ -8,7 +8,7 @@
                             <div class="h6 title">{{ $t('user.friend.friends') }}</div>
                             <form class="w-search">
                                 <div class="form-group with-button">
-                                    <input class="form-control" v-model="searchKey" @input="search" type="text" :placeholder="$t('user.friend.search')">
+                                    <input class="form-control" v-model="searchKey" type="text" :placeholder="$t('user.friend.search')">
                                     <button @click.prevent="search">
                                         <svg class="olymp-magnifying-glass-icon">
                                             <use xlink:href="/frontend/icons/icons.svg#olymp-magnifying-glass-icon"></use>
@@ -119,7 +119,7 @@
             loading: false,
         }),
         created() {
-            this.listUser();
+            this.listUser()
         },
         mounted() {
             $(window).scroll(() => {
@@ -136,12 +136,17 @@
         computed: {
             ...mapState('auth', { authUser: 'user' })
         },
+        watch: {
+            searchKey() {
+                this.search()
+            }
+        },
         beforeDestroy() {
             $(window).off()
         },
         methods: {
             slipEmail(email) {
-                if (email.length > 25) {
+                if (email && email.length > 25) {
                     return email.substring(0, 22) + '...'
                 }
 
@@ -162,6 +167,7 @@
                 if (!this.searchKey.trim()) {
                     this.page = 0
                     this.hasData = true
+                    this.friends = []
                     this.listUser()
                 } else {
                     this.loading = true

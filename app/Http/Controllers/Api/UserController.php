@@ -151,15 +151,14 @@ class UserController extends ApiController
     {
         $user = $this->repository->findOrFail($id);
 
-        $recipient = $user->friendsIAmSender()
-            ->wherePivot('status', User::ACCEPTED)
-            ->where('name', 'like', '%' . $keyword . '%')->get();
-        $sender = $user->friendsIAmRecipient()
-            ->wherePivot('status', User::ACCEPTED)
-            ->where('name', 'like', '%' . $keyword . '%')->get();
+        return $this->getData(function () use ($user, $keyword) {
+            if ($keyword == '') {
+                return;
+            }
 
-        return $this->getData(function () use ($recipient, $sender) {
-            $this->compacts['data'] = collect()->push([$recipient, $sender])->flatten();
+            $this->compacts['data'] = $user->friends()->filter(function ($friend) use ($keyword) {
+                return false !== stristr($friend->name, $keyword);
+            })->flatten();
         });
     }
 
