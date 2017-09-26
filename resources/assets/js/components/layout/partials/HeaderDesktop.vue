@@ -734,7 +734,7 @@ export default {
                     id: campaign[0].hashtag,
                     name: campaign[0].hashtag,
                     singleChat: false,
-                    slug: this.replaceSpace(campaign[0].title + '-' + campaign[0].id)
+                    slug: campaign[0].id
                 })
             } else {
                 let id = (Number(mess.to) != this.user.id)
@@ -743,12 +743,9 @@ export default {
                     id: id,
                     name: mess.showName,
                     singleChat: true,
-                    slug: this.replaceSpace(mess.showName + '-' + id)
+                    slug: id
                 })
             }
-        },
-        replaceSpace(str) {
-            return str.replace(' ', '-').toLowerCase();
         },
         changeLanguage(locale) {
             this.$i18n.locale = this.lang = locale
