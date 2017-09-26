@@ -9,6 +9,7 @@ use App\Repositories\Contracts\EventInterface;
 use App\Repositories\Contracts\ActionInterface;
 use App\Repositories\Contracts\CommentInterface;
 use Illuminate\Http\Request;
+use App\Models\Comment;
 
 class CommentController extends ApiController
 {
@@ -123,10 +124,13 @@ class CommentController extends ApiController
         });
     }
 
-    public function show($modelId)
+    public function show($modelId, $flag)
     {
-        return $this->getData(function () use ($modelId) {
-            $this->compacts['loadMore'] = $this->commentRepository->getComment($modelId);
+        $commentClass = new \ReflectionClass(Comment::class);
+        $model = $commentClass->getNamespaceName() . '\\' . ucfirst($flag);
+
+        return $this->getData(function () use ($modelId, $model) {
+            $this->compacts['loadMore'] = $this->commentRepository->getComment($modelId, $model);
         });
     }
 

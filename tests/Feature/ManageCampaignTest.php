@@ -20,7 +20,7 @@ class ManageCampaignTest extends TestCase
         $faker = \Faker\Factory::create();
         $user = factory(User::class)->create();
         $owner = factory(User::class)->create();
-        $campaign = factory(Campaign::class)->create();
+        $campaign = factory(Campaign::class)->create(['hashtag' => 'Default']);
         $ownerId = app(RoleRepository::class)
             ->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)
             ->id;
@@ -32,25 +32,19 @@ class ManageCampaignTest extends TestCase
         ]);
         $this->actingAs($user, 'api');
         $response = $this->json('PATCH', route('campaign.change-role'), [
-            'userId' => 1,
+            'userId' => $user->id,
             'campaignId' => $campaign->id,
             'roleId' => 4,
         ]);
 
-        $response->assertJsonFragment([
-                'http_status' => [
-                    'code' => INTERNAL_SERVER_ERROR,
-                    'message' => 'This action is unauthorized.',
-                    'status' => false,
-                ],
-            ]);
+        $response->assertStatus(UNAUTHORIZED);
     }
 
     public function testChangeRoleWithInvalidDataThenFail()
     {
         $faker = \Faker\Factory::create();
         $user = factory(User::class)->create();
-        $campaign = factory(Campaign::class)->create();
+        $campaign = factory(Campaign::class)->create(['hashtag' => 'Default']);
         $ownerId = app(RoleRepository::class)
             ->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)
             ->id;
@@ -82,7 +76,7 @@ class ManageCampaignTest extends TestCase
         $faker = \Faker\Factory::create();
         $member = factory(User::class)->create();
         $owner = factory(User::class)->create();
-        $campaign = factory(Campaign::class)->create();
+        $campaign = factory(Campaign::class)->create(['hashtag' => 'Default']);
         $ownerId = app(RoleRepository::class)
             ->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)
             ->id;
@@ -114,7 +108,7 @@ class ManageCampaignTest extends TestCase
         $faker = \Faker\Factory::create();
         $user = factory(User::class)->create();
         $owner = factory(User::class)->create();
-        $campaign = factory(Campaign::class)->create();
+        $campaign = factory(Campaign::class)->create(['hashtag' => 'Default']);
         $ownerId = app(\App\Repositories\Eloquent\RoleRepository::class)
             ->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)
             ->id;
@@ -144,7 +138,7 @@ class ManageCampaignTest extends TestCase
         $faker = \Faker\Factory::create();
         $member = factory(User::class)->create();
         $owner = factory(User::class)->create();
-        $campaign = factory(Campaign::class)->create();
+        $campaign = factory(Campaign::class)->create(['hashtag' => 'Default']);
         $ownerId = app(RoleRepository::class)
             ->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)
             ->id;
@@ -175,7 +169,7 @@ class ManageCampaignTest extends TestCase
         $faker = \Faker\Factory::create();
         $member = factory(User::class)->create();
         $owner = factory(User::class)->create();
-        $campaign = factory(Campaign::class)->create();
+        $campaign = factory(Campaign::class)->create(['hashtag' => 'Default']);
         $ownerId = app(RoleRepository::class)
             ->findRoleOrFail(Role::ROLE_OWNER, Role::TYPE_CAMPAIGN)
             ->id;

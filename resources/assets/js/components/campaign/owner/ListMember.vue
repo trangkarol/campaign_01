@@ -142,12 +142,13 @@
                 'changeMemberRole',
                 'searchMember',
                 'loadMoreMembers',
+                'listMember'
             ]),
             timeAgo(time) {
                 return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
             },
             listMembers(campaignId) {
-                this.searchMember({
+                this.listMember({
                     campaignId: this.pageId,
                     status: 1,
                     search: this.search,
@@ -160,13 +161,15 @@
                     this.roles = data.roles
                 })
                 .catch(err => {
-                    const message = this.$i18n.t('messages.message-fail')
-                    noty({ text: message, force: true, container: false })
+                    if (err.response.data.http_status.code == 404 ||
+                        err.response.data.http_status.code == 401) {
+                        this.$router.push({ name: 'not_found' })
+                    }
                 })
             },
             searchMembers: _.debounce(function (e) {
                 e.preventDefault()
-                this.searchMember({
+                this.listMember({
                     campaignId: this.pageId,
                     status: 1,
                     search: this.search,
@@ -179,8 +182,10 @@
                     this.members = data.members
                 })
                 .catch(err => {
-                    const message = this.$i18n.t('messages.message-fail')
-                    noty({ text: message, force: true, container: false })
+                    if (err.response.data.http_status.code == 404 ||
+                        err.response.data.http_status.code == 401) {
+                        this.$router.push({ name: 'not_found' })
+                    }
                 })
             }, 100),
 
@@ -266,7 +271,7 @@
             $(window).scroll(() => {
                 if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
                     if ((parseInt(this.members.current_page) + 1) <= this.members.last_page) {
-                        this.searchMember({
+                        this.listMember({
                             campaignId: this.pageId,
                             status: 1,
                             search: this.search,
@@ -281,8 +286,10 @@
                             this.members = data.members
                         })
                         .catch(err => {
-                            const message = this.$i18n.t('messages.message-fail')
-                            noty({ text: message, force: true, container: false })
+                            if (err.response.data.http_status.code == 404 ||
+                                err.response.data.http_status.code == 401) {
+                                this.$router.push({ name: 'not_found' })
+                            }
                         })
                     }
                 }

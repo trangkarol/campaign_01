@@ -32,6 +32,7 @@ class Comment extends BaseModel
     protected $appends = [
         'user',
         'checkLike',
+        'sub_comment'
     ];
 
     public function user()
@@ -67,5 +68,14 @@ class Comment extends BaseModel
     public function getCheckLikeAttribute()
     {
         return !is_null($this->likes()->where('user_id', \Auth::guard('api')->user()->id)->first());
+    }
+
+    public function getSubCommentAttribute()
+    {
+        return $this->subComment()
+            ->withTrashed()
+            ->getLikes()
+            ->orderBy('created_at', 'desc')
+            ->paginate(config('settings.paginate_comment'), ['*'], 1);
     }
 }

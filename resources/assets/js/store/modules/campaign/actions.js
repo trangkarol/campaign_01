@@ -210,6 +210,20 @@ export const acceptCampaign = ({ commit }, campaignId) => {
     })
 };
 
+export const listMember = ({ commit }, data) => {
+    if ((parseInt(data.pageCurrent) + 1) <= data.pageNumberEvent) {
+        return new Promise((resolve, reject) => {
+            get(`campaign/members/${data.campaignId}/${data.status}?search=${data.search}&roleId=${data.roleId}&page=${(parseInt(data.pageCurrent) + 1)}`)
+                .then(res => {
+                    resolve(res.data)
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
+};
+
 export default {
     campaignDetail,
     fetchData,
@@ -226,5 +240,6 @@ export default {
     searchMemberToInvite,
     updateEventsCampaign,
     inviteUser,
-    acceptCampaign
+    acceptCampaign,
+    listMember
 };

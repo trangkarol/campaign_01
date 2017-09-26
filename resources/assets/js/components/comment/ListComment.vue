@@ -10,7 +10,7 @@
         </a>
         <a href="javascript:void(0)" class="more-comments"
             v-show="paginates[flag][modelId].current_page < paginates[flag][modelId].last_page
-                && paginates[flag][modelId].total"
+                && paginates[flag][modelId].total > 2"
             @click="handelLoadMoreParentComment({
                 modelId: modelId,
                 flag: flag,
@@ -124,7 +124,7 @@
                     </li>
                     <li class="view-more"
                         v-if="comment.sub_comment.current_page < comment.sub_comment.last_page
-                            && comment.sub_comment.total
+                            && comment.sub_comment.total > 2
                             && flagReply == comment.id">
                         <a href="javascript:void(0)" class="morpCame-comments"
                             @click="handelLoadMoreSubComment({

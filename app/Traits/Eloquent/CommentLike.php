@@ -10,14 +10,7 @@ trait CommentLike
             $query
                 ->withTrashed()
                 ->getLikes()
-                ->with(['subComment' => function ($subQuery) {
-                    $subQuery->withTrashed()->getLikes()
-                        ->groupBy('created_at')
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(config('settings.paginate_comment'), ['*'], 1);
-                }])
                 ->where('parent_id', config('settings.comment_parent'))
-                ->groupBy('created_at')
                 ->orderBy('created_at', 'desc')
                 ->paginate(config('settings.paginate_comment'), ['*'], 1);
         }]);
@@ -27,7 +20,6 @@ trait CommentLike
     {
         return $query->with(['likes' => function ($query) {
             $query->withTrashed()->with('user')
-                ->groupBy('created_at')
                 ->orderBy('created_at', 'desc')
                 ->paginate(config('settings.paginate_default'), ['*'], 1);
         }]);
