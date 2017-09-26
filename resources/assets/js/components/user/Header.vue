@@ -102,7 +102,8 @@
                                         </svg>
                                     </a>
                                 </div>
-                                <a href="#" class="btn btn-control bg-purple" v-if="user.id != authUser.id">
+                                <a href="javascript:void(0)" @click="addChatComponent" class="btn btn-control bg-purple"
+                                    v-if="user.id != authUser.id">
                                     <svg class="olymp-chat---messages-icon">
                                         <use xlink:href="/frontend/icons/icons.svg#olymp-chat---messages-icon"></use>
                                     </svg>
@@ -378,38 +379,16 @@
                 user.has_send_request = hasSendRequest
                 this.updateCurrentPageUser(user)
             },
-            // socket
-            sockets: {
-                acceptRequestSuccess: function (data) {
-                    if ((data.data.acceptId == this.authUser.id && data.data.userId == this.user.id)
-                        || (data.data.acceptId == this.user.id && data.data.userId == this.authUser.id)
-                    ) {
-                        this.changeState(false, false, 1)
-                    }
-                },
-                rejectRequestSuccess: function (data) {
-                    if ((data.data.rejectId == this.authUser.id && data.data.userId == this.user.id)
-                        || (data.data.rejectId == this.user.id && data.data.userId == this.authUser.id)
-                    ) {
-                        this.changeState(false, false, 0)
-                    }
-                },
-                sendRequestSuccess: function (data) {
-                    if (this.authUser.id == data.data.userId && this.user.id == data.data.acceptId) {
-                        this.changeState(true, false, 0)
-                    }
-
-                    if (data.data.acceptId == this.authUser.id && data.data.userId == this.user.id) {
-                        this.changeState(false, true, 0)
-                    }
-                },
-                unfriendSuccess: function (data) {
-                    if ((data.data.unfriendId == this.authUser.id && data.data.userId == this.user.id)
-                        || (data.data.unfriendId == this.user.id && data.data.userId == this.authUser.id)
-                    ) {
-                        this.changeState(false, false, false)
-                    }
-                }
+            addChatComponent() {
+                EventBus.$emit('addChatComponent', {
+                    id: this.user.id,
+                    name: this.user.name,
+                    singleChat: true,
+                    slug: this.replaceSpace(this.user.name + '-' + this.user.id)
+                })
+            },
+            replaceSpace(str) {
+                return str.replace(' ', '-').toLowerCase()
             }
         },
         computed: {
@@ -445,6 +424,39 @@
         components: {
             ImageModal
         },
+        // socket
+        sockets: {
+            acceptRequestSuccess: function (data) {
+                if ((data.data.acceptId == this.authUser.id && data.data.userId == this.user.id)
+                    || (data.data.acceptId == this.user.id && data.data.userId == this.authUser.id)
+                ) {
+                    this.changeState(false, false, 1)
+                }
+            },
+            rejectRequestSuccess: function (data) {
+                if ((data.data.rejectId == this.authUser.id && data.data.userId == this.user.id)
+                    || (data.data.rejectId == this.user.id && data.data.userId == this.authUser.id)
+                ) {
+                    this.changeState(false, false, 0)
+                }
+            },
+            sendRequestSuccess: function (data) {
+                if (this.authUser.id == data.data.userId && this.user.id == data.data.acceptId) {
+                    this.changeState(true, false, 0)
+                }
+
+                if (data.data.acceptId == this.authUser.id && data.data.userId == this.user.id) {
+                    this.changeState(false, true, 0)
+                }
+            },
+            unfriendSuccess: function (data) {
+                if ((data.data.unfriendId == this.authUser.id && data.data.userId == this.user.id)
+                    || (data.data.unfriendId == this.user.id && data.data.userId == this.authUser.id)
+                ) {
+                    this.changeState(false, false, false)
+                }
+            }
+        }
     }
 </script>
 <style lang="scss" scoped>

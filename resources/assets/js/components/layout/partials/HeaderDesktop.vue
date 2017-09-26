@@ -142,7 +142,9 @@
                                     </div>
                                     <div class="notification-event">
                                         <a href="#" class="h6 notification-friend">{{ mess.showName }}</a>
-                                        <span class="chat-message-item" v-html="mess.sendName + mess.message"></span>
+                                        <span id="chat-notification" class="chat-message-item"
+                                            v-html="mess.sendName + mess.message">
+                                        </span>
                                         <span class="notification-date">
                                             <time class="entry-date updated" datetime="2004-07-24T18:18" v-if="mess.read">
                                                 {{ $t('homepage.header.readed_at') + ' ' + calendarTime(mess.time) }}
@@ -719,7 +721,6 @@ export default {
             }
         },
         addChatComponent(mess) {
-            console.log(mess)
             if (!Number(mess.to) && typeof mess.to === 'string' || !Number(mess.from) && typeof mess.from === 'string') {
                 let campaign = this.groups.filter(group => {
                     return group.hashtag === mess.showName
@@ -979,7 +980,7 @@ export default {
     background-color: rgb(236, 239, 241) !important;
 }
 
-.chat-message-item {
+#chat-notification {
     color: #0c0c0c !important;
     p {
         color: #0c0c0c !important;
