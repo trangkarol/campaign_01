@@ -19,7 +19,9 @@
         "cancel_request": "Cancel friend request",
         "accept_request": "Accept friend request",
         "reject_request": "Reject friend request",
-        "add_friend": "Add friend"
+        "add_friend": "Add friend",
+        "friends_since": "Friends Since",
+        "nothing_found": "Nothing found"
     },
     "title": {
         "login": "Login to your Account",

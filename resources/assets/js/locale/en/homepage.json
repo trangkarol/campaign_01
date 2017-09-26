@@ -50,7 +50,11 @@
         "logout": "Logout",
         "vietnam": "Vietnamese ",
         "english": "English",
-        "japan": "Janpanese"
+        "japan": "Janpanese",
+        "notifications": "Notifications",
+        "invited_join": "invited you to join campaign",
+        "loading": "Loading...",
+        "notification_empty": "Don't have any notification"
     },
     "share_to": "Share to"
 }
