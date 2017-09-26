@@ -2,8 +2,8 @@
     <div class="container">
         <div class="row">
             <!-- Main Content -->
-            <div class="col-xl-6 push-xl-3 col-lg-12 push-lg-0 col-md-12 col-sm-12 col-xs-12">
-                <div class="page-description" v-if="!listActivity.data.length">
+            <div class="col-xl-6 push-xl-3 col-lg-12 push-lg-0 col-md-12 col-sm-12 col-xs-12" v-if="listActivity">
+                <div class="page-description" v-if="!listActivity.total">
                     <div class="icon">
                         <svg class="olymp-star-icon left-menu-icon">
                             <use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use>
@@ -62,33 +62,26 @@
                                 </show-text>
                             </p>
 
-                            <a href="javascript:void(0)" style="display: none;"
-                                data-toggle="modal"
-                                data-target="#blog-post-popup"
-                                class="btn btn-md-2 btn-border-think c-grey btn-transparent custom-color">
-                                {{ $t('post.read_more') }}
-                            </a>
-
                             <master-like
-                                :likes="activity.likes"
+                                :likes="activity.activitiable.likes"
                                 :checkLiked="checkLiked"
-                                :flag="'activity'"
+                                :flag="nameActivity(activity.activitiable_type)"
                                 :type="'like'"
-                                :modelId="activity.id"
-                                :numberOfComments="activity.number_of_comments"
-                                :numberOfLikes="activity.number_of_likes"
+                                :modelId="activity.activitiable.id"
+                                :numberOfComments="activity.activitiable.number_of_comments"
+                                :numberOfLikes="activity.activitiable.number_of_likes"
                                 :showMore="true">
                             </master-like>
 
                             <div class="control-block-button post-control-button">
                                 <master-like
-                                    :likes="activity.likes"
+                                    :likes="activity.activitiable.likes"
                                     :checkLiked="checkLiked"
-                                    :flag="'activity'"
+                                    :flag="nameActivity(activity.activitiable_type)"
                                     :type="'like-infor'"
-                                    :modelId="activity.id"
-                                    :numberOfComments="activity.number_of_comments"
-                                    :numberOfLikes="activity.number_of_likes">
+                                    :modelId="activity.activitiable.id"
+                                    :numberOfComments="activity.activitiable.number_of_comments"
+                                    :numberOfLikes="activity.activitiable.number_of_likes">
                                 </master-like>
                                 <a href="javascript:void(0)" class="btn btn-control">
                                     <svg class="olymp-comments-post-icon">
@@ -108,10 +101,10 @@
                             </div>
                         </article>
                         <comment
-                            :comments="activity.comments"
-                            :numberOfComments="activity.number_of_comments"
-                            :model-id ="activity.id"
-                            :flag="'activity'"
+                            :comments="activity.activitiable.comments"
+                            :numberOfComments="activity.activitiable.number_of_comments"
+                            :model-id="activity.activitiable.id"
+                            :flag="nameActivity(activity.activitiable_type)"
                             :classListComment="''"
                             :classFormComment="''">
                         </comment>

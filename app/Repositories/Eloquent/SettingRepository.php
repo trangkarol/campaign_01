@@ -30,9 +30,9 @@ class SettingRepository extends BaseRepository implements SettingInterface
             ->pluck('id')
             ->all();
 
-        $campaignsClose = $this->user->campaigns
-            ->where('status', Campaign::BLOCK)
-            ->pluck('id')
+        $campaignsClose = $this->user->campaigns()
+            ->onlyTrashed()
+            ->pluck('campaign_id')
             ->all();
 
         $campaignsPublic = $this->where('settingable_type', Campaign::class)

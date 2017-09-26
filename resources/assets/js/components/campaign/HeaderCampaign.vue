@@ -73,6 +73,13 @@
                                                     {{ $t('campaigns.events_closed') }}
                                                 </router-link>
                                             </li>
+                                            <li>
+                                                <router-link
+                                                    :to="{ name: 'campaign.discussion' }"
+                                                    :class="checkActiveUrl('campaign.discussion')">
+                                                    {{ $t('campaigns.discussion') }}
+                                                </router-link>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>

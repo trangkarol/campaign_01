@@ -82,6 +82,11 @@ class Campaign extends BaseModel
         return $this->morphMany(Like::class, 'likeable');
     }
 
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
     public function settings()
     {
         return $this->morphMany(Setting::class, 'settingable');

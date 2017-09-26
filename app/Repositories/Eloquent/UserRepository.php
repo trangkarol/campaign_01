@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Campaign;
 use App\Models\Action;
+use App\Models\Activity;
 use App\Models\Event;
 use App\Repositories\Contracts\UserInterface;
 use App\Jobs\SendEmail;
@@ -113,26 +114,81 @@ class UserRepository extends BaseRepository implements UserInterface
         return $data;
     }
 
-    public function getTimeline($user, $userId)
+    public function getTimeline($user, $data, $userId)
     {
-        $activities = $user->activities()
-            ->with('activitiable.media')
-            ->getLikes()
-            ->getComments()
+        $currentUser = $user;
+        $user = $user->activities()
+            ->with(['activitiable' => function ($query) {
+                $query->with('media')
+                    ->getLikes();
+            }])
             ->whereIn('activitiable_type', [
                 Campaign::class,
                 Action::class,
                 Event::class,
-            ])->orderBy('id', 'DESC')
-            ->paginate(config('setting.pagination.timeline'));
+            ])
+            ->where('name', Activity::CREATE);
+        if ($currentUser->id == $userId) {
+            $user = $user->where(function ($query) use ($data) {
+                $query->where(function ($query) use ($data) {
+                    $query->whereIn('activitiable_id', $data['eventIds'])
+                        ->where('activitiable_type', Event::class);
+                })
+                ->orWhere(function ($sub) use ($data) {
+                    $sub->where('activitiable_type', Campaign::class)
+                        ->whereIn('activitiable_id', $data['campaignIds']);
+                })
+                ->orWhere(function ($sub) use ($data) {
+                    $sub->where('activitiable_type', Action::class)
+                        ->whereIn('activitiable_id', $data['actionIds']);
+                });
+            });
+        }
 
-        $checkLiked = $this->checkLike($user->activities(), $userId);
-        $activities = $activities;
+        $activities = $checkLikeActivities = $user;
+
+        // $checkLikes = $user->activities()->whereIn('id', $checkLikeActivities->get()->pluck('id'))
+        //     ->with(['activitiable' => function ($query) use ($userId) {
+        //         $query->whereHas('likes', function ($subQuery) use ($userId) {
+        //             $subQuery->where('user_id', $userId);
+        //         });
+        //     }])
+        //     ->get();
+
+        // $checkLiked = $checkLikes->reject(function ($item, $key) {
+        //     return $item->activitiable === null;
+        // });
+
+        $inforListActivity = $activities->groupBy('created_at')
+            ->orderBy('created_at', 'DESC')
+            ->paginate(config('setting.pagin-tion.timeline'));
+
+        $listActivity = $inforListActivity->each(function ($item) {
+            if ($item->activitiable_type == Campaign::class) {
+                $item->load('activitiable.tags', 'activitiable.settings');
+            } else {
+                if ($item->activitiable_type == Event::class) {
+                    $item = $item->load('activitiable.campaign');
+                } else {
+                    $item = $item->load('activitiable.event.campaign');
+                }
+
+                //comment
+                $item->load(['comments' => function ($query) {
+                    $query->withTrashed()
+                        ->getLikes()
+                        ->where('parent_id', config('settings.comment_parent'))
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(config('settings.paginate_comment'), ['*'], 1);
+                }]);
+            }
+        });
 
         return [
-            'currentPageUser' => $user,
-            'listActivity' => $activities,
-            'checkLiked' => $checkLiked,
+            'currentPageUser' => $currentUser,
+            'inforListActivity' => $inforListActivity,
+            'listActivity' => $listActivity,
+            'checkLiked' => []//$checkLiked->pluck('activitiable_id'),
         ];
     }
 
