@@ -384,11 +384,8 @@
                     id: this.user.id,
                     name: this.user.name,
                     singleChat: true,
-                    slug: this.replaceSpace(this.user.name + '-' + this.user.id)
+                    slug: this.user.slug
                 })
-            },
-            replaceSpace(str) {
-                return str.replace(' ', '-').toLowerCase()
             }
         },
         computed: {
