@@ -124,7 +124,13 @@
 
         watch: {
             time() {
-                this.newExpense.time = moment(this.time).format('YYYY-MM-DD')
+                var arrayTime = this.time.split('/')
+
+                if (arrayTime[2].length == 4) {
+                    this.newExpense.time = this.time.split('/').reverse().join('-')
+                } else {
+                    this.newExpense.time = this.time.split('/').join('-')
+                }
             }
         },
 
