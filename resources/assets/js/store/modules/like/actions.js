@@ -7,9 +7,7 @@ export const setLike = ({ commit }, data) => {
 };
 
 export const likeActivity = ({ commit }, data) => {
-     console.log('sdsds', data.deleteDate)
     if (data.deleteDate == null) {
-        console.log('sdsds')
         return new Promise((resolve, reject) => {
             post(`like/${data.modelId}/${data.model}`)
                 .then(res => {
