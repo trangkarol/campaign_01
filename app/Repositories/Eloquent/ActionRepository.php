@@ -285,4 +285,26 @@ class ActionRepository extends BaseRepository implements ActionInterface
 
         return $data;
     }
+
+    public function actionIds($eventId)
+    {
+        $data['list_action'] = $this->where('id', $id)
+            ->getLikes('getLikes')
+            ->getComments('getComments')
+            ->withTrashed()
+            ->with([
+                'user',
+                'media' => function ($query) {
+                    $query->withTrashed();
+                },
+            ])
+            ->first();
+
+        return $data;
+    }
+
+    public function getActionIds($eventIds)
+    {
+        return $this->whereIn('event_id', $eventIds)->lists('id')->all();
+    }
 }

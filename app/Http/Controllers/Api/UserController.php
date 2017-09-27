@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\ApiController;
 use App\Repositories\Contracts\UserInterface;
+use App\Repositories\Contracts\EventInterface;
 use App\Repositories\Contracts\TagInterface;
+use App\Repositories\Contracts\SettingInterface;
+use App\Repositories\Contracts\ActionInterface;
 use App\Http\Requests\User\ProfileRequest;
 use App\Http\Requests\User\SecurityRequest;
 use App\Http\Requests\User\ImageUploadRequest;
@@ -27,17 +30,26 @@ class UserController extends ApiController
 
     protected $tagRepository;
     protected $roleRepository;
+    protected $settingRepository;
+    protected $actionRepository;
+    protected $eventRepository;
     private $redis;
     const READ = 0;
 
     public function __construct(
         UserInterface $userRepository,
         TagInterface $tagRepository,
-        RoleInterface $roleRepository
+        RoleInterface $roleRepository,
+        SettingInterface $settingRepository,
+        ActionInterface $actionRepository,
+        EventInterface $eventRepository
     ) {
         parent::__construct($userRepository);
         $this->tagRepository = $tagRepository;
         $this->roleRepository = $roleRepository;
+        $this->settingRepository = $settingRepository;
+        $this->actionRepository = $actionRepository;
+        $this->eventRepository = $eventRepository;
         $this->redis = LRedis::connection();
     }
 
@@ -305,8 +317,12 @@ class UserController extends ApiController
             throw new Exception('Error Processing Request');
         }
 
-        return $this->doAction(function () use ($user) {
-            $this->compacts['data'] = $this->repository->getTimeline($user, $this->user->id);
+        return $this->getData(function () use ($user) {
+            $data = [];
+            $data['campaignIds'] = $this->settingRepository->getCampaignIds();
+            $data['eventIds'] = $this->eventRepository->getEventIds($data['campaignIds']);
+            $data['actionIds'] = $this->actionRepository->getActionIds($data['eventIds']);
+            $this->compacts['data'] = $this->repository->getTimeline($user, $data, $this->user->id);
         });
     }
 

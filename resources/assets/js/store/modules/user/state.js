@@ -1,12 +1,11 @@
 export default {
     user: {},
     currentPageUser: {},
-    listActivity: {
-        data: [],
-    },
+    listActivity: {},
     checkLiked: [],
     loading: false,
     listPhoto: [],
     listFriend: [],
-    photosUser: []
+    photosUser: [],
+    inforListActivity: {}
 }

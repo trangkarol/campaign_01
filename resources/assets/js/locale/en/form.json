@@ -84,5 +84,6 @@
     "joined": "joined",
     "campaign": "campaign",
     "event": "event",
-    "action": "action"
+    "action": "action",
+    "closed": "closed"
 }

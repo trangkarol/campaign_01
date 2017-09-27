@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Campaign;
 use App\Models\Action;
+use App\Models\Activity;
 use App\Models\Event;
 use App\Repositories\Contracts\UserInterface;
 use App\Jobs\SendEmail;
@@ -114,26 +115,120 @@ class UserRepository extends BaseRepository implements UserInterface
         return $data;
     }
 
-    public function getTimeline($user, $userId)
+    public function getTimeline($user, $data, $userId)
     {
-        $activities = $user->activities()
-            ->with('activitiable.media')
-            ->getLikes()
-            ->getComments()
-            ->whereIn('activitiable_type', [
+        $currentUser = $user;
+        $user = $user->activities()->withTrashed()
+            ->with(['activitiable' => function ($query) {
+                $query->withTrashed();
+            }])
+            ->where('name', Activity::CREATE);
+
+        if ($currentUser->id != $userId) {
+            $user = $user->withTrashed()->where(function ($query) use ($data) {
+                $query->where(function ($sub) use ($data) {
+                    $sub->whereIn('activitiable_id', $data['eventIds'])
+                        ->where('activitiable_type', Event::class);
+                })
+                ->orWhere(function ($sub) use ($data) {
+                    $sub->where('activitiable_type', Campaign::class)
+                        ->whereIn('activitiable_id', $data['campaignIds']);
+                })
+                ->orWhere(function ($sub) use ($data) {
+                    $sub->where('activitiable_type', Action::class)
+                        ->whereIn('activitiable_id', $data['actionIds']);
+                });
+            });
+        } else {
+            $user = $user->whereIn('activitiable_type', [
+                Event::class,
                 Campaign::class,
                 Action::class,
-                Event::class,
-            ])->orderBy('id', 'DESC')
-            ->paginate(config('setting.pagination.timeline'));
+            ]);
+        }
 
-        $checkLiked = $this->checkLike($user->activities(), $userId);
-        $activities = $activities;
+        $activities = $checkLikeActivities = $user;
+
+        $checkLikes = $checkLikeActivities->get()->each(function ($item) use ($userId) {
+            $item->load(['activitiable' => function ($query) use ($userId) {
+                $query->withTrashed()
+                    ->whereHas('likes', function ($subQuery) use ($userId) {
+                        $subQuery->withTrashed()
+                            ->where('user_id', $userId);
+                    });
+            }]);
+        });
+
+        $checkLiked = $checkLikes->reject(function ($item, $key) {
+            return $item->activitiable === null;
+        });
+
+        $inforListActivity = $activities
+            ->orderBy('created_at', 'DESC')
+            ->paginate(config('settings.paginate_event'));
+
+        $listActivity = $inforListActivity->reject(function ($item) {
+            if ($item->activitiable_type == Campaign::class) {
+                $item->load(['activitiable' => function ($query) {
+                    $query->withTrashed()->with(['comments' => function ($sub) {
+                        $sub->withTrashed()
+                            ->getLikes()
+                            ->where('parent_id', config('settings.comment_parent'))
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(config('settings.paginate_comment'), ['*'], 1);
+                    }])
+                    ->with(['tags', 'media' => function ($subQuery) {
+                        $subQuery->withTrashed();
+                    }, 'settings' => function ($subQuery) {
+                        $subQuery->withTrashed();
+                    }])
+                    ->getLikes();
+                }]);
+            } else {
+                if ($item->activitiable_type == Event::class) {
+                    $item->load(['activitiable' => function ($query) {
+                        $query->withTrashed()->with(['comments' => function ($sub) {
+                            $sub->withTrashed()
+                                ->getLikes()
+                                ->where('parent_id', config('settings.comment_parent'))
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(config('settings.paginate_comment'), ['*'], 1);
+                        }])
+                        ->with(['media' => function ($subQuery) {
+                            $subQuery->withTrashed();
+                        }, 'campaign' => function ($subQuery) {
+                            $subQuery->withTrashed();
+                        }])
+                        ->getLikes();
+                    }]);
+                } else {
+                    $item->load(['activitiable' => function ($query) {
+                        $query->withTrashed()->with(['comments' => function ($sub) {
+                            $sub->withTrashed()
+                                ->getLikes()
+                                ->where('parent_id', config('settings.comment_parent'))
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(config('settings.paginate_comment'), ['*'], 1);
+                        }])
+                        ->with(['event' => function ($subQuery) {
+                            $subQuery->withTrashed()
+                                ->with(['campaign' => function ($sub) {
+                                    $sub->withTrashed();
+                                }]);
+                        }, 'media' => function ($subQuery) {
+                            $subQuery->withTrashed();
+                        }])
+                        ->getLikes();
+                    }]);
+                }
+            }
+        });
 
         return [
-            'currentPageUser' => $user,
-            'listActivity' => $activities,
-            'checkLiked' => $checkLiked,
+            'currentPageUser' => $currentUser,
+            'inforListActivity' => $inforListActivity,
+            'listActivity' => $listActivity,
+            'checkLiked' => $checkLiked->pluck('activitiable_id'),
         ];
     }
 
