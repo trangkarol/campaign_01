@@ -405,4 +405,12 @@ abstract class BaseRepository implements RepositoryInterface
 
         return $this;
     }
+
+    public function pluck($column, $key = null)
+    {
+        $model = $this->model->pluck($column, $key);
+        $this->makeModel();
+
+        return $model;
+    }
 }

@@ -15,7 +15,7 @@
     "limit": "Limit user join campaign",
     "public": "Public",
     "private": "Private",
-    "format_date": "MM/DD/YYYY",
+    "format_date": "YYYY/MM/DD",
     "tags": "Search or add a tag",
     "add_tags": "Add this as new tag",
     "upload_image": "Upload image",

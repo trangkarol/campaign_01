@@ -59,11 +59,12 @@ class UserRepository extends BaseRepository implements UserInterface
 
         $fields = [
             'content' => trans('emails.active_account', ['object' => $user->name]),
+            'linkActive' => action('Frontend\UserController@active', $user->token_confirm),
         ];
 
         $this->dispatch(new SendEmail($info, User::ACTIVE_LINK_SEND, $fields));
 
-        return $fields;
+        return $fields['content'];
     }
 
     /**

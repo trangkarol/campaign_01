@@ -788,6 +788,7 @@ export default {
             this.$validator.setLocale(locale)
             window.moment.locale(locale)
             localStorage.setItem('locale', locale)
+            EventBus.$emit('changeLanguage', { locale: locale })
         }
     },
 
