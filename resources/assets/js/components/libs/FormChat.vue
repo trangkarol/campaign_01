@@ -2,11 +2,6 @@
         <div class="div-input-chat form-group label-floating">
             <div ref="chatEditor" class="chat-quill-editor"></div>
             <div class="add-options-message">
-                <a href="#" class="options-message">
-                    <svg class="olymp-computer-icon">
-                        <use xlink:href="/frontend/icons/icons.svg#olymp-computer-icon"></use>
-                    </svg>
-                </a>
                 <div class="options-message smile-block">
                     <svg class="olymp-happy-sticker-icon">
                         <use xlink:href="/frontend/icons/icons.svg#olymp-happy-sticker-icon"></use>

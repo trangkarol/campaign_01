@@ -60,11 +60,11 @@ export default {
     watch: {
         start() {
             this.status = this.validateDate(this.start, this.end)
-            this.$emit('update:startDay', this.start)
+            this.$emit('update:startDay', this.standStart)
         },
         end() {
             this.status = this.validateDate(this.start, this.end)
-            this.$emit('update:endDay', this.end)
+            this.$emit('update:endDay', this.standEnd)
         },
         status() {
             this.$emit('update:flag', this.status)

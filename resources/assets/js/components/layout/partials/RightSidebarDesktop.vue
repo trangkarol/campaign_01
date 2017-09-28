@@ -28,8 +28,8 @@
         <div class="fixed-sidebar-right sidebar--large" id="sidebar-right-1">
             <div class="mCustomScrollbar" data-mcs-theme="dark" id="listOpen">
                 <div class="ui-block-title ui-block-title-small">
-                    <a href="#" class="title">{{ $t('chat.close_friends') }}s</a>
-                    <a href="#">{{ $t('chat.settings') }}</a>
+                    <a href="javascript:void(0)" class="title">{{ $t('chat.close_friends') }}s</a>
+                    <a href="javascript:void(0)">{{ $t('chat.settings') }}</a>
                 </div>
                 <ul class="chat-users">
                     <li class="inline-items" v-for="friend in users">
@@ -41,7 +41,11 @@
                             <span class="icon-status disconected" v-else></span>
                         </div>
                         <div class="author-status">
-                            <a href="#" class="h6 author-name">{{ friend.name }}</a>
+                            <a href="javascript:void(0)"
+                                class="h6 author-name"
+                                @click="addChatComponent(friend.id, friend.name, true, friend.slug)">
+                                {{ friend.name }}
+                            </a>
                             <span class="status">
                                 {{ friend.online ? $t('user.connect.online') : $t('user.connect.offline') }}
                             </span>
@@ -75,8 +79,8 @@
                     </li>
                 </ul>
                 <div class="ui-block-title ui-block-title-small">
-                    <a href="#" class="title">{{ $t('chat.groups') }}</a>
-                    <a href="#">{{ $t('chat.settings') }}</a>
+                    <a href="javascript:void(0)" class="title">{{ $t('chat.groups') }}</a>
+                    <a href="javascript:void(0)">{{ $t('chat.settings') }}</a>
                 </div>
                 <ul class="chat-users">
                     <li class="inline-items" v-for="group in groupsCampaign">
@@ -88,7 +92,11 @@
                             <span class="icon-status online"></span>
                         </div>
                         <div class="author-status">
-                            <a href="#" class="h6 author-name">{{ group.hashtag }}</a>
+                            <a href="javascript:void(0)"
+                                class="h6 author-name"
+                                @click="addChatComponent(group.hashtag, group.hashtag, false, group.slug)">
+                                {{ group.hashtag }}
+                            </a>
                             <span class="status"></span>
                         </div>
                         <div class="more">
