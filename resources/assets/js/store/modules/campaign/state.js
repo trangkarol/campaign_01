@@ -1,5 +1,12 @@
 export default {
-    campaign: [],
+    campaign: {
+        'campaign_images': {},
+        'start_day': {},
+        'end_day': {},
+        'owner': [],
+        'status': {},
+        'user': []
+    },
     listMembers: {
         members: [],
         memberIds: [],

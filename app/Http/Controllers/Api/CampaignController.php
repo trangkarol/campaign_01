@@ -444,6 +444,16 @@ class CampaignController extends ApiController
         });
     }
 
+    public function statisticWithUser($id)
+    {
+        $campaign = $this->campaignRepository->withTrashed()->findOrFail($id);
+
+        return $this->getData(function () use ($campaign) {
+            $this->authorize('view', $campaign);
+            $this->compacts['data'] = $this->campaignRepository->statisticWithUser($campaign);
+        });
+    }
+
     public function getEventsClosed($campaignId)
     {
         $campaign = $this->campaignRepository->findOrFail($campaignId);

@@ -5,7 +5,7 @@
                 <div class="ui-block">
                     <div class="ui-block-content">
                         <div class="monthly-indicator">
-                            <a href="#" class="btn btn-control bg-breez">
+                            <a href="#" class="btn btn-control bg-breez" @click.prevent="showUserStatistic">
                                 <svg class="olymp-happy-faces-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-happy-faces-icon"></use></svg>
                             </a>
                             <div class="monthly-count">
@@ -22,7 +22,7 @@
                 <div class="ui-block">
                     <div class="ui-block-content">
                         <div class="monthly-indicator">
-                            <a href="#" class="btn btn-control bg-primary negative">
+                            <a href="#" class="btn btn-control bg-primary negative" @click.prevent>
                                 <svg class="olymp-stats-arrows"><use xlink:href="/frontend/icons/icons.svg#olymp-month-calendar-icon"></use></svg>
                             </a>
                             <div class="monthly-count">
@@ -41,7 +41,7 @@
                 <div class="ui-block">
                     <div class="ui-block-content">
                         <div class="monthly-indicator">
-                            <a href="#" class="btn btn-control bg-yellow negative">
+                            <a href="#" class="btn btn-control bg-yellow negative" @click.prevent>
                                 <svg class="olymp-stats-arrows"><use xlink:href="/frontend/icons/icons.svg#olymp-month-calendar-icon"></use></svg>
                             </a>
                             <div class="monthly-count">
@@ -71,6 +71,7 @@
             </div>
         </div>
         <information :show.sync="showInfo" :data="information" @reload="fetchStatisticInfo"/>
+        <user-statistic :show.sync="showUser" :data="userInfo" @reload="fetchUserStatistic"/>
 
         <div class="row">
 
@@ -143,7 +144,8 @@
 <script>
 import LineChart from '../libs/chart/LineChart.js'
 import { get } from '../../helpers/api'
-import Information from './ExportInformation.vue'
+import Information from './ExportInformation'
+import UserStatistic from './UserStatistic'
 
 export default {
     data() {
@@ -192,15 +194,30 @@ export default {
             information: {
                 title: '',
                 description: '',
-                event_count: 0,
                 active_users: [],
-                owner: {},
-                settings: [],
                 reported_at: null
-            }
+            },
+            showUser: false,
+            userInfo: {}
         }
     },
     methods: {
+        fetchUserStatistic() {
+            this.$Progress.start()
+            get(`campaign/${this.pageId}/user-statistic`)
+                .then(res => {
+                    this.$set(this.userInfo, 'users', res.data.data.approved_users)
+                    const guests = _.groupBy(res.data.data.donations, 'user.id')
+                    this.$set(this.userInfo, 'guests', guests)
+                    this.$set(this.userInfo, 'reported_at', new Date().toLocaleString(window.Laravel.locale))
+                    this.$Progress.finish()
+                })
+                .catch(() => this.$Progress.fail)
+        },
+        showUserStatistic() {
+            this.fetchUserStatistic()
+            this.showUser = true
+        },
         fetchStatisticInfo() {
             this.$Progress.start()
             get(`campaign/${this.pageId}/get-export-data`)
@@ -208,8 +225,6 @@ export default {
                     this.information = res.data.data
                     this.information.event_count = this.information.events.length
                     this.information.events = _.groupBy(this.information.events, 'settings[0].date_string')
-                    this.information.media = this.information.media[0].image_medium
-                    this.information.owner = this.information.owner[0]
                     this.information.reported_at = new Date().toLocaleString(window.Laravel.locale)
                     this.$Progress.finish()
                 })
@@ -269,7 +284,8 @@ export default {
     },
     components: {
         LineChart,
-        Information
+        Information,
+        UserStatistic
     }
 }
 </script>

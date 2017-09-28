@@ -77,7 +77,18 @@
         "and": "and",
         "finished": "finished",
         "actions": "actions",
-        "not_enought_data": "Not enough data for statistics"
+        "not_enought_data": "Not enough data for statistics",
+        "more": "More",
+        "join_at": "Joined at",
+        "guest": "Guest who has donations",
+        "percent": "Percent",
+        "info": "{0} has donate {1} time(s) in {2} events(s)"
+    },
+    "roles": {
+        "owner": "Owner",
+        "moderator": "Moderator",
+        "member": "Member",
+        "blocked": "Blocked user"
     },
     "events_closed": "Events Closed",
     "delete_at": "Delete At",

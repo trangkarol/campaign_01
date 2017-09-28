@@ -96,6 +96,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::get('campaign-related/{id}', 'CampaignController@getCampaignRelated');
             Route::get('search-members/{campaignId}/{status}', 'CampaignController@searchMembers');
             Route::get('{id}/statistic', 'CampaignController@statistic')->name('statistic');
+            Route::get('{id}/user-statistic', 'CampaignController@statisticWithUser')->name('userStatistic');
             Route::get('{id}/get-export-data', 'CampaignController@getExportData')->name('export');
             Route::get('events-closed/{campaignId}', 'CampaignController@getEventsClosed');
             Route::post('open/{id}', 'CampaignController@openCampaign');

@@ -94,95 +94,75 @@
                     </a>
                 </div>
             </article>
-            <div v-if="data.event_count">
-                <ul class="comments-list" v-for="(events, day) in data.events">
-                    <li><h3 class="date-title">{{ day | localeDate}}</h3></li>
-                    <li v-for="event in events">
-                        <div class="post__author author vcard inline-items">
-                            <img :src="event.media[0].image_thumbnail" alt="author" v-if="event.media.length">
-                            <div class="author-date">
-                                <router-link class="h6 post__author-name fn"
-                                    :to="{
-                                        name: 'event.index',
-                                        params: { slug: $route.params.slug, slugEvent: event.slug }
-                                    }">
-                                    {{ event.title }}
-                                </router-link>
-                                <div class="post__date">
-                                    <time class="published" datetime="2017-03-24T18:18">
-                                        {{ $t('campaigns.statistic.created_at') }}
-                                        {{ event.created_at | localeDate }}
-                                    </time>
-                                </div>
-                            </div>
-                            <a href="#" class="more"><svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg></a>
+            <ul class="comments-list">
+                <li>
+                    <h3 class="date-title pull-left">{{ $t('campaigns.list-members') }}</h3>
+                    <form class="w-search pull-right" @submit.prevent>
+                        <div class="form-group with-button">
+                            <input class="form-control" type="text" :placeholder="$t('messages.search-list-member')" v-model="search">
+                            <button>
+                                <svg class="olymp-magnifying-glass-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-magnifying-glass-icon"></use></svg>
+                            </button>
                         </div>
-                        <div>
-                            <a class="place inline-items post-add-icon">
-                                <svg class="olymp-add-a-place-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-add-a-place-icon"></use></svg>
-                                <span>{{ event.address }}</span>
-                            </a>
-                            <a class="place inline-items post-add-icon">
-                                <svg class="olymp-small-calendar-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-small-calendar-icon"></use></svg>
-                                <span>{{ getDay(event.settings, settings.events.start_day) | localeDate }}</span>
-                                <span v-if="getDay(event.settings, settings.events.end_day)">
-                                    - {{ getDay(event.settings, settings.events.end_day) | localeDate }}
-                                </span>
-                            </a>
-                            <a class="post-add-icon inline-items place">
-                                <svg class="olymp-heart-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-heart-icon"></use></svg>
-                                <span>{{ event.number_of_likes }}</span>
-                            </a>
-                        </div>
-                        <div>
-                            <table class="mt-3 table-bordered table table-sm" v-if="event.goals.length">
-                                <thead class="thead-default">
-                                    <tr>
-                                        <th><a class="place inline-items post-add-icon">
-                                            <svg class="olymp-add-a-place-icon">
-                                                <use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use>
-                                            </svg>
-                                        </a></th>
-                                        <th>{{ $t('events.donation.donate') }}</th>
-                                        <th>{{ $t('events.donation.goal') }}</th>
-                                        <th>{{ $t('events.donation.received') }}</th>
-                                        <th>{{ $t('campaigns.statistic.donation_times') }}</th>
-                                        <th>{{ $t('events.expenses_statistic.spent') }}</th>
-                                        <th>{{ $t('campaigns.statistic.spent_times') }}</th>
-                                        <th class="text-capitalize">{{ $t('events.expenses_statistic.remain') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(goal, i) in event.goals">
-                                        <th scope="row">{{ i + 1 }}</th>
-                                        <td>{{ goal.donation_type.name + ' (' + goal.donation_type.quality.name + ')' }}</td>
-                                        <td>{{ goal.goal }}</td>
-                                        <td>
-                                            {{ sumValue(goal.donations, 'value') }}
-                                            ({{ getPercent(sumValue(goal.donations, 'value'), goal.goal) }} %)
-                                        </td>
-                                        <td>{{ goal.donations.length }}</td>
-                                        <td>
-                                            {{ sumValue(goal.expenses, 'cost') }}
-                                            ({{ getPercent(sumValue(goal.expenses, 'cost'), sumValue(goal.donations, 'value')) }}%)
-                                        </td>
-                                        <td>{{ goal.expenses.length }}</td>
-                                        <td>
-                                            {{ sumValue(goal.donations, 'value') - sumValue(goal.expenses, 'cost') }}
-                                            ({{ 100 - getPercent(sumValue(goal.expenses, 'cost'), sumValue(goal.donations, 'value')) }}%)
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div v-else>
-                <p class="h6 post__author-name fn text-center align-middle mt-1">
-                    {{ $t('campaigns.statistic.no_event') }}
-                </p>
-            </div>
+                    </form>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th></th>
+                                <th>{{ $t('form.label.full_name') }}</th>
+                                <th>{{ $t('form.role') }}</th>
+                                <th>{{ $t('campaigns.statistic.join_at') }}</th>
+                                <th>{{ $t('campaigns.statistic.donation_times') }}</th>
+                                <th>{{ $t('campaigns.statistic.more') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr  v-if="!filteredUsers.members.length">
+                                <td colspan="7" class="text-center">{{ $t('user.friend.nothing_found') }}</td>
+                            </tr>
+                            <tr v-for="(user, index) in filteredUsers.members" v-else>
+                                <th scope="row">{{ index + 1 }}</th>
+                                <td><span class="author-thumb"><img style="max-width: 36px" :src="user.image_thumbnail"></span></td>
+                                <td v-if="user.pivot.role_id != 6">{{ user.name }}</td>
+                                <td v-else><s>{{ user.name }}</s></td>
+                                <td>{{ getRole(user) }}</td>
+                                <td>{{ user.pivot.created_at | localeDate }}</td>
+                                <td>{{ user.donations.length }}</td>
+                                <td><a href="#" @click.prevent="selectUser(user)"><i class="fa fa-eye"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+                <li>
+                    <h3 class="date-title">{{ $t('campaigns.statistic.guest') }}</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th></th>
+                                <th>{{ $t('form.label.full_name') }}</th>
+                                <th>{{ $t('campaigns.email') }}</th>
+                                <th>{{ $t('campaigns.statistic.donation_times') }}</th>
+                                <th>{{ $t('campaigns.statistic.more') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr  v-if="!filteredUsers.guests.length">
+                                <td colspan="6" class="text-center">{{ $t('user.friend.nothing_found') }}</td>
+                            </tr>
+                            <tr v-for="(donation, index) in filteredUsers.guests" v-else>
+                                <th scope="row">{{ index + 1 }}</th>
+                                <th><span class="author-thumb"><img style="max-width: 36px" :src="donation[0].user.image_thumbnail"></span></th>
+                                <td>{{ donation[0].user.name }}</td>
+                                <td>{{ donation[0].user.email }}</td>
+                                <td>{{ donation.length }}</td>
+                                <td><a href="#" @click.prevent="selectUser(donation, true)"><i class="fa fa-eye"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </li>
+            </ul>
             <div class="comment-form inline-items">
                 <div class="with-icon-right is-empty float-right">
                     {{ $t('campaigns.statistic.reported_at') }}
@@ -191,21 +171,76 @@
                 </div>
             </div>
         </div>
+        <modal :show.sync="showModal" v-if="selectedUser.id">
+            <h4 slot="header">{{ selectedUser.name }} </h4>
+            <div slot="main">
+                <strong>{{ $t('campaigns.statistic.info', [selectedUser.name, selectedUser.donations.length, Object.keys(selectedUser.events).length]) }}</strong>
+                <table class="table table-striped" style="margin-top: 1em">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>{{ $t('form.label.goal') }}</th>
+                            <th>{{ $t('events.donation.donate') }}</th>
+                            <th class="text-capitalize">{{ $t('actions.at') }}</th>
+                            <th>{{ $t('campaigns.statistic.percent') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <td colspan="5" class="text-center table-info" v-if="!Object.keys(selectedUser.events).length">{{ $t('user.friend.nothing_found') }}</td>
+                        <template v-for="(donations, index) in selectedUser.events" v-else>
+                            <td colspan="5" class="text-center table-success"><i class="fa fa-calendar"></i> {{ index }}</td>
+                            <tr v-for="(donation, index) in donations">
+                                <th scope="row">{{ index + 1 }}</th>
+                                <td>{{ donation.goal.goal + ' ' + donation.goal.donation_type.quality.name + ' ' + donation.goal.donation_type.name }}</td>
+                                <td>{{ donation.value  + ' ' + donation.goal.donation_type.quality.name }}</td>
+                                <td>{{ donation.donated_at }}</td>
+                                <td>{{ Math.round(donation.value / donation.goal.goal * 100) }}%</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </modal>
     </div>
 </transition>
 </template>
 <script>
 import { mapState } from 'vuex'
 import string from '../../helpers/mixin/string'
+import Modal from '../libs/Modal'
+
 export default {
     mixins: [string],
     props: ['show', 'data'],
     data() {
         return {
-            settings: window.Laravel.settings
+            settings: window.Laravel.settings,
+            search: '',
+            showModal: false,
+            selectedUser: {},
+            roles: {
+                3: this.$t('campaigns.roles.owner'),
+                4: this.$t('campaigns.roles.moderator'),
+                5: this.$t('campaigns.roles.member'),
+                6: this.$t('campaigns.roles.blocked'),
+            }
         }
     },
-    computed: mapState('campaign', ['campaign']),
+    computed: {
+        ...mapState('campaign', ['campaign']),
+        filteredUsers() {
+            return {
+                members: this.data.users ? this.data.users.filter((user) => {
+                        return user.name.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0 ||
+                            user.email.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0
+                    }) : [],
+                guests: this.data.users ? Object.values(this.data.guests).filter((user) => {
+                    return user[0].user.name.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0 ||
+                        user[0].user.email.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0
+                    }) : []
+            }
+        }
+    },
     methods: {
         closeModal() {
             this.$emit('update:show', false)
@@ -213,23 +248,24 @@ export default {
         reload() {
             this.$emit('reload')
         },
-        getDay(settings, key) {
-            let filter = settings.filter(setting => {
-                return setting.key == key
-            })[0]
-
-            return filter ? filter.value : null
-        },
-        sumValue(object, key) {
-            return object.reduce((sum, value) => sum + value[key], 0)
-        },
-        getPercent(divisor, devide) {
-            if (devide == 0)
-                return null
-            return Math.round(divisor/devide*100)
-        },
         print() {
             window.print()
+        },
+        getRole(user) {
+            return this.roles[user.pivot.role_id]
+        },
+        selectUser(user, isGuest = false) {
+            this.showModal = true
+
+            if (!isGuest) {
+                this.selectedUser = user
+            } else {
+                this.selectedUser = user[0].user
+                this.$set(this.selectedUser, 'donations', user)
+            }
+
+            const events = _.groupBy(this.selectedUser.donations, 'event.title')
+            this.$set(this.selectedUser, 'events', events)
         }
     },
     filters: {
@@ -243,6 +279,9 @@ export default {
                 this.closeModal()
             }
         })
+    },
+    components: {
+        Modal
     }
 }
 </script>
@@ -307,6 +346,17 @@ export default {
         font-size: 13px;
         svg {
             fill: #c10d4a;
+        }
+    }
+    .w-search {
+        input {
+            padding: 10px 15px;
+            margin-bottom: 5px;
+        }
+    }
+    .table {
+        td, th {
+            padding: 0.4rem;
         }
     }
 </style>
