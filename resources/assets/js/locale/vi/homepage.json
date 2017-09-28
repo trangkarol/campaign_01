@@ -19,7 +19,7 @@
     "friendly": "Thân thiện",
     "features": "Tính năng",
     "make_campaign_description": "Mọi thành viên của tổ chức sẽ có ý thức hơn về mục tiêu và phấn đấu vì sự thành công tập thể của tập thể khi họ cùng xác định và lập bản đồ để đạt được mục tiêu đó",
-    "Message_master_description": "Bạn nên sử dụng phương tiện truyền thông xã hội để kết nối bạn bè. Khi giao tiếp bằng fCampaign, bạn có thể kết nối bạn bè và nhận được thông tin cập nhật về cuộc sống của họ ngay cả khi bạn sống ngàn dặm từ họ và không có thời gian để đáp ứng",
+    "message_master_description": "Bạn nên sử dụng phương tiện truyền thông xã hội để kết nối bạn bè. Khi giao tiếp bằng fCampaign, bạn có thể kết nối bạn bè và nhận được thông tin cập nhật về cuộc sống của họ ngay cả khi bạn sống ngàn dặm từ họ và không có thời gian để đáp ứng",
     "friendly_description": "Loại bỏ bức tường ngăn cách, tạo sự cởi mở và thân thiện giữa các thành viên.",
     "clear_statistics_description": "Các mục tiêu về chất lượng trở nên rõ ràng hơn, mỗi thành viên sẽ hiểu và kiểm soát quy trình một cách nhất quán. Giảm chi phí thông qua kiểm soát tốt, năng lực của quá trình sẽ được cải thiện.",
     "share_images_description": "Đây là nơi an toàn để chia sẻ hình ảnh Bạn có thể chia sẻ ảnh của bạn với cả nhóm hoặc chỉ với gia đình và bạn bè thân thiết",
@@ -50,7 +50,11 @@
         "logout": "Đăng xuất",
         "vietnam": "Việt nam",
         "english": "English",
-        "japan": "Janpan"
+        "japan": "Janpan",
+        "notifications": "Thông báo",
+        "invited_join": "đã mời bạn tham gia chiến dịch",
+        "loading": "Đang tải...",
+        "notification_empty": "Không có thông báo."
     },
     "share_to": "Chia sẻ"
 }

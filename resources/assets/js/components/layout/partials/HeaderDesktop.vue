@@ -69,6 +69,7 @@
                 </div>
             </div>
             <div class="control-block" v-if="authenticated">
+                <!-- Component friends -->
                 <div class="control-icon more has-items" @click="markRead(0)">
                     <svg class="olymp-happy-face-icon">
                         <use xlink:href="/frontend/icons/icons.svg#olymp-happy-face-icon"></use>
@@ -123,6 +124,8 @@
                         <a href="javascript:void(0)" @click="getListRequest()" class="view-all bg-blue" v-show="count">{{ $t('messages.show_more') }}</a>
                     </div>
                 </div>
+
+                <!-- Component chat -->
                 <div class="control-icon more has-items">
                     <svg class="olymp-chat---messages-icon">
                         <use xlink:href="/frontend/icons/icons.svg#olymp-chat---messages-icon"></use>
@@ -146,10 +149,10 @@
                                             v-html="mess.sendName + mess.message">
                                         </span>
                                         <span class="notification-date">
-                                            <time class="entry-date updated" datetime="2004-07-24T18:18" v-if="mess.read">
+                                            <time class="entry-date updated" v-if="mess.read">
                                                 {{ $t('homepage.header.readed_at') + ' ' + calendarTime(mess.time) }}
                                             </time>
-                                            <time class="entry-date updated" datetime="2004-07-24T18:18" v-else>
+                                            <time class="entry-date updated" v-else>
                                                 {{ calendarTime(mess.time) }}
                                             </time>
                                         </span>
@@ -165,7 +168,6 @@
                                         </svg>
                                     </div>
                                 </li>
-
                             </ul>
                         </div>
                         <a href="javascript:void(0)" class="view-all bg-purple" @click="getMessagesNotification">
@@ -173,55 +175,35 @@
                         </a>
                     </div>
                 </div>
-                <div class="control-icon more has-items" style="display:none;">
-                    <svg class="olymp-thunder-icon">
+
+                <!-- Component notification -->
+                <div class="control-icon more div-notification has-items">
+                    <svg class="olymp-thunder-icon" @click.stop="getListNotification">
                         <use xlink:href="/frontend/icons/icons.svg#olymp-thunder-icon"></use>
                     </svg>
-                    <div class="label-avatar bg-primary">8</div>
-                    <div class="more-dropdown more-with-triangle triangle-top-center">
+                    <div class="label-avatar bg-primary" v-if="totalUnreadNotifications">
+                        {{ totalUnreadNotifications }}
+                    </div>
+                    <div id="detail-notification" class="more-dropdown more-with-triangle triangle-top-center" v-show="show">
                         <div class="ui-block-title ui-block-title-small">
-                            <h6 class="title">Notifications</h6>
-                            <a href="#">Mark all as read</a>
-                            <a href="#">Settings</a>
+                            <h6 class="title">{{ $t('homepage.header.notifications') }}</h6>
+                            <a href="#" style="display: none;">Mark all as read</a>
+                            <a href="#" style="display: none;">Settings</a>
                         </div>
                         <div class="mCustomScrollbar" data-mcs-theme="dark">
-                            <ul class="notification-list">
-                                <li>
+                            <ul class="ul-notification notification-list">
+                                <li v-for="item in listNotification" :class="{ 'un-read': !item.read_at }" @click="redirect(item)">
                                     <div class="author-thumb">
-                                        <img src="/images/avatar62-sm.jpg" alt="author">
+                                        <img :src="item.data.from.image_thumbnail" alt="author">
                                     </div>
                                     <div class="notification-event">
                                         <div>
-                                            <a href="#" class="h6 notification-friend">Mathilda Brinker</a> commented on your new
-                                            <a href="#" class="notification-link">profile status</a>.</div>
+                                            <b>{{ item.data.from.name }}</b>
+                                            {{ $t('homepage.header.invited_join') }}
+                                            <a href="javascipt:void(0)" class="notification-link">{{ item.data.campaign.title }}</a>.
+                                        </div>
                                         <span class="notification-date">
-                                            <time class="entry-date updated" datetime="2004-07-24T18:18">4 hours ago</time>
-                                        </span>
-                                    </div>
-                                    <span class="notification-icon">
-                                        <svg class="olymp-comments-post-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use>
-                                        </svg>
-                                    </span>
-                                    <div class="more">
-                                        <svg class="olymp-three-dots-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
-                                        </svg>
-                                        <svg class="olymp-little-delete">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-little-delete"></use>
-                                        </svg>
-                                    </div>
-                                </li>
-                                <li class="un-read">
-                                    <div class="author-thumb">
-                                        <img src="/images/avatar63-sm.jpg" alt="author">
-                                    </div>
-                                    <div class="notification-event">
-                                        <div>You and
-                                            <a href="#" class="h6 notification-friend">Nicholas Grissom</a> just became friends. Write on
-                                            <a href="#" class="notification-link">his wall</a>.</div>
-                                        <span class="notification-date">
-                                            <time class="entry-date updated" datetime="2004-07-24T18:18">9 hours ago</time>
+                                            <time class="entry-date updated">{{ timeAgo(item.created_at) }}</time>
                                         </span>
                                     </div>
                                     <span class="notification-icon">
@@ -229,7 +211,8 @@
                                             <use xlink:href="/frontend/icons/icons.svg#olymp-happy-face-icon"></use>
                                         </svg>
                                     </span>
-                                    <div class="more">
+
+                                    <div class="more" style="display: none;">
                                         <svg class="olymp-three-dots-icon">
                                             <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
                                         </svg>
@@ -238,91 +221,17 @@
                                         </svg>
                                     </div>
                                 </li>
-                                <li class="with-comment-photo">
-                                    <div class="author-thumb">
-                                        <img src="/images/avatar64-sm.jpg" alt="author">
-                                    </div>
-                                    <div class="notification-event">
-                                        <div>
-                                            <a href="#" class="h6 notification-friend">Sarah Hetfield</a> commented on your
-                                            <a href="#" class="notification-link">photo</a>.</div>
-                                        <span class="notification-date">
-                                            <time class="entry-date updated" datetime="2004-07-24T18:18">Yesterday at 5:32am</time>
-                                        </span>
-                                    </div>
-                                    <span class="notification-icon">
-                                        <svg class="olymp-comments-post-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use>
-                                        </svg>
-                                    </span>
-                                    <div class="comment-photo">
-                                        <img src={{ asset('images/comment-photo1.jpg') }} alt="photo">
-                                        <span>“She looks incredible in that outfit! We should see each...”</span>
-                                    </div>
-                                    <div class="more">
-                                        <svg class="olymp-three-dots-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
-                                        </svg>
-                                        <svg class="olymp-little-delete">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-little-delete"></use>
-                                        </svg>
-                                    </div>
+                                <li class="li-loading" v-show="loading">
+                                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                                    <span>{{ $t('homepage.header.loading') }}</span>
                                 </li>
-                                <li>
-                                    <div class="author-thumb">
-                                        <img src="/images/avatar65-sm.jpg" alt="author">
-                                    </div>
-                                    <div class="notification-event">
-                                        <div>
-                                            <a href="#" class="h6 notification-friend">Green Goo Rock</a> invited you to attend to his event Goo in
-                                            <a href="#" class="notification-link">Gotham Bar</a>.</div>
-                                        <span class="notification-date">
-                                            <time class="entry-date updated" datetime="2004-07-24T18:18">March 5th at 6:43pm</time>
-                                        </span>
-                                    </div>
-                                    <span class="notification-icon">
-                                        <svg class="olymp-happy-face-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-happy-face-icon"></use>
-                                        </svg>
-                                    </span>
-                                    <div class="more">
-                                        <svg class="olymp-three-dots-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
-                                        </svg>
-                                        <svg class="olymp-little-delete">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-little-delete"></use>
-                                        </svg>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="author-thumb">
-                                        <img src="/images/avatar66-sm.jpg" alt="author">
-                                    </div>
-                                    <div class="notification-event">
-                                        <div>
-                                            <a href="#" class="h6 notification-friend">James Summers</a> commented on your new
-                                            <a href="#" class="notification-link">profile status</a>.</div>
-                                        <span class="notification-date">
-                                            <time class="entry-date updated" datetime="2004-07-24T18:18">March 2nd at 8:29pm</time>
-                                        </span>
-                                    </div>
-                                    <span class="notification-icon">
-                                        <svg class="olymp-heart-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-heart-icon"></use>
-                                        </svg>
-                                    </span>
-                                    <div class="more">
-                                        <svg class="olymp-three-dots-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
-                                        </svg>
-                                        <svg class="olymp-little-delete">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-little-delete"></use>
-                                        </svg>
-                                    </div>
+                                <li class="notification-empty" v-if="!listNotification.length && !loading">
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    {{ $t('homepage.header.notification_empty') }}
                                 </li>
                             </ul>
                         </div>
-                        <a href="#" class="view-all bg-primary">View All Notifications</a>
+                        <a href="javascript:void(0)" class="view-all bg-primary"></a>
                     </div>
                 </div>
                 <div class="author-page author vcard inline-items more">
@@ -454,7 +363,14 @@ export default {
         keyword: '',
         usersFinded: [],
         campaignsFinded: [],
-        lang: ''
+        lang: '',
+        /*--- list Notification ---*/
+        listNotification: [],
+        totalUnreadNotifications: 0,
+        page: 1,
+        totalPage: 1,
+        loading: false,
+        show: false
     }),
     created () {
         this.lang = !!localStorage.getItem('locale') ? localStorage.getItem('locale') : window.Laravel.locale
@@ -464,6 +380,8 @@ export default {
         })
 
         if (this.authenticated) {
+            this.getTotalUnreadNotification()
+
             EventBus.$on('getListFriends', () => {
                 this.getMessagesNotification()
             })
@@ -493,11 +411,38 @@ export default {
             friends: state => state.listContact
         })
     },
+    mounted() {
+        const vm = this
+        $('#notification_messages').on('scroll', function() {
+            if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                vm.getMessagesNotification()
+            }
+        })
+
+        $(document).on('click', function(e) {
+            if (e.target.id != 'detail-notification' && vm.show && !$('#detail-notification').find(e.target).length) {
+               vm.show = false
+               vm.markReadNotifications()
+            }
+        })
+
+        $('.ul-notification').on('scroll', function() {
+            if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                vm.loadMoreNotification()
+            }
+        })
+    },
+    beforeDestroy() {
+        $(window).off()
+    },
     methods: {
         ...mapActions('auth', [
             'logout',
             'getListFollow'
         ]),
+        timeAgo(time) {
+            return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
+        },
         handleLogout() {
             post(logout).then(res => {
                 this.logout()
@@ -506,6 +451,97 @@ export default {
                 this.$router.push('/')
             })
         },
+
+        /*--- List Notification ---*/
+        getTotalUnreadNotification() {
+            get('total-unread-notifications')
+                .then(res => {
+                    this.totalUnreadNotifications = res.data.totalUnread
+                })
+                .catch(err => {
+                    noty({
+                        text: this.$i18n.t('messages.error'),
+                        type: 'error',
+                        force: false,
+                        container: false
+                    })
+                })
+        },
+
+        getListNotification() {
+            if (!this.show) {
+                this.show = true
+
+                if (!this.listNotification.length || this.totalUnreadNotifications) {
+                    this.loading = true
+                    get('list-notification')
+                        .then(res => {
+                            this.listNotification = res.data.notifications.data
+                            this.totalPage = res.data.notifications.last_page
+                            this.loading = false
+                        })
+                        .catch(err => {
+                            this.loading = false
+                            noty({
+                                text: this.$i18n.t('messages.error'),
+                                type: 'error',
+                                force: false,
+                                container: false
+                            })
+                        })
+                }
+            } else {
+                this.show = false
+            }
+        },
+
+        loadMoreNotification() {
+            if (this.page < this.totalPage) {
+                this.loading = true
+                get(`list-notification?page=${++this.page}`)
+                    .then(res => {
+                        this.listNotification = this.listNotification.concat(res.data.notifications.data)
+                        this.loading = false
+                    })
+                    .catch(err => {
+                        this.loading = false
+                        noty({
+                            text: this.$i18n.t('messages.error'),
+                            type: 'error',
+                            force: false,
+                            container: false
+                        })
+                    })
+            }
+        },
+
+        markReadNotifications() {
+            post('mark-read-notifications')
+                .then(res => {
+                    this.totalUnreadNotifications = 0
+                    this.listNotification.forEach((item, index) => {
+                        this.listNotification[index].read_at = new Date().toJSON().slice(0, 10).replace(/-/g, '/')
+                    })
+                })
+                .catch(err => {
+                    noty({
+                        text: this.$i18n.t('messages.error'),
+                        type: 'error',
+                        force: false,
+                        container: false
+                    })
+                })
+        },
+
+        redirect(data) {
+            if (data.type === 'App\\Notifications\\InviteUser') {
+                this.$router.push({ name: 'campaign.timeline', params: { slug: data.data.campaign.slug }})
+            }
+
+            this.show = false
+        },
+
+        /*--- List message ---*/
         getMessagesNotification() {
             if (this.continue) {
                 get(`${showNotification}?paginate=${this.paginate}`)
@@ -754,14 +790,7 @@ export default {
             localStorage.setItem('locale', locale)
         }
     },
-    mounted() {
-        const vm = this
-        $('#notification_messages').on('scroll', function() {
-            if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-                vm.getMessagesNotification()
-            }
-        })
-    },
+
     sockets: {
         singleChat: function (data) {
             this.receiveMessage(data, true)
@@ -832,12 +861,89 @@ export default {
             }
 
             this.count = (this.count > 0) ? this.count - 1 : this.count
+        },
+
+        //--- List Notification ---//
+        inviteUser: function (notification) {
+            this.totalUnreadNotifications++
+
+            if (this.show) {
+                this.listNotification.unshift(notification.data)
+            }
         }
     }
 }
 </script>
 
 <style lang="scss">
+.div-notification {
+    .ul-notification {
+        overflow-y: scroll;
+        max-height: 300px;
+
+        .un-read {
+            background: rgba(246, 247, 243, 0.82);
+            &:hover {
+                background: #fafbfd;
+            }
+        }
+
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+        }
+
+        &::-webkit-scrollbar {
+            width: 2px;
+            background-color: #ff5e3a;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #494c62;
+        }
+    }
+
+    &.more{
+        b {
+            color: #515365
+        }
+
+        .more-dropdown {
+            visibility: visible;
+            opacity: 1;
+            padding: 0 0 40px 0;
+        }
+    }
+
+    .author-thumb {
+        img {
+            height: 34px;
+            width: 34px;
+        }
+    }
+
+    .li-loading {
+        text-align: center;
+        font-size: 6px;
+        padding: 10px 0px 10px;
+        border: 0px;
+
+        span {
+            font-size: 12px;
+        }
+    }
+
+    .notification-empty {
+        text-align: center;
+        font-weight: bold;
+        i {
+            margin-top: 0px;
+            margin-right: 2px;
+            font-size: 20px;
+        }
+    }
+}
+
 .select-lang {
     width: 95px;
     color: white;
@@ -901,7 +1007,6 @@ export default {
                 }
             }
         }
-
     }
 }
 

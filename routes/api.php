@@ -51,6 +51,8 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
         Route::post('send-message-to-group', 'ChatController@sendMessageToGroup');
         Route::get('show-message/{id}', 'ChatController@showMessages');
         Route::get('show-notifications', 'ChatController@getNotification');
+        Route::get('list-notification', 'UserController@listNotification');
+        Route::get('total-unread-notifications', 'UserController@totalUnreadNotifications');
         Route::post('like/{modelId}/{flag}', 'LikeController@like')->name('like');
         Route::delete('delete-photo/{mediaId}', 'UserController@deletePhoto')->name('delete-photo');
         Route::get('search/{page}/{quantity}/{type}', 'CampaignController@search')->name('search');
@@ -67,7 +69,6 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
 
             Route::get('news-feed', 'ActivityController@getNewsFeed')->name('newsfeed');
             Route::get('friends-suggest', 'UserController@friendsSuggest')->name('friends-suggest');
-            Route::patch('follow/{id}', 'UserController@follow')->name('follow');
             Route::patch('follow-tag/{id}', 'UserController@followTag')->name('follow-tag');
             Route::patch('join-campaign/{id}', 'UserController@joinCampaign')->name('join-campaign');
             Route::get('list-user-following', 'UserController@getListFollow')->name('list-user-following');
@@ -78,6 +79,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::get('list-request-friend', 'UserController@getNotificationRequest');
             Route::post('reject-request', 'UserController@rejectRequest');
             Route::post('mark-all-read', 'UserController@markRead');
+            Route::post('mark-read-notifications', 'UserController@markReadNotifications');
         });
 
         Route::group(['prefix' => '/campaign', 'as' => 'campaign.'], function () {

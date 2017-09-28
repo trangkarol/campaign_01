@@ -11,8 +11,9 @@ use App\Repositories\Contracts\ActionInterface;
 use App\Repositories\Contracts\UserInterface;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\UnknowException;
-use Illuminate\Http\Request;
 use App\Http\Requests\CampaignRequest;
+use App\Notifications\InviteUser;
+use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Campaign;
@@ -528,7 +529,7 @@ class CampaignController extends ApiController
     public function inviteUser($campaignId, $userId)
     {
         $data = [];
-        $data['userId'] = $userId;
+        $data['invitedUser'] = $this->userRepository->findOrFail($userId);
         $data['campaign'] = $this->campaignRepository->findOrFail($campaignId);
         $data['roleIdMember'] = $this->roleRepository->findRoleOrFail(Role::ROLE_MEMBER, Role::TYPE_CAMPAIGN)->id;
 
@@ -537,8 +538,20 @@ class CampaignController extends ApiController
         }
 
         return $this->doAction(function () use ($data) {
-            $data['is_manager'] = $this->user->can('permission', $data['campaign']) ? config('settings.is_manager') : config('settings.not_manager');
+            $data['is_manager'] = $this->user->can('permission', $data['campaign'])
+                ? config('settings.is_manager')
+                : config('settings.not_manager');
             $this->compacts['members'] = $this->campaignRepository->inviteUser($data);
+
+            $notification['type'] = InviteUser::class;
+            $notification['data'] = [
+                'to' => $data['invitedUser']->id,
+                'from' => $this->user,
+                'campaign' => $data['campaign']
+            ];
+
+            $this->redis = LRedis::connection();
+            $this->redis->publish('inviteUser', json_encode($notification));
         });
     }
 

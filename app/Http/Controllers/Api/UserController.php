@@ -445,4 +445,25 @@ class UserController extends ApiController
             $this->compacts['data'] = $this->repository->getFriendsSuggest();
         });
     }
+
+    public function listNotification()
+    {
+        return $this->getData(function () {
+            $this->compacts['notifications'] = $this->repository->listNotification($this->user);
+        });
+    }
+
+    public function totalUnreadNotifications()
+    {
+        return $this->getData(function () {
+            $this->compacts['totalUnread'] = $this->repository->totalUnreadNotifications();
+        });
+    }
+
+    public function markReadNotifications()
+    {
+        return $this->doAction(function () {
+            $this->compacts['unread'] = $this->repository->markReadNotifications($this->user);
+        });
+    }
 }

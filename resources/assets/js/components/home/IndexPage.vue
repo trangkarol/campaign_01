@@ -135,7 +135,7 @@
                                     <div class="birthday-author-name">
                                         <p class="h6 author-name">{{ $t('homepage.friendly') }}</p>
                                         <div class="birthday-date">
-                                            {{ $t('homepage.message_master_description') }}
+                                            {{ $t('homepage.friendly_description') }}
                                         </div>
                                     </div>
                                     <div class="birthday-author-name">

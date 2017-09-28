@@ -19,7 +19,9 @@
         "cancel_request": "Hủy yêu cầu",
         "accept_request": "Chấp nhận",
         "reject_request": "Từ chối",
-        "add_friend": "Thêm bạn bè"
+        "add_friend": "Thêm bạn bè",
+        "friends_since": "Bạn bè từ",
+        "nothing_found": "Không kết quả"
     },
     "title": {
         "login": "Đăng nhập vào tài khoản",

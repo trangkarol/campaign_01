@@ -2,19 +2,21 @@
 
 namespace App\Repositories\Eloquent;
 
+use Exception;
 use App\Models\Media;
 use App\Models\Campaign;
 use App\Models\Activity;
+use App\Notifications\InviteUser;
 use App\Traits\Common\UploadableTrait;
 use App\Repositories\Contracts\CampaignInterface;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\UnknowException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Exception;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Donation;
 use Carbon\Carbon;
+use Notification;
 
 class CampaignRepository extends BaseRepository implements CampaignInterface
 {
@@ -624,7 +626,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         ->with('media', 'tags', 'owner')
         ->withCount('activeUsers')
         ->inRandomOrder()
-        ->take(config('settings.campaigns_involve'))
+        ->take(config('settings.campaigns_public'))
         ->get();
 
         return [
@@ -641,8 +643,11 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
      */
     public function inviteUser($data)
     {
+        $this->setGuard('api');
+        Notification::send($data['invitedUser'], new InviteUser($this->user, $data['campaign']));
+
         return $data['campaign']->users()->toggle([
-            $data['userId'] => [
+            $data['invitedUser']->id => [
                 'role_id' => $data['roleIdMember'],
                 'status' => Campaign::REQUEST_USER,
                 'is_manager' => $data['is_manager'],

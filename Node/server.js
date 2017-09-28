@@ -16,8 +16,10 @@ let listFriend = []
 const redisClient = redis.createClient(process.env.REDIS_PORT, 'redis')
 const client = redis.createClient(process.env.REDIS_PORT, 'redis')
 const subClient = redis.createClient(process.env.REDIS_PORT, 'redis')
+const notificationClient = redis.createClient(process.env.REDIS_PORT, 'redis')
 
 subClient.subscribe('createCampaign', 'createEvent')
+notificationClient.subscribe('inviteUser')
 redisClient.subscribe('singleChat', 'groupChat', 'activies', 'noty')
 redisClient.on('message', function (channel, data) {
     if (channel == 'activies') {
@@ -38,6 +40,11 @@ redisClient.on('message', function (channel, data) {
             io.to(message.to).emit(channel, data)
         }
     }
+})
+
+notificationClient.on('message', function (channel, data) {
+    let notification = JSON.parse(data)
+    io.sockets.in(notification.data.to).emit('inviteUser', { data: notification })
 })
 
 redisClient.on('error', function (err) {

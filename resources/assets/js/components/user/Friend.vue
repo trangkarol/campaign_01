@@ -68,7 +68,9 @@
                                                 <a href="javascript:void(0)"
                                                     class="btn btn-control bg-purple"
                                                     @click="addChatComponent(user)">
-                                                    <svg class="olymp-chat---messages-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-chat---messages-icon"></use></svg>
+                                                    <svg class="olymp-chat---messages-icon">
+                                                        <use xlink:href="/frontend/icons/icons.svg#olymp-chat---messages-icon"></use>
+                                                    </svg>
                                                     <div class="ripple-container"></div>
                                                 </a>
                                             </div>
@@ -81,7 +83,7 @@
                                                 {{ $t('user.friend.phone') }}: {{ user.phone }}<br>
                                             </p>
                                             <div class="friend-since" data-swiper-parallax="-100">
-                                                <h6>{{ $t('user.friend.follow_since') }}:</h6>
+                                                <h6>{{ $t('user.friend.friends_since') }}:</h6>
                                                 <div class="h6">{{ user.pivot.created_at }}</div>
                                             </div>
                                         </div>
@@ -98,7 +100,9 @@
             <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
             <span>{{ $t('user.friend.loading') }}</span>
         </div>
-        <h4 class="text-center" v-show="(!friends.length && searchKey) || (!hasData && !friends.length)">Nothing found</h4>
+        <h4 class="text-center" v-show="(!friends.length && searchKey) || (!hasData && !friends.length)">
+            {{ $t('user.friend.nothing_found') }}
+        </h4>
     </div>
 </template>
 
@@ -186,30 +190,6 @@
                         });
                 }
             }, 500),
-            follow(event, id) {
-                patch('follow/' + id)
-                    .then(response => {
-                        if (event.target.textContent == this.$i18n.t('user.follow.follow')) {
-                            event.target.innerHTML = this.$i18n.t('user.follow.unfollow')
-                            $('.link-svg' + id).removeClass('red')
-                            $('.link-svg' + id + '> svg').attr('class', 'olymp-check-icon');
-                            $('.link-svg' + id + '> svg > use').attr('xlink:href', '/frontend/icons/icons.svg#olymp-check-icon')
-                        } else {
-                            event.target.innerHTML = this.$i18n.t('user.follow.follow')
-                            $('.link-svg' + id).addClass('red')
-                            $('.link-svg' + id + '> svg').attr('class', 'olymp-close-icon')
-                            $('.link-svg' + id + '> svg > use').attr('xlink:href', '/frontend/icons/icons.svg#olymp-close-icon')
-                        }
-                    })
-                    .catch(function(error) {
-                        noty({
-                            text: this.$i18n.t('messages.load_fail'),
-                            type: 'error',
-                            force: false,
-                            container: false
-                        })
-                    });
-            },
             modal(text, callback) {
                 let n = new Noty({
                     text: text,

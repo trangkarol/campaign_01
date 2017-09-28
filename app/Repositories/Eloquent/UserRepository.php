@@ -390,29 +390,6 @@ class UserRepository extends BaseRepository implements UserInterface
         $friendsIAmSender = $this->user->acceptFriends()->pluck('users.id')->all();
         $friendIds[] = $this->user->id;
         $friendIds = array_merge($friendIds, $friendsPedding, $friendsIAmSender);
-
-        // if (count($friendIds)) {
-        //     $friendSuggestIds = \DB::table('relationships')
-        //         ->where('status', User::ACCEPTED)
-        //         ->whereIn('sender_id', $friendIds)
-        //         ->where('recipient_id', '<>' ,$this->user->id)
-        //         ->whereNotIn('recipient_id', $friendIds)
-        //         ->groupBy('recipient_id')
-        //         ->pluck('recipient_id');
-        //     $friendSuggests = $this->model
-        //         ->where('status', User::ACTIVE)
-        //         ->whereIn('id', $friendSuggestIds)
-        //         ->inRandomOrder()
-        //         ->take(config('settings.friend_suggest'))
-        //         ->get()
-        //         ->each(function ($query) use ($friendIds) {
-        //             $query->makeVisible([
-        //                 'is_friend',
-        //                 'has_pending_request',
-        //                 'has_send_request',
-        //             ]);
-        //         });
-
         $friendSuggests = $this->where('status', User::ACTIVE)
             ->whereNotIn('id', $friendIds)
             ->inRandomOrder()
@@ -427,5 +404,36 @@ class UserRepository extends BaseRepository implements UserInterface
             'countMutualFriends' => $countMutualFriends,
             'friendSuggests' => $friendSuggests,
         ];
+    }
+
+    /** --- List Notification --- **/
+
+    public function listNotification($user)
+    {
+        return $this->getIfUser($user)
+            ->notifications()
+            ->where('type', '<>', MakeFriend::class)
+            ->paginate(config('pagination.notification'));
+    }
+
+    public function totalUnreadNotifications()
+    {
+        $this->setGuard('api');
+
+        return $this->user
+            ->unreadNotifications()
+            ->where('type', '<>', MakeFriend::class)
+            ->count();
+    }
+
+    public function markReadNotifications($user)
+    {
+        $this->getIfUser($user)
+            ->unreadNotifications()
+            ->where('type', '<>', MakeFriend::class)
+            ->get()
+            ->markAsRead();
+
+        return true;
     }
 }
