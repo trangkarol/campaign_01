@@ -589,9 +589,16 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
             })
             ->whereHas('settings', function ($query) {
                 $query->where('key', config('settings.campaigns.end_day'))
-                    ->where('value', '>', Carbon::now()->format('m/d/Y'));
+                    ->where(function ($subQuery) {
+                        $subQuery->orWhere('value', '>', Carbon::now()->format('m/d/Y'))
+                            ->orWhere('value', '>', Carbon::now()->format('d/m/Y'))
+                            ->orWhere('value', '>', Carbon::now()->format('Y/m/d'));
+                    })
+                    ->orWhere(function ($subQuery) {
+                        $subQuery->where('key', config('settings.campaigns.end_day'))
+                            ->where('value', '');
+                    });
             })
-            ->model
             ->with('media', 'tags')
             ->inRandomOrder()
             ->take(config('settings.campaigns_involve'))

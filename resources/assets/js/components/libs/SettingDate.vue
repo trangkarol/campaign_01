@@ -3,7 +3,7 @@
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <div class="form-group date-time-picker label-floating is-focused">
                 <label class="control-label">{{ $t('campaigns.startday') }}</label>
-                <date-picker :date.sync="start">
+                <date-picker :date.sync="start" :formatStand.sync="standStart">
                 </date-picker>
                 <span class="input-group-addon">
                     <svg class="olymp-calendar-icon">
@@ -18,7 +18,7 @@
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <div class="form-group date-time-picker label-floating is-focused">
                 <label class="control-label">{{ $t('campaigns.endday') }}</label>
-                <date-picker :date.sync="end">
+                <date-picker :date.sync="end" :formatStand.sync="standEnd">
                 </date-picker>
                 <span class="input-group-addon">
                     <svg class="olymp-calendar-icon">
@@ -43,7 +43,9 @@ export default {
             messageStartDay: '',
             start: this.startDay,
             end: this.endDay,
-            status: ''
+            status: '',
+            standStart: null,
+            standEnd: null
         }
     },
     props: {
@@ -71,7 +73,6 @@ export default {
     methods: {
         validateDate(start, end) {
             let flag = true
-            let now = window.moment().format(this.$i18n.t('campaigns.format_date'))
 
             if (!start) {
                 this.start = window.moment().format(this.$i18n.t('campaigns.format_date'))
@@ -79,14 +80,16 @@ export default {
                 this.messageEndDay = ''
             }
 
-            if (window.moment(start).isBefore(now) && !this.isUpdate) {
+            if (window.moment(this.standStart).isBefore(moment()) && !this.isUpdate) {
                 this.messageStartDay = this.$i18n.t('messages.start_day')
                 flag = false
             } else {
                 this.messageStartDay = ''
             }
 
-            if (end && (window.moment(end).isSameOrBefore(now) || window.moment(end).isSameOrBefore(start))) {
+            if (end && (window.moment(this.standEnd).isSameOrBefore(moment())
+                || window.moment(this.standEnd).isSameOrBefore(this.standStart))
+            ) {
                 this.messageEndDay = this.$i18n.t('messages.end_day')
                 flag = false
             } else {
