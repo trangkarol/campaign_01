@@ -6,12 +6,14 @@ export default {
         state.currentPageUser = data.currentPageUser
         state.listActivity = data.listActivity
         state.checkLiked = data.checkLiked
+        state.inforListActivity = data.inforListActivity
     },
     [types.SET_LIST_ACTIVITY](state, data) {
-        let old_data = state.listActivity.data
+        let old_data = state.listActivity
         state.listActivity = data.listActivity
         state.checkLiked = data.checkLiked
-        state.listActivity.data = $.merge(old_data, state.listActivity.data)
+        state.listActivity = $.merge(old_data, state.listActivity)
+        state.inforListActivity = data.inforListActivity
     },
     [types.SET_LOADING](state, loading) {
         state.loading = loading

@@ -10,7 +10,8 @@ export const getUser = ({ commit, rootState }, id) => {
                 commit(types.SET_CURRENT_PAGE_USER, {
                     currentPageUser: res.data.data.currentPageUser,
                     listActivity: res.data.data.listActivity,
-                    checkLiked: res.data.data.checkLiked
+                    checkLiked: res.data.data.checkLiked,
+                    inforListActivity: res.data.data.inforListActivity,
                 })
                 commit(types.SET_LOADING, false)
                 resolve(res.data.data.currentPageUser)
@@ -31,7 +32,8 @@ export const loadMore = ({ commit, rootState }, data) => {
                 .then(res => {
                     commit(types.SET_LIST_ACTIVITY, {
                         listActivity: res.data.data.listActivity,
-                        checkLiked: res.data.data.checkLiked
+                        checkLiked: res.data.data.checkLiked,
+                        inforListActivity: res.data.data.inforListActivity
                     })
                     commit(types.SET_LOADING, false)
                     resolve(res.data.data.currentPageUser)

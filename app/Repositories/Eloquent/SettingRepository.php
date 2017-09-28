@@ -23,22 +23,16 @@ class SettingRepository extends BaseRepository implements SettingInterface
         $roles = $role->whereIn('name', $rolesName)
             ->where('type', Role::TYPE_CAMPAIGN)
             ->lists('id');
-        $campaignIds = $this->user->campaigns
-            ->where('status', Campaign::ACTIVE)
-            ->where('pivot.status', Campaign::APPROVED)
-            ->whereIn('pivot.role_id', $roles)
-            ->pluck('id')
-            ->all();
 
-        $campaignsClose = $this->user->campaigns
-            ->where('status', Campaign::BLOCK)
-            ->pluck('id')
+        $campaignIds = $this->user->campaigns()
+            ->withTrashed()
+            ->where('campaign_user.status', Campaign::ACTIVE)
+            ->whereIn('campaign_user.role_id', $roles)
+            ->pluck('campaign_id')
             ->all();
-
-        $campaignsPublic = $this->where('settingable_type', Campaign::class)
+        $campaignsPublic = $this->withTrashed()->where('settingable_type', Campaign::class)
             ->where('key', config('settings.campaigns.status'))
             ->where('value', config('settings.value_of_settings.status.public'))
-            ->whereNotIn('settingable_id', $campaignsClose)
             ->groupBy('settingable_id')
             ->pluck('settingable_id')
             ->all();

@@ -2,8 +2,8 @@
     <div class="container">
         <div class="row">
             <!-- Main Content -->
-            <div class="col-xl-6 push-xl-3 col-lg-12 push-lg-0 col-md-12 col-sm-12 col-xs-12">
-                <div class="page-description" v-if="!listActivity.data.length">
+            <div class="col-xl-6 push-xl-3 col-lg-12 push-lg-0 col-md-12 col-sm-12 col-xs-12" v-if="inforListActivity">
+                <div class="page-description" v-if="!inforListActivity.total">
                     <div class="icon">
                         <svg class="olymp-star-icon left-menu-icon">
                             <use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use>
@@ -14,31 +14,40 @@
 
                 <div v-else>
                     <div id="newsfeed-items-grid">
-                    <div class="ui-block" v-for="(activity, index) in listActivity.data">
+                    <div class="ui-block" v-for="(activity, index) in listActivity">
                         <article class="hentry post has-post-thumbnail thumb-full-width">
                             <div class="post__author author vcard inline-items">
                                 <img :src="currentPageUser.image_thumbnail" alt="author" class="image-auth">
                                 <div class="author-date">
-                                    <a class="h6 post__author-name fn" href="javascript:void(0)">{{ currentPageUser.name }}</a>
-                                    <span>{{ detemineAction(activity.name) }}</span>
-                                    <router-link :to="url(activity.activitiable_type, activity.activitiable)">
-                                        {{ nameActivity(activity.activitiable_type) }}
+                                    <router-link class="h6 post__author-name fn"
+                                        :to="{ name: 'user.timeline', params: { slug: currentPageUser.slug }}">
+                                        {{ currentPageUser.name }}
+                                    </router-link>
+                                    {{ detemineAction(activity) }}
+                                    <span class="span-event">{{ nameActivity(activity.activitiable_type) }}</span>
+                                    <router-link class="link-event" :to="url(activity.activitiable_type, activity.activitiable)">
+                                        "<span class="title-event">{{ title(activity) }}</span>"
+                                    </router-link>
+                                    <span v-if="activity.activitiable_type != 'App\\Models\\Campaign'">
+                                        - {{ $t('homepage.in_campaign') }}</span>
+                                    <router-link class="link-event"
+                                        v-if="activity.activitiable_type == 'App\\Models\\Event'"
+                                        :to="url('App\\Models\\Campaign', activity.activitiable.campaign)">
+                                        "<span class="title-event">{{ belongTo(activity) }}</span>"
+                                    </router-link>
+                                    <router-link class="link-event"
+                                        v-if="activity.activitiable_type == 'App\\Models\\Action'"
+                                        :to="url('App\\Models\\Campaign', activity.activitiable.event.campaign)">
+                                        "<span class="title-event">{{ belongTo(activity) }}</span>"
                                     </router-link>
                                     <div class="post__date">
                                         <time class="published">
-                                            {{ timeAgo(activity.created_at) }}
+                                            {{ timeAgo(activity.activitiable.created_at) }}
                                         </time>
                                     </div>
                                 </div>
                             </div>
-                            <div class="post-thumb" v-if="activity.activitiable.media.length">
-                                <a href="javascript:void(0)"
-                                    v-if="activity.activitiable_type == 'App\\Models\\Action'"
-                                    @click="detailAction(activity.activitiable_id)">
-                                    <img :src="activity.activitiable.media[0].image_medium" alt="photo">
-                                </a>
-                                <img :src="activity.activitiable.media[0].image_medium" alt="photo" v-else>
-                            </div>
+                            <list-image v-if="activity.activitiable.media.length" :listImage="activity.activitiable.media"></list-image>
                             <a href="javascript:void(0)"
                                 @click="detailAction(activity.activitiable_id)"
                                 v-if="activity.activitiable_type == 'App\\Models\\Action'"
@@ -62,33 +71,28 @@
                                 </show-text>
                             </p>
 
-                            <a href="javascript:void(0)" style="display: none;"
-                                data-toggle="modal"
-                                data-target="#blog-post-popup"
-                                class="btn btn-md-2 btn-border-think c-grey btn-transparent custom-color">
-                                {{ $t('post.read_more') }}
-                            </a>
-
                             <master-like
-                                :likes="activity.likes"
+                                :likes="activity.activitiable.likes"
                                 :checkLiked="checkLiked"
-                                :flag="'activity'"
+                                :flag="nameActivity(activity.activitiable_type)"
                                 :type="'like'"
-                                :modelId="activity.id"
-                                :numberOfComments="activity.number_of_comments"
-                                :numberOfLikes="activity.number_of_likes"
+                                :modelId="activity.activitiable.id"
+                                :numberOfComments="activity.activitiable.number_of_comments"
+                                :numberOfLikes="activity.activitiable.number_of_likes"
+                                :deleteDate="activity.activitiable.deleted_at"
                                 :showMore="true">
                             </master-like>
 
                             <div class="control-block-button post-control-button">
                                 <master-like
-                                    :likes="activity.likes"
+                                    :likes="activity.activitiable.likes"
                                     :checkLiked="checkLiked"
-                                    :flag="'activity'"
+                                    :flag="nameActivity(activity.activitiable_type)"
                                     :type="'like-infor'"
-                                    :modelId="activity.id"
-                                    :numberOfComments="activity.number_of_comments"
-                                    :numberOfLikes="activity.number_of_likes">
+                                    :modelId="activity.activitiable.id"
+                                    :numberOfComments="activity.activitiable.number_of_comments"
+                                    :numberOfLikes="activity.activitiable.number_of_likes"
+                                    :deleteDate="activity.activitiable.deleted_at">
                                 </master-like>
                                 <a href="javascript:void(0)" class="btn btn-control">
                                     <svg class="olymp-comments-post-icon">
@@ -107,13 +111,16 @@
                                 </plugin-sidebar>
                             </div>
                         </article>
+
                         <comment
-                            :comments="activity.comments"
-                            :numberOfComments="activity.number_of_comments"
-                            :model-id ="activity.id"
-                            :flag="'activity'"
+                            :comments="activity.activitiable.comments"
+                            :numberOfComments="activity.activitiable.number_of_comments"
+                            :model-id ="activity.activitiable.id"
+                            :flag="nameActivity(activity.activitiable_type)"
                             :classListComment="''"
-                            :classFormComment="''">
+                            :classFormComment="''"
+                            :deleteDate="activity.activitiable.deleted_at"
+                            :canComment="true">
                         </comment>
                     </div>
                 </div>
@@ -136,8 +143,9 @@
         </div>
         <action-detail
             :showAction.sync="showAction"
-            :dataAction="dataAction"
-            :checkLikeActions="checkLikeAction">
+            :dataAction.sync="dataAction.list_action"
+            :checkLikeActions.sync="dataAction.checkLikeAction"
+            :canComment.sync="checkPermission">
         </action-detail>
     </div>
 </template>
@@ -155,18 +163,20 @@
     import ShowText from '../libs/ShowText.vue'
     import ShareSocialNetwork from '../libs/ShareSocialNetwork.vue'
     import PluginSidebar from '../libs/PluginSidebar.vue'
+    import ListImage from '../home/ListImage.vue'
 
     export default {
         data: () => ({
             showAction: false,
-            dataAction: {},
-            checkLikeAction: {}
+            dataAction: [],
+            checkPermission: true
         }),
         computed: {
             ...mapState('user', [
                 'listActivity',
                 'loading',
                 'checkLiked',
+                'inforListActivity',
             ]),
             ...mapState('user', {
                 currentPageUser: state => state.currentPageUser,
@@ -181,7 +191,7 @@
                 if ($(document).height() - $(window).height() < $(window).scrollTop() + 1) {
                     this.loadMore({
                         id: this.pageId,
-                        infoPaginate: this.listActivity
+                        infoPaginate: this.inforListActivity
                     })
                 }
             })
@@ -191,6 +201,9 @@
         },
         methods: {
             ...mapActions('user', ['loadMore']),
+            ...mapActions('action', [
+                'getDetailAction',
+            ]),
 
             timeAgo(time) {
                 return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
@@ -208,9 +221,13 @@
                 }
 
             },
-            detemineAction(name) {
-                switch(name) {
+            detemineAction(activity) {
+                switch(activity.name) {
                     case 'create':
+                        if (activity.activitiable.deleted_at) {
+                            return this.$i18n.t('form.closed')
+                        }
+
                         return this.$i18n.t('form.created')
                     case 'update':
                         return this.$i18n.t('form.updated')
@@ -232,22 +249,35 @@
                         return {}
                 }
             },
+            title(activity) {
+                if (activity.activitiable_type == 'App\\Models\\Action') {
+                    return activity.activitiable.caption
+                }
+
+                return activity.activitiable.title
+            },
+            belongTo(activity) {
+                if (activity.activitiable_type == 'App\\Models\\Action') {
+                    return activity.activitiable.event.campaign.title
+                }
+
+                if (activity.activitiable.campaign) {
+                    return activity.activitiable.campaign.title
+                }
+            },
             detailAction(actionId) {
-                get(`action/${actionId}`)
-                    .then(res => {
-                        this.showAction = true
-                        this.dataAction = res.data.actions.list_action
-                        this.checkLikeAction = res.data.actions.checkLikeAction
-                    })
-                    .catch(err => {
-                        noty({
-                            text: this.$i18n.t('messages.error'),
-                            type: 'error',
-                            force: false,
-                            container: false
-                        })
-                    })
-            }
+                this.showAction = true
+                this.getDetailAction(actionId)
+                .then(data => {
+                    this.dataAction = data.actions
+                    this.checkPermission = data.checkPermission
+                })
+                .catch(err => {
+                    this.showAction = false
+                    const message = this.$i18n.t('messages.message-fail')
+                    noty({ text: message, force: true, container: false })
+                })
+            },
         },
         components: {
             LeftSidebar,
@@ -257,7 +287,8 @@
             ActionDetail,
             ShowText,
             ShareSocialNetwork,
-            PluginSidebar
+            PluginSidebar,
+            ListImage
         },
     }
 </script>
@@ -290,5 +321,27 @@
 
     .post__date {
         margin-top: 5px;
+    }
+
+    .author-date {
+        font-size: 14px;
+        .link-event {
+            color: rgb(97, 99, 115);
+            text-transform: uppercase;
+            font-weight: 400;
+            .title-event {
+                color: #616373;
+                &:hover {
+                    color: #fe5d39;
+                }
+            }
+        }
+        .published {
+            font-size: 13px;
+        }
+    }
+
+    .span-event{
+        color: #fe5d39;
     }
 </style>
