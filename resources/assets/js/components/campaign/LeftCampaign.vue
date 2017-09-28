@@ -11,12 +11,12 @@
                 <ul class="widget w-personal-info item-block">
                     <li v-if="campaign.start_day != null">
                         <span class="title">{{ $t('campaigns.start-day') }}:</span>
-                        <span class="text">{{ campaign.start_day['value'] }}</span>
+                        <span class="text">{{ formatDateTime(campaign.start_day['value']) }}</span>
                     </li>
 
                     <li v-if="campaign.end_day != null">
                         <span class="title">{{ $t('campaigns.end-day') }}:</span>
-                        <span class="text">{{ campaign.end_day['value'] }}</span>
+                        <span class="text">{{ formatDateTime(campaign.end_day['value']) }}</span>
                     </li>
 
                     <li v-if="campaign.timeout_campaign != null">
@@ -113,6 +113,11 @@
                     lng: parseFloat(this.campaign.longitude)
                 }
             },
+        },
+        methods: {
+            formatDateTime(value) {
+                return window.moment(value).format('L')
+            }
         }
     }
 </script>

@@ -15,13 +15,13 @@ export default {
             type: Object
         },
         formatStand: {
-            type: Date
+            type: String
         }
     },
     data() {
         return {
-            value: this.date,
-            standTime: ''
+            value: !this.date ? this.date : window.moment(this.date).format('L'),
+            standTime: this.date
         }
     },
     created() {
@@ -46,9 +46,8 @@ export default {
             const { format } = picker.locale
             const { date } = picker.startDate._d
 
-            this.standTime = picker.startDate._d
+            this.standTime = picker.startDate.format('YYYY-MM-DD')
             this.emitValue(picker.startDate.format(format))
-
         });
 
         // set null value when clear datetimepicker

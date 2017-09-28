@@ -547,7 +547,7 @@ class CampaignController extends ApiController
             $notification['data'] = [
                 'to' => $data['invitedUser']->id,
                 'from' => $this->user,
-                'campaign' => $data['campaign']
+                'campaign' => $data['campaign'],
             ];
 
             $this->redis = LRedis::connection();
