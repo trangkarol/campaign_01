@@ -54,7 +54,9 @@
         "notifications": "Thông báo",
         "invited_join": "đã mời bạn tham gia chiến dịch",
         "loading": "Đang tải...",
-        "notification_empty": "Không có thông báo."
+        "notification_empty": "Không có thông báo.",
+        "user_donated": "đã quyên góp cho sự kiện của bạn",
+        "accept_donate": "đã chấp nhận sự đóng góp của bạn trong sự kiện"
     },
     "share_to": "Chia sẻ"
 }

@@ -54,7 +54,9 @@
         "notifications": "Notifications",
         "invited_join": "invited you to join campaign",
         "loading": "Loading...",
-        "notification_empty": "Don't have any notification"
+        "notification_empty": "Don't have any notification",
+        "user_donated": "donated to your event",
+        "accept_donate": "has accepted your donation in the event"
     },
     "share_to": "Share to"
 }

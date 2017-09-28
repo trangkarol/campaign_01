@@ -192,35 +192,12 @@
                         </div>
                         <div class="mCustomScrollbar" data-mcs-theme="dark">
                             <ul class="ul-notification notification-list">
-                                <li v-for="item in listNotification" :class="{ 'un-read': !item.read_at }" @click="redirect(item)">
-                                    <div class="author-thumb">
-                                        <img :src="item.data.from.image_thumbnail" alt="author">
-                                    </div>
-                                    <div class="notification-event">
-                                        <div>
-                                            <b>{{ item.data.from.name }}</b>
-                                            {{ $t('homepage.header.invited_join') }}
-                                            <a href="javascipt:void(0)" class="notification-link">{{ item.data.campaign.title }}</a>.
-                                        </div>
-                                        <span class="notification-date">
-                                            <time class="entry-date updated">{{ timeAgo(item.created_at) }}</time>
-                                        </span>
-                                    </div>
-                                    <span class="notification-icon">
-                                        <svg class="olymp-happy-face-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-happy-face-icon"></use>
-                                        </svg>
-                                    </span>
-
-                                    <div class="more" style="display: none;">
-                                        <svg class="olymp-three-dots-icon">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
-                                        </svg>
-                                        <svg class="olymp-little-delete">
-                                            <use xlink:href="/frontend/icons/icons.svg#olymp-little-delete"></use>
-                                        </svg>
-                                    </div>
-                                </li>
+                                <notification v-for="(notification, index) in listNotification"
+                                    :notification="notification"
+                                    :key="index"
+                                    :totalUnreadNotifications.sync="totalUnreadNotifications"
+                                    :show.sync="show">
+                                </notification>
                                 <li class="li-loading" v-show="loading">
                                     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
                                     <span>{{ $t('homepage.header.loading') }}</span>
@@ -234,6 +211,8 @@
                         <a href="javascript:void(0)" class="view-all bg-primary"></a>
                     </div>
                 </div>
+
+                <!-- Component profile -->
                 <div class="author-page author vcard inline-items more">
                     <div class="author-thumb">
                         <img alt="author" :src="user.image_thumbnail" class="avatar">
@@ -280,6 +259,8 @@
                         <span class="author-subtitle">{{ user.email }}</span>
                     </router-link>
                 </div>
+
+                <!-- Component languages -->
                 <div class="select-lang control-icon more has-items">
                     <img src="/images/vn.png" v-show="lang == 'vi'" alt="author">
                     <img src="/images/jp5.png" v-show="lang == 'ja'" alt="author">
@@ -327,7 +308,6 @@
                 </div>
             </div>
             <!--End: control-block -->
-
             <div class="control-log control-block" v-else>
                 <router-link to="/login">{{ $t('homepage.header.login') }}</router-link> |
                 <router-link to="/register">{{ $t('homepage.header.register') }}</router-link>
@@ -348,6 +328,7 @@ import {
 } from '../../../router/router'
 import { post, get } from '../../../helpers/api'
 import noty from '../../../helpers/noty'
+import Notification from './Notification'
 import { EventBus } from '../../../EventBus.js'
 
 export default {
@@ -492,6 +473,7 @@ export default {
                 }
             } else {
                 this.show = false
+                this.markReadNotifications()
             }
         },
 
@@ -531,14 +513,6 @@ export default {
                         container: false
                     })
                 })
-        },
-
-        redirect(data) {
-            if (data.type === 'App\\Notifications\\InviteUser') {
-                this.$router.push({ name: 'campaign.timeline', params: { slug: data.data.campaign.slug }})
-            }
-
-            this.show = false
         },
 
         /*--- List message ---*/
@@ -790,6 +764,9 @@ export default {
             localStorage.setItem('locale', locale)
         }
     },
+    components: {
+        Notification
+    },
 
     sockets: {
         singleChat: function (data) {
@@ -864,9 +841,8 @@ export default {
         },
 
         //--- List Notification ---//
-        inviteUser: function (notification) {
+        getNotification: function (notification) {
             this.totalUnreadNotifications++
-
             if (this.show) {
                 this.listNotification.unshift(notification.data)
             }
@@ -876,6 +852,22 @@ export default {
 </script>
 
 <style lang="scss">
+ #notification_messages, #notification_list_request, ul {
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #F5F5F5;
+    }
+
+    &::-webkit-scrollbar {
+        width: 2px;
+        background-color: #ff5e3a;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #494c62;
+    }
+}
+
 .div-notification {
     .ul-notification {
         overflow-y: scroll;
@@ -886,20 +878,6 @@ export default {
             &:hover {
                 background: #fafbfd;
             }
-        }
-
-        &::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-            background-color: #F5F5F5;
-        }
-
-        &::-webkit-scrollbar {
-            width: 2px;
-            background-color: #ff5e3a;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background-color: #494c62;
         }
     }
 
@@ -1080,12 +1058,5 @@ export default {
 
 .message-unread {
     background-color: rgb(236, 239, 241) !important;
-}
-
-#chat-notification {
-    color: #0c0c0c !important;
-    p {
-        color: #0c0c0c !important;
-    }
 }
 </style>
