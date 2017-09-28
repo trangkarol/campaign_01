@@ -163,6 +163,16 @@ class UserRepository extends BaseRepository implements UserInterface
             return $item->activitiable === null;
         });
 
+        //sort like according to campaign, event, action
+        $dataChecklike = [];
+        $dataChecklike['campaign'] = $checkLiked->where('activitiable_type', Campaign::class)->pluck('activitiable_id');
+        $dataChecklike['event'] = $checkLiked->where('activitiable_type', Event::class)->pluck('activitiable_id');
+        $dataChecklike['action'] = $checkLiked->where('activitiable_type', Action::class)->pluck('activitiable_id');
+
+        $checkLiked = $checkLiked->each(function ($item, $key) {
+            return $item->activitiable === null;
+        });
+
         $inforListActivity = $activities
             ->orderBy('created_at', 'DESC')
             ->paginate(config('settings.paginate_event'));
@@ -170,26 +180,25 @@ class UserRepository extends BaseRepository implements UserInterface
         $listActivity = $inforListActivity->reject(function ($item) {
             if ($item->activitiable_type == Campaign::class) {
                 $item->load(['activitiable' => function ($query) {
-                    $query->withTrashed()->with(['comments' => function ($sub) {
-                        $sub->withTrashed()
-                            ->getLikes()
-                            ->where('parent_id', config('settings.comment_parent'))
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(config('settings.paginate_comment'), ['*'], 1);
-                    }])
-                    ->with(['tags', 'media' => function ($subQuery) {
-                        $subQuery->withTrashed();
-                    }, 'settings' => function ($subQuery) {
-                        $subQuery->withTrashed();
-                    }])
-                    ->getLikes();
+                    $query->withTrashed()
+                        ->getLikes()
+                        ->with(['comments' => function ($sub) {
+                            $sub->withTrashed()
+                                ->where('parent_id', config('settings.comment_parent'))
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(config('settings.paginate_comment'), ['*'], 1);
+                        }])
+                        ->with(['tags', 'media' => function ($subQuery) {
+                            $subQuery->withTrashed();
+                        }, 'settings' => function ($subQuery) {
+                            $subQuery->withTrashed();
+                        }]);
                 }]);
             } else {
                 if ($item->activitiable_type == Event::class) {
                     $item->load(['activitiable' => function ($query) {
                         $query->withTrashed()->with(['comments' => function ($sub) {
                             $sub->withTrashed()
-                                ->getLikes()
                                 ->where('parent_id', config('settings.comment_parent'))
                                 ->orderBy('created_at', 'desc')
                                 ->paginate(config('settings.paginate_comment'), ['*'], 1);
@@ -205,7 +214,6 @@ class UserRepository extends BaseRepository implements UserInterface
                     $item->load(['activitiable' => function ($query) {
                         $query->withTrashed()->with(['comments' => function ($sub) {
                             $sub->withTrashed()
-                                ->getLikes()
                                 ->where('parent_id', config('settings.comment_parent'))
                                 ->orderBy('created_at', 'desc')
                                 ->paginate(config('settings.paginate_comment'), ['*'], 1);
@@ -228,7 +236,7 @@ class UserRepository extends BaseRepository implements UserInterface
             'currentPageUser' => $currentUser,
             'inforListActivity' => $inforListActivity,
             'listActivity' => $listActivity,
-            'checkLiked' => $checkLiked->pluck('activitiable_id'),
+            'checkLiked' => $dataChecklike,
         ];
     }
 

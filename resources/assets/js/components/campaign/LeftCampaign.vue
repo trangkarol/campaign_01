@@ -9,6 +9,10 @@
             </div>
             <div class="ui-block-content">
                 <ul class="widget w-personal-info item-block">
+                    <!-- <li v-if="campaign.status != null">
+                        <span class="title">{{ $t('campaigns.status') }}:</span>
+                        <span class="text">{{ campaign.status['value'] }}</span>
+                    </li> -->
                     <li v-if="campaign.start_day != null">
                         <span class="title">{{ $t('campaigns.start-day') }}:</span>
                         <span class="text">{{ campaign.start_day['value'] }}</span>

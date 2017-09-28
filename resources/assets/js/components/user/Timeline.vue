@@ -73,7 +73,7 @@
 
                             <master-like
                                 :likes="activity.activitiable.likes"
-                                :checkLiked="checkLiked"
+                                :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
                                 :flag="nameActivity(activity.activitiable_type)"
                                 :type="'like'"
                                 :modelId="activity.activitiable.id"
@@ -86,7 +86,7 @@
                             <div class="control-block-button post-control-button">
                                 <master-like
                                     :likes="activity.activitiable.likes"
-                                    :checkLiked="checkLiked"
+                                    :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
                                     :flag="nameActivity(activity.activitiable_type)"
                                     :type="'like-infor'"
                                     :modelId="activity.activitiable.id"
@@ -263,6 +263,18 @@
 
                 if (activity.activitiable.campaign) {
                     return activity.activitiable.campaign.title
+                }
+            },
+            checkLikes(type, checkLiked) {
+                switch(type) {
+                    case 'App\\Models\\Campaign':
+                        return checkLiked.campaign
+                    case 'App\\Models\\Event':
+                        return checkLiked.event
+                    case 'App\\Models\\Action':
+                        return checkLiked.action
+                    default:
+                        return ''
                 }
             },
             detailAction(actionId) {
