@@ -303,7 +303,7 @@ export default {
                     this.campaign.latitude = parseFloat(c.latitude)
                     this.campaign.longitude = parseFloat(c.longitude)
                     this.campaign.tags = c.tags
-                    this.campaign.media = c.media[0].image_thumbnail
+                    this.campaign.media = c.media[0].image_default
                     this.center.lng = parseFloat(c.longitude)
                     this.center.lat = parseFloat(c.latitude)
 
