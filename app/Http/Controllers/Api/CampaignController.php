@@ -551,7 +551,7 @@ class CampaignController extends ApiController
             ];
 
             $this->redis = LRedis::connection();
-            $this->redis->publish('inviteUser', json_encode($notification));
+            $this->redis->publish('getNotification', json_encode($notification));
         });
     }
 

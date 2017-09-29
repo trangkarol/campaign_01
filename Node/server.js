@@ -19,7 +19,7 @@ const subClient = redis.createClient(process.env.REDIS_PORT, 'redis')
 const notificationClient = redis.createClient(process.env.REDIS_PORT, 'redis')
 
 subClient.subscribe('createCampaign', 'createEvent')
-notificationClient.subscribe('inviteUser')
+notificationClient.subscribe('getNotification')
 redisClient.subscribe('singleChat', 'groupChat', 'activies', 'noty')
 redisClient.on('message', function (channel, data) {
     if (channel == 'activies') {
@@ -44,7 +44,7 @@ redisClient.on('message', function (channel, data) {
 
 notificationClient.on('message', function (channel, data) {
     let notification = JSON.parse(data)
-    io.sockets.in(notification.data.to).emit('inviteUser', { data: notification })
+    io.sockets.in(notification.data.to).emit('getNotification', { data: notification })
 })
 
 redisClient.on('error', function (err) {

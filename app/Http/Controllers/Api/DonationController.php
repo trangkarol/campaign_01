@@ -8,6 +8,10 @@ use App\Http\Requests\DonationRequest;
 use App\Exceptions\Api\UnknowException;
 use App\Repositories\Contracts\EventInterface;
 use App\Repositories\Contracts\DonationInterface;
+use App\Notifications\AcceptDonation;
+use App\Notifications\UserDonate;
+use Notification;
+use LRedis;
 
 class DonationController extends ApiController
 {
@@ -48,6 +52,9 @@ class DonationController extends ApiController
                     'donationType.quality',
                 ])
                 ->get();
+
+            Notification::send($event->user, new UserDonate($this->user, $event));
+            $this->sendNotification($event->user_id, $event, UserDonate::class);
         });
     }
 
@@ -90,6 +97,10 @@ class DonationController extends ApiController
             $this->compacts['donation'] = $this->donationRepository->update($donation->id, [
                 'status' => $request->status,
             ])->load('user');
+
+            $event = $donation->event;
+            Notification::send($donation->user, new AcceptDonation($this->user, $event));
+            $this->sendNotification($donation->user_id, $event, AcceptDonation::class);
         });
     }
 
@@ -122,5 +133,18 @@ class DonationController extends ApiController
         return $this->doAction(function () use ($donation) {
             $this->compacts['donation'] = $this->donationRepository->delete($donation->id);
         });
+    }
+
+    public function sendNotification($receiver, $event, $modelName)
+    {
+        $notification['type'] = $modelName;
+        $notification['data'] = [
+            'to' => $receiver,
+            'from' => $this->user,
+            'event' => $event,
+        ];
+
+        $this->redis = LRedis::connection();
+        $this->redis->publish('getNotification', json_encode($notification));
     }
 }
