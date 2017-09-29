@@ -6,7 +6,7 @@
                     <div class="ui-block">
                         <div class="top-header top-header-favorit">
                             <div class="top-header-thumb" v-if="campaign.campaign_images != null">
-                                <img :src="campaign.campaign_images.image_slider" :alt="campaign.name" class="images-campaign">
+                                <img :src="campaign.campaign_images.image_default" :alt="campaign.name" class="images-campaign">
                                 <div class="top-header-author">
                                     <div class="avatar-campaign author-thumb"
                                         :style="{ 'background-image': 'url(' + campaign.campaign_images.image_medium + ')' }"
