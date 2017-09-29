@@ -32,6 +32,7 @@
         },
         created() {
             EventBus.$emit('redirect-page')
+            this.$socket.emit('viewing_like', `user${this.pageId}`)
             this.getUser(this.pageId)
         },
         watch: {
@@ -46,6 +47,9 @@
         },
         components: {
             UserHeader
+        },
+        beforeDestroy() {
+            this.$socket.emit('stop_view_like', `user${this.pageId}`)
         }
     }
 </script>

@@ -157,7 +157,10 @@ abstract class BaseRepository implements RepositoryInterface
     public function findOrFail($id, $columns = ['*'])
     {
         try {
-            return $this->model->findOrFail($id, $columns);
+            $model = $this->model->findOrFail($id, $columns);
+            $this->makeModel();
+
+            return $model;
         } catch (ModelNotFoundException $e) {
             throw new \App\Exceptions\Api\NotFoundException('Model not found with id:' . $id, NOT_FOUND);
         }

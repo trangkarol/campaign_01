@@ -90,5 +90,6 @@
     "open_campaign": "Open Campaign",
     "invite_user": "Invite user",
     "accept": "Accept",
-    "no_data": "No data"
+    "no_data": "No data",
+    "no_campaigns_are_closed": "No campaigns are closed"
 }

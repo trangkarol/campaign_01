@@ -305,6 +305,6 @@ class ActionRepository extends BaseRepository implements ActionInterface
 
     public function getActionIds($eventIds)
     {
-        return $this->whereIn('event_id', $eventIds)->lists('id')->all();
+        return $this->withTrashed()->whereIn('event_id', $eventIds)->lists('id')->all();
     }
 }

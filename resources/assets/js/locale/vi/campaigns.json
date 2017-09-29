@@ -90,5 +90,6 @@
     "open_campaign": "Mở chiến dịch",
     "invite_user": "Mời bạn bè",
     "accept": "Chấp nhận",
-    "no_data": "Không có dữ liệu"
+    "no_data": "Không có dữ liệu",
+    "no_campaigns_are_closed": "Không có chiến dịch nào được đóng."
 }
