@@ -7,6 +7,8 @@ use App\Models\Media;
 use App\Models\Campaign;
 use App\Models\Activity;
 use App\Notifications\InviteUser;
+use App\Notifications\UserRequest;
+use App\Notifications\AcceptRequest;
 use App\Traits\Common\UploadableTrait;
 use App\Repositories\Contracts\CampaignInterface;
 use App\Exceptions\Api\NotFoundException;
@@ -334,13 +336,16 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     public function changeStatusUser($data)
     {
         if ($data['flag'] == Campaign::FLAG_APPROVE) {
-            $result = $data['campaign']->users()->updateExistingPivot($data['user_id'], ['status' => Campaign::APPROVED]);
+            $result = $data['campaign']->users()->updateExistingPivot($data['userRequest']->id, [
+                'status' => Campaign::APPROVED
+            ]);
             $data['campaign']->activities()->create([
-                'user_id' => $data['user_id'],
+                'user_id' => $data['userRequest']->id,
                 'name' => Activity::JOIN,
             ]);
+            Notification::send($data['userRequest'], new AcceptRequest($data['sender'], $data['campaign']));
 
-            return $result;
+            return AcceptRequest::class;
         }
 
         $data['campaign']->users()->detach($data['user_id']);
@@ -369,14 +374,24 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
      * @param  int $campaign, $userId
      * @return
      */
-    public function attendCampaign($campaign, $userId)
+    public function attendCampaign($campaign, $user)
     {
-        return $campaign->users()->toggle([
-            $userId => [
+        $campaign->users()->toggle([
+            $user->id => [
                 'role_id' => app(RoleRepository::class)->findRoleOrFail(Role::ROLE_MEMBER, Role::TYPE_CAMPAIGN)->id,
                 'status' => Campaign::APPROVING,
             ]
         ]);
+
+        $ownerCampaign = $campaign->owner;
+        $moderatorsCampaign = $campaign->moderators;
+        $listReceiver = $ownerCampaign->merge($moderatorsCampaign);
+        Notification::send($listReceiver->all(), new UserRequest($user, $campaign));
+
+        return [
+            'listReceiver' => $listReceiver,
+            'model' => UserRequest::class,
+        ];
     }
 
     /**

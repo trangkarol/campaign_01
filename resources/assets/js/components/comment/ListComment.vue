@@ -440,7 +440,6 @@ export default {
     }
 
     .more-comments {
-        padding: 0px 0px 10px;
-        margin-top: -10px;
+        padding: 10px 0;
     }
 </style>

@@ -294,54 +294,59 @@
 </script>
 
 <style lang="scss" scoped>
-    .h6 .post__author-name .fn {
-        font-size: 16px !important;
-    }
+    .post {
+        padding-bottom: 0px;
+        border-bottom: 0;
 
-    .title-action {
-        font-size: 17px !important;
-    }
+        .h6 .post__author-name .fn {
+            font-size: 16px !important;
+        }
 
-    .name-action {
-        font-size: 17px !important;
-        font-weight: bold !important;
-    }
+        .title-action {
+            font-size: 17px !important;
+        }
 
-    .img-auth, .article-more {
-        width: 3%;
-    }
+        .name-action {
+            font-size: 17px !important;
+            font-weight: bold !important;
+        }
 
-    .author-date {
-        width: 80%;
-    }
+        .img-auth, .article-more {
+            width: 3%;
+        }
 
-    .post__author {
-        margin-bottom: 10px;
-    }
+        .author-date {
+            width: 80%;
+        }
 
-    .post__date {
-        margin-top: 5px;
-    }
+        .post__author {
+            margin-bottom: 10px;
+        }
 
-    .author-date {
-        font-size: 14px;
-        .link-event {
-            color: rgb(97, 99, 115);
-            text-transform: uppercase;
-            font-weight: 400;
-            .title-event {
-                color: #616373;
-                &:hover {
-                    color: #fe5d39;
+        .post__date {
+            margin-top: 5px;
+        }
+
+        .author-date {
+            font-size: 14px;
+            .link-event {
+                color: rgb(97, 99, 115);
+                text-transform: uppercase;
+                font-weight: 400;
+                .title-event {
+                    color: #616373;
+                    &:hover {
+                        color: #fe5d39;
+                    }
                 }
             }
+            .published {
+                font-size: 13px;
+            }
         }
-        .published {
-            font-size: 13px;
-        }
-    }
 
-    .span-event{
-        color: #fe5d39;
+        .span-event{
+            color: #fe5d39;
+        }
     }
 </style>

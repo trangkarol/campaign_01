@@ -25,15 +25,8 @@
                         </time>
                     </div>
                 </div>
-                <div class="more" style="display: none;">
-                    <svg class="olymp-three-dots-icon">
-                        <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
-                    </svg>
-                    <ul class="more-dropdown">
-                        <li>
-                            <a href="javascript:void(0)">Edit Post</a>
-                        </li>
-                    </ul>
+                <div class="more">
+                    <i aria-hidden="true" class="fa fa-calendar-check-o"></i>
                 </div>
             </div>
             <p>
@@ -136,32 +129,49 @@
 </script>
 
 <style lang="scss" scoped>
-    .author-date {
-        width: 90%;
-    }
-    .post-thumb {
-        margin-top: 10px;
-        margin-bottom: 0px;
-    }
-    .span-event{
-        color: #fe5d39;
-    }
+    .post {
+        padding-bottom: 0px;
 
-    .author-date {
-        font-size: 14px;
-        .link-event {
-            color: rgb(97, 99, 115);
-            text-transform: uppercase;
-            font-weight: 400;
-            .title-event {
-                color: #616373;
-                &:hover {
-                    color: #fe5d39;
+        .author-date {
+            font-size: 14px;
+            width: 82%;
+        }
+        .post-thumb {
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+        .span-event{
+            color: #fe5d39;
+        }
+
+        .author-date {
+            font-size: 14px;
+            .link-event {
+                color: rgb(97, 99, 115);
+                text-transform: uppercase;
+                font-weight: 400;
+                .title-event {
+                    color: #616373;
+                    &:hover {
+                        color: #fe5d39;
+                    }
                 }
             }
+            .published {
+                font-size: 13px;
+            }
         }
-        .published {
-            font-size: 13px;
+
+        .more {
+            padding: 10px;
+            padding-left: 11px;
+            border-radius: 70%;
+            border: 0;
+            margin: -10px -10px 0px 0px;
+            i {
+            font-size: 30px;
+                color: #404358;
+            }
         }
     }
 </style>
