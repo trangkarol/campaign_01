@@ -125,7 +125,7 @@
 
         watch: {
             time() {
-                this.newData.time = moment(this.time).format('YYYY-MM-DD')
+                this.newExpense.time = this.newExpense.time? this.newExpense.time : this.time
             }
         },
 
@@ -217,7 +217,7 @@
             this.newData.goal_id = this.expense.goal.id
             this.newData.cost = this.expense.cost
             this.newData.reason = this.expense.reason
-            this.time = moment(this.expense.time).format('L')
+            this.time = moment(this.expense.time).format('YYYY-MM-DD')
             this.callApi()
         },
 

@@ -37,7 +37,7 @@
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="form-group date-time-picker label-floating">
                         <label class="control-label">{{ $t('form.label.time') }}</label>
-                        <date-picker :date.sync="time"></date-picker>
+                        <date-picker :date.sync="time" :formatStand.sync="newExpense.time"></date-picker>
                         <span class="input-group-addon">
                             <svg class="olymp-calendar-icon">
                                 <use xlink:href="/frontend/icons/icons.svg#olymp-calendar-icon"></use>
@@ -124,13 +124,7 @@
 
         watch: {
             time() {
-                var arrayTime = this.time.split('/')
-
-                if (arrayTime[2].length == 4) {
-                    this.newExpense.time = this.time.split('/').reverse().join('-')
-                } else {
-                    this.newExpense.time = this.time.split('/').join('-')
-                }
+                this.newExpense.time = this.newExpense.time? this.newExpense.time : this.time
             }
         },
 
@@ -212,7 +206,7 @@
         created() {
             this.callApi()
             this.newExpense.event_id = this.pageId
-            this.time = moment().format('L');
+            this.time = moment().format('YYYY-MM-DD');
         },
 
         components: {
