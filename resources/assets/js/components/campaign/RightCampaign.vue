@@ -360,6 +360,11 @@
         padding: 15px 25px 10px;
         .skills-item {
             margin-bottom: 0px;
+
+            img {
+                width: 34px;
+                height: 34px;
+            }
         }
 
         .btn-join {

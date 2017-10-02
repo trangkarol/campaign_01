@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="ui-block features-video wrap-event">
+                <div class="wrap-event ui-block features-video">
                     <div class="slider-event video-player">
                         <slider v-if="event.media.length" animation="fade" height="100%" :interval="300000">
                             <slider-item v-for="(i, index) in event.media" :key="index">
@@ -85,18 +85,19 @@
                                 </plugin-sidebar>
                             </div>
                         </article>
-
-                        <comment
-                            :comments="event.comments"
-                            :numberOfComments="event.number_of_comments"
-                            :model-id ="event.id"
-                            :flag="pageType"
-                            :classListComment="'list-comment-event'"
-                            :classFormComment="'input-comment-event'"
-                            :deleteDate="event.deleted_at"
-                            :canComment="event.isMember"
-                            :roomLike="`campaign${event.campaign_id}`">
-                        </comment>
+                        <div class="show-comments">
+                            <comment
+                                :comments="event.comments"
+                                :numberOfComments="event.number_of_comments"
+                                :model-id ="event.id"
+                                :flag="pageType"
+                                :classListComment="'list-comment-event'"
+                                :classFormComment="'input-comment-event'"
+                                :deleteDate="event.deleted_at"
+                                :canComment="event.isMember"
+                                :roomLike="`campaign${event.campaign_id}`">
+                            </comment>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -244,7 +245,24 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+    .show-comments {
+        height: 225px;
+        overflow-y: scroll;
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+        }
+
+        &::-webkit-scrollbar {
+            width: 2px;
+            background-color: #ff5e3a;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #7a7fa0;
+        }
+    }
     .wrap-event {
         z-index: 20 !important;
         margin-top: 10px;
@@ -264,9 +282,9 @@
             }
         }
         .info-event {
-            padding: 5px 14px !important;
+            padding: 15px 15px 0px !important;
+            border-bottom: 0px;
             .user-event {
-                padding-bottom: 5px !important;
                 margin-bottom: 0px;
                 padding: 0;
                 .author-date {
@@ -285,31 +303,6 @@
             .title-event {
                 padding: 0px !important;
                 margin: 2px 0 !important;
-            }
-            .like-comment-event {
-                padding:0px!important;
-                .float-comment-shared {
-                    float: left !important;
-                    margin-right: 10px !important;
-                }
-            }
-            .liked {
-                background-color: #ff5e3a !important;
-                &:hover {
-                    background-color: #9a9fbf !important;
-                }
-            }
-        }
-        .list-comment-event {
-            height: 225px;
-            overflow-y: scroll;
-            &::-webkit-scrollbar {
-                display: none;
-            }
-            .has-children {
-                span {
-                    padding: 10px 0px;
-                }
             }
         }
         .input-comment-event {

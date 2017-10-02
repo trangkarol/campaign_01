@@ -56,7 +56,13 @@
         "loading": "Loading...",
         "notification_empty": "Don't have any notification",
         "user_donated": "donated to your event",
-        "accept_donate": "has accepted your donation in the event"
+        "accept_donate": "has accepted your donation in the event",
+        "request_join": "requested to join campaign",
+        "accept_request": "has accepted your request to join in the campaign"
     },
-    "share_to": "Share to"
+    "share_to": "Share to",
+    "address": "Address",
+    "start_day": "Start day",
+    "infomation": "Infomation",
+    "see_details": "See details"
 }

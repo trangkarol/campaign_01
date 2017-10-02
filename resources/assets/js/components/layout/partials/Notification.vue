@@ -66,6 +66,50 @@
             <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
         </span>
     </li>
+
+    <!-- notification when someone request to join campaign -->
+    <li :class="{ 'un-read': !notification.read_at }"
+        @click="redirect(notification)"
+        v-else-if="notification.type == 'App\\Notifications\\UserRequest'">
+        <div class="author-thumb">
+            <img :src="notification.data.from.image_thumbnail" alt="author">
+        </div>
+        <div class="notification-event">
+            <div>
+                <b>{{ notification.data.from.name }}</b>
+                {{ $t('homepage.header.request_join') }}
+                <b class="notification-to">{{ notification.data.campaign.title }}</b>.
+            </div>
+            <span class="notification-date">
+                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+            </span>
+        </div>
+        <span class="notification-icon">
+            <i class="fa fa-reply" aria-hidden="true"></i>
+        </span>
+    </li>
+
+    <!-- notification when Owner campaign accept request's user -->
+    <li :class="{ 'un-read': !notification.read_at }"
+        @click="redirect(notification)"
+        v-else-if="notification.type == 'App\\Notifications\\AcceptRequest'">
+        <div class="author-thumb">
+            <img :src="notification.data.from.image_thumbnail" alt="author">
+        </div>
+        <div class="notification-event">
+            <div>
+                <b>{{ notification.data.from.name }}</b>
+                {{ $t('homepage.header.accept_request') }}
+                <b class="notification-to">{{ notification.data.campaign.title }}</b>.
+            </div>
+            <span class="notification-date">
+                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+            </span>
+        </div>
+        <span class="notification-icon">
+            <i class="fa fa-check-square-o" aria-hidden="true"></i>
+        </span>
+    </li>
 </template>
 
 <script>
@@ -83,7 +127,13 @@
             redirect(notification) {
                 switch (notification.type) {
                     case 'App\\Notifications\\InviteUser':
+                    case 'App\\Notifications\\AcceptRequest':
                         this.$router.push({ name: 'campaign.timeline', params: {
+                            slug: notification.data.campaign.slug
+                        }})
+                        break
+                    case 'App\\Notifications\\UserRequest':
+                        this.$router.push({ name: 'campaign.member_request', params: {
                             slug: notification.data.campaign.slug
                         }})
                         break
@@ -115,12 +165,21 @@
     i {
         font-size: 25px;
     }
+
     .fa-gift {
         color: rgb(121, 124, 148);
     }
 
     .fa-thumbs-o-up{
         color: #55c1b4;
+    }
+
+    .fa-reply {
+        color: #5bc2ba;
+    }
+
+    .fa-check-square-o {
+        color: #ffa58f;
     }
 
     .notification-to {

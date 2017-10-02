@@ -18,6 +18,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Campaign;
 use App\Models\Activity;
+use Notification;
 use Exception;
 use LRedis;
 
@@ -104,11 +105,12 @@ class CampaignController extends ApiController
     public function changeStatusMember($campaignId, $userId, $flag)
     {
         $campaign = $this->campaignRepository->findOrFail($campaignId);
-
+        $userRequest = $this->userRepository->findOrFail($userId);
         $data = [
             'campaign' => $campaign,
             'flag' => $flag,
-            'user_id' => $userId,
+            'userRequest' => $userRequest,
+            'sender' => $this->user,
         ];
 
         if ($this->user->cannot('changeStatusUser', $campaign)) {
@@ -116,8 +118,9 @@ class CampaignController extends ApiController
         }
 
         return $this->doAction(function () use ($data) {
-            $this->campaignRepository->changeStatusUser($data);
-            $this->compacts['change_status'] = $this->userRepository->findOrFail($data['user_id']);
+            $acceptRequestModel = $this->campaignRepository->changeStatusUser($data);
+            $this->compacts['change_status'] = $data['userRequest'];
+            $this->sendNotification($data['userRequest']->id, $data['campaign'], $acceptRequestModel);
         });
     }
 
@@ -374,11 +377,13 @@ class CampaignController extends ApiController
             }
         }
 
-        $user = $this->user;
+        return $this->doAction(function () use ($campaign) {
+            $data = $this->campaignRepository->attendCampaign($campaign, $this->user);
+            $this->compacts['attend_campaign'] = $this->user;
 
-        return $this->doAction(function () use ($user, $campaign) {
-            $this->campaignRepository->attendCampaign($campaign, $user->id);
-            $this->compacts['attend_campaign'] = $user;
+            foreach ($data['listReceiver'] as $receiver) {
+                $this->sendNotification($receiver->id, $campaign, $data['model']);
+            }
         });
     }
 
@@ -542,16 +547,7 @@ class CampaignController extends ApiController
                 ? config('settings.is_manager')
                 : config('settings.not_manager');
             $this->compacts['members'] = $this->campaignRepository->inviteUser($data);
-
-            $notification['type'] = InviteUser::class;
-            $notification['data'] = [
-                'to' => $data['invitedUser']->id,
-                'from' => $this->user,
-                'campaign' => $data['campaign'],
-            ];
-
-            $this->redis = LRedis::connection();
-            $this->redis->publish('getNotification', json_encode($notification));
+            $this->sendNotification($data['invitedUser']->id, $data['campaign'], InviteUser::class);
         });
     }
 
@@ -569,5 +565,18 @@ class CampaignController extends ApiController
             $this->compacts['user'] = $this->user;
             $this->compacts['is_manager'] = $this->campaignRepository->acceptInvitation($data);
         });
+    }
+
+    public function sendNotification($receiver, $campaign, $modelName)
+    {
+        $notification['type'] = $modelName;
+        $notification['data'] = [
+            'to' => $receiver,
+            'from' => $this->user,
+            'campaign' => $campaign,
+        ];
+
+        $this->redis = LRedis::connection();
+        $this->redis->publish('getNotification', json_encode($notification));
     }
 }

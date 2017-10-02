@@ -1,5 +1,5 @@
 {
-    "create_a": "tạo môt",
+    "create_a": "đã tạo môt",
     "new_campaign": "chiến dịch mới",
     "event": "sự kiện",
     "loading": "Đang tải...",
@@ -56,7 +56,13 @@
         "loading": "Đang tải...",
         "notification_empty": "Không có thông báo.",
         "user_donated": "đã quyên góp cho sự kiện của bạn",
-        "accept_donate": "đã chấp nhận sự đóng góp của bạn trong sự kiện"
+        "accept_donate": "đã chấp nhận sự đóng góp của bạn trong sự kiện",
+        "request_join": "đã yêu cầu tham gia chiến dịch",
+        "accept_request": "đã chấp nhận yêu cầu tham gia của bạn trong chiến dịch"
     },
-    "share_to": "Chia sẻ"
+    "share_to": "Chia sẻ",
+    "address": "Địa chỉ",
+    "start_day": "Ngày bắt đầu",
+    "infomation": "Thông tin",
+    "see_details": "Xem chi tiết"
 }
