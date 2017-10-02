@@ -53,8 +53,10 @@ class DonationController extends ApiController
                 ])
                 ->get();
 
-            Notification::send($event->user, new UserDonate($this->user, $event));
-            $this->sendNotification($event->user_id, $event, UserDonate::class);
+            if ($event->user_id != $this->user->id) {
+                Notification::send($event->user, new UserDonate($this->user, $event));
+                $this->sendNotification($event->user_id, $event, UserDonate::class);
+            }
         });
     }
 
@@ -98,9 +100,11 @@ class DonationController extends ApiController
                 'status' => $request->status,
             ])->load('user');
 
-            $event = $donation->event;
-            Notification::send($donation->user, new AcceptDonation($this->user, $event));
-            $this->sendNotification($donation->user_id, $event, AcceptDonation::class);
+            if ($donation->user_id != $this->user->id) {
+                $event = $donation->event;
+                Notification::send($donation->user, new AcceptDonation($this->user, $event));
+                $this->sendNotification($donation->user_id, $event, AcceptDonation::class);
+            }
         });
     }
 

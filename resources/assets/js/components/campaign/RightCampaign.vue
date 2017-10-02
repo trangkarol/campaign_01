@@ -19,6 +19,24 @@
                     v-else-if="checkOwner" @click="comfirmOpenCampaign">
                     {{ $t('campaigns.open_campaign') }}
                 </a>
+
+                <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color bg-primary full-width"
+                    v-if="checkJoinCampaign == 1 && !checkPermission && !campaign.deleted_at"
+                    @click="comfirmJoinCampaign">{{ $t('campaigns.join-now') }}</a>
+
+                <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color bg-grey full-width"
+                    v-if="checkJoinCampaign == 3 && !checkOwner && !campaign.deleted_at"
+                    @click="comfirmLeaveCampaign" >
+                    {{ $t('campaigns.leave') }}</a>
+
+                <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color bg-purple full-width"
+                    v-if="checkJoinCampaign == 2 && !checkOwner && !campaign.deleted_at">
+                    {{ $t('campaigns.aproving') }}</a>
+
+                <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color bg-purple full-width"
+                    @click="comfirmAcceptCampaign"
+                    v-if="checkJoinCampaign == 4 && !checkOwner && !campaign.deleted_at">
+                    {{ $t('campaigns.accept') }}</a>
             </div>
         </div>
 
@@ -98,23 +116,6 @@
                     </li>
                 </ul>
 
-                <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color bg-primary full-width"
-                    v-if="checkJoinCampaign == 1 && !checkPermission && !campaign.deleted_at"
-                    @click="comfirmJoinCampaign">{{ $t('campaigns.join-now') }}</a>
-
-                <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color bg-grey full-width"
-                    v-if="checkJoinCampaign == 3 && !checkOwner && !campaign.deleted_at"
-                    @click="comfirmLeaveCampaign" >
-                    {{ $t('campaigns.leave') }}</a>
-
-                <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color bg-purple full-width"
-                    v-if="checkJoinCampaign == 2 && !checkOwner && !campaign.deleted_at">
-                    {{ $t('campaigns.aproving') }}</a>
-
-                <a href="javascript:void(0)" class="btn btn-md-2 btn-border-think custom-color bg-purple full-width"
-                    @click="comfirmAcceptCampaign"
-                    v-if="checkJoinCampaign == 4 && !checkOwner && !campaign.deleted_at">
-                    {{ $t('campaigns.accept') }}</a>
             </div>
         </div>
         <!-- invite user to join campaign -->
@@ -354,6 +355,12 @@
         border-radius: 3px;
         color: #fff;
         margin: 3px 0px 0px 3px;
+    }
+
+    .ui-block-title {
+        .btn + * {
+            margin-left: 0px;
+        }
     }
 
     .w-pool-content {

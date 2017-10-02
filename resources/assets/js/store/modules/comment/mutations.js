@@ -3,7 +3,7 @@ import { post, get } from 'axios'
 
 export default {
     [types.CHANGE_COMMENT](state, data) {
-        if (typeof(state.comments[data.flag]) === "undefined") {
+        if (typeof (state.comments[data.flag]) === "undefined") {
             state.comments[data.flag] = []
             state.paginates[data.flag] = []
         }
@@ -167,7 +167,7 @@ export default {
 
         data.rootStateLike.like = []
         data.rootStateLike.like = like
-        // comment
+            // comment
         commentReverse.forEach(function (item, index) {
             commentReverse[index]['sub_comment']['data'] = item.sub_comment.data.reverse()
             commentReverse[index]['sub_comment']['last_page'] = 2
@@ -211,6 +211,5 @@ export default {
 
         state.comments = []
         state.comments = comments
-        console.log('fixbug_management_campaign', comments[data.flag][data.modelId][index[0]].sub_comment, data.comments)
     },
 };

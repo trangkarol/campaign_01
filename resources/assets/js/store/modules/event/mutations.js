@@ -72,6 +72,7 @@ export default {
 
         data.rootStateLike.like['action'][data.action.list_action.id] = []
         data.rootStateLike.checkLike['action'][data.action.list_action.id] = false
+        data.rootStateLike.like['action'][data.action.list_action.id]['numberOfLikes'] = 0
         state.actions.list_action.data = [data.action.list_action, ...state.actions.list_action.data]
         state.actions.checkLikeAction = []
     },

@@ -217,8 +217,9 @@ class ActionRepository extends BaseRepository implements ActionInterface
     public function createFromExpense($data, $goal)
     {
         $newData = $this->initData($data, $goal);
+        $action = parent::create($newData);
 
-        return parent::create($newData);
+        return $this->getOneAction($action->id);
     }
 
     public function updateFromExpense($data, $goal)

@@ -115,7 +115,7 @@
                                     <td class="freshness">
                                         <div class="author-freshness" v-if="result.owner.length">
                                             <div class="author-thumb">
-                                                <img :src="result.media[0].image_small" alt="author">
+                                                <img :src="result.owner[0].image_thumbnail" alt="author">
                                             </div>
                                             <router-link class="h6 title" :to="{ name: 'user.timeline', params: { slug: result.owner[0].slug }}">
                                                 {{ result.owner[0].name }}

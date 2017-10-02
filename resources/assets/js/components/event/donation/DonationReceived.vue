@@ -51,8 +51,8 @@
                                     {{ donation.user.name }}
                                 </a>
                             </router-link>
-                            {{ $t('events.donation.donate')
-                                + donation.value
+                            {{ $t('events.donation.donated')
+                                + " " + donation.value
                                 + " " + type.quantity
                                 + " " + type.donate
                             }}.
