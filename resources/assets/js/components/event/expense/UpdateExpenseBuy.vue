@@ -181,7 +181,7 @@
 
         watch: {
             time() {
-                this.newData.expense.time = moment(this.time).format('YYYY-MM-DD')
+                this.newExpense.expense.time = this.newExpense.expense.time? this.newExpense.expense.time : this.time
             }
         },
 
@@ -294,7 +294,7 @@
             this.newData.name = this.expense.products[0].name
             this.newData.quantity = this.expense.products[0].pivot.quantity
             this.newData.quality = this.expense.qualitys[0].name
-            this.time = moment(this.expense.time).format('L')
+            this.time = moment(this.expense.time).format('YYYY-MM-DD')
             this.callApi()
             get('event/donation').then(res => {
                 this.qualitys = res.data.qualitys.map(quality => quality.name)

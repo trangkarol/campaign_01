@@ -367,7 +367,7 @@
 
                 return `${caption.cost} ${caption.nameQuality} ${caption.typeName}
                     ${this.$i18n.t('actions.is_used')} ${this.$i18n.t('actions.at')}
-                    ${moment(caption.expenseTime, 'YYYY-MM-DD').format('DD/MM/YYYY')}`
+                    ${moment(caption.expenseTime, 'YYYY-MM-DD').format('L')}`
             }
         },
 
