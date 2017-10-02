@@ -74,7 +74,8 @@
                                             {{ role.name }}
                                         </label>
 
-                                        <label v-else-if="role.id != 3 && member.campaigns[0].pivot.role_id != 3">
+                                        <label v-else-if="checkOwner && role.id != 3
+                                            && member.campaigns[0].pivot.role_id != 3">
                                             <input type="hidden"
                                                 v-if="role.id == member.campaigns[0].pivot.role_id"
                                                 :value="roleCurrent[member.id] = role.id">
@@ -87,7 +88,42 @@
                                                 @change="changeRoleMember"
                                                 :checked="member.campaigns[0].pivot.role_id === role.id"
                                                 :disabled="member.campaigns[0].pivot.role_id == 3
-                                                    || member.id == user.id || checkDeleted() || (checkModerators && member.campaigns[0].pivot.role_id == 4)    ">
+                                                    || member.id == user.id || checkDeleted()">
+                                            {{ role.name }}
+                                        </label>
+
+                                        <label v-else-if="checkModerators && role.id != 3
+                                            && member.campaigns[0].pivot.role_id == 4">
+                                            <input type="hidden"
+                                                v-if="role.id == member.campaigns[0].pivot.role_id"
+                                                :value="roleCurrent[member.id] = role.id">
+                                            <input type="radio"
+                                                :name="member.email + member.id"
+                                                :value="role.id"
+                                                :data-id="role.id"
+                                                :data-user-id="member.id"
+                                                :data-deleted="campaign.deleted_at"
+                                                @change="changeRoleMember"
+                                                :checked="member.campaigns[0].pivot.role_id === role.id"
+                                                :disabled="member.campaigns[0].pivot.role_id == 3
+                                                    || member.id == user.id || checkDeleted() || (checkModerators && member.campaigns[0].pivot.role_id == 4)">
+                                            {{ role.name }}
+                                        </label>
+
+                                         <label v-else-if="checkModerators && role.id != 3 && role.id != 4">
+                                            <input type="hidden"
+                                                v-if="role.id == member.campaigns[0].pivot.role_id"
+                                                :value="roleCurrent[member.id] = role.id">
+                                            <input type="radio"
+                                                :name="member.email + member.id"
+                                                :value="role.id"
+                                                :data-id="role.id"
+                                                :data-user-id="member.id"
+                                                :data-deleted="campaign.deleted_at"
+                                                @change="changeRoleMember"
+                                                :checked="member.campaigns[0].pivot.role_id === role.id"
+                                                :disabled="member.campaigns[0].pivot.role_id == 3
+                                                    || member.id == user.id || checkDeleted()">
                                             {{ role.name }}
                                         </label>
                                     </div>
@@ -134,6 +170,7 @@
             ]),
              ...mapGetters('campaign', [
                 'checkModerators',
+                'checkOwner'
             ]),
         },
         methods: {

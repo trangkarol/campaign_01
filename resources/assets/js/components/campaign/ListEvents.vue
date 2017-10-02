@@ -59,10 +59,6 @@
                             :deleteDate="event.deleted_at"
                             :roomLike="`campaign${pageId}`">
                         </master-like>
-
-                        <a href="javascript:void(0)" class="btn btn-control">
-                            <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
-                        </a>
                         <plugin-sidebar>
                             <template scope="props" slot="sharing-social">
                                 <share-social-network

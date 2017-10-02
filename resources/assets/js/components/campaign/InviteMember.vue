@@ -56,7 +56,7 @@
 </template>
 
 <script>
-    import { mapActions, mapState } from 'vuex'
+    import { mapActions, mapState, mapGetters } from 'vuex'
     import noty from '../../helpers/noty'
     import MessageComfirm from '../libs/MessageComfirm.vue'
     import Noty from 'noty'
@@ -69,24 +69,31 @@
             userIdCurrent: 0
         }),
         created: function () {
-            this.searchMemberToInvite({
-                campaignId: this.pageId,
-                search: this.search_invite,
-                pageNumberEvent: 1,
-                pageCurrent: 0
-            })
-            .then(data => {
-                this.listInviteUser = []
-                this.listInviteUser = data.members
-            })
-            .catch(err => {
-                const message = this.$i18n.t('messages.message-fail')
-                noty({ text: message, force: true, container: false })
-            })
+            if (this.checkInvite()) {
+                this.searchMemberToInvite({
+                    campaignId: this.pageId,
+                    search: this.search_invite,
+                    pageNumberEvent: 1,
+                    pageCurrent: 0
+                })
+                .then(data => {
+                    this.listInviteUser = []
+                    this.listInviteUser = data.members
+                })
+                .catch(err => {
+                    const message = this.$i18n.t('messages.message-fail')
+                    noty({ text: message, force: true, container: false })
+                })
+            }
         },
         computed: {
             ...mapState('campaign', [
                 'campaign',
+            ]),
+            ...mapGetters('campaign', [
+                'checkPermission',
+                'checkJoinCampaign',
+                'checkOwner'
             ]),
         },
         methods: {
@@ -142,6 +149,16 @@
                 });
 
                 this.listInviteUser.data = data
+            },
+            checkInvite() {
+                if (this.campaign.status && !this.campaign.deleted_at) {
+                    if ((this.campaign.status['value'] == 0 && (this.checkPermission || this.checkAdmin))
+                        || (this.campaign.status['value'] == 1 && (this.checkJoinCampaign == 3 || this.checkAdmin)))  {
+                        return true;
+                    }
+
+                    return false;
+                }
             }
         },
         mounted() {

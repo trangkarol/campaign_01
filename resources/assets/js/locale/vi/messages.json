@@ -63,5 +63,7 @@
     "message-join-campaign": "Bạn phải tham gia vào chiến dịch để thực hiện hành động này.",
     "comfirm-accept-campaign": "Chấp nhận lời mời này?",
     "no_event_show": "Không có sự kiện để hiển thị.",
-    "model_closed": "Hoạt động này đã đóng, bạn không thể để thực hành động này."
+    "model_closed": "Hoạt động này đã đóng, bạn không thể thực hành động này.",
+    "permission": "Bạn phải tham gia vào chiến dịch này mới có quyền thực hiện chức năng này.",
+    "accept-campaign-succesfully": "Bạn đã tham gia vaò chiến dịch này."
 }

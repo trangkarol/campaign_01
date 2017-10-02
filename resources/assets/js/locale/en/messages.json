@@ -64,6 +64,7 @@
     "message-join-campaign": "You must join to campaign to like this.",
     "comfirm-accept-campaign": "Would you like to accept this invitation?",
     "no_event_show": "There is no event to show.",
-    "model_closed": "This model are closed so you can't like this.",
-    "permission": "You may join this campaign."
+    "model_closed": "This activity is closed, you cannot take this action.",
+    "permission": "You may join this campaign.",
+    "accept-campaign-succesfully": "You attend to this campaign."
 }

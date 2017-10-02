@@ -1,21 +1,22 @@
 <template lang="html">
     <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-        <div class="ui-block" v-if="(checkPermission || checkAdmin) && !campaign.deleted_at">
+        <div class="ui-block">
             <div class="ui-block-title">
                 <router-link
                     :to="{ name: 'event.create', params: { slug: campaign.slug }}"
+                    v-if="(checkPermission || checkAdmin) && !campaign.deleted_at"
                     class="btn-join btn btn-md-2 btn-border-think bg-blue full-width">
                     {{ $t('campaigns.create-event') }}
                 </router-link>
                 <a href="javascript:void(0)"
                     class="btn marginless btn-md-2 btn-border-think custom-color bg-grey full-width"
-                    v-if="!campaign.deleted_at"
+                    v-if="checkOwner && !campaign.deleted_at"
                     @click="comfirmCloseCampaign">
                     {{ $t('campaigns.close_campaign') }}
                 </a>
                 <a href="javascript:void(0)"
                     class="btn marginless btn-md-2 btn-border-think custom-color bg-primary full-width"
-                    v-else @click="comfirmOpenCampaign">
+                    v-else-if="checkOwner" @click="comfirmOpenCampaign">
                     {{ $t('campaigns.open_campaign') }}
                 </a>
             </div>
@@ -316,7 +317,7 @@
                 this.acceptCampaign(this.pageId)
                     .then(res => {
                         this.flag_confirm_accept = false
-                        const message = this.$i18n.t('messages.comfirm-accept-campaign')
+                        const message = this.$i18n.t('messages.accept-campaign-succesfully')
                         noty({ text: message, force: true, type: 'success', container: false })
                     })
                     .catch(err => {
@@ -326,7 +327,7 @@
                     })
             },
             checkInvite() {
-                if (this.campaign.status) {
+                if (this.campaign.status && !this.campaign.deleted_at) {
                     if ((this.campaign.status['value'] == 0 && (this.checkPermission || this.checkAdmin))
                         || (this.campaign.status['value'] == 1 && (this.checkJoinCampaign == 3 || this.checkAdmin)))  {
                         return true;

@@ -100,10 +100,6 @@
                             </master-like>
 
                             <a href="javascript:void(0)" class="btn btn-control">
-                                <svg class="olymp-comments-post-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use></svg>
-                            </a>
-
-                            <a href="javascript:void(0)" class="btn btn-control">
                                 <svg class="olymp-share-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-share-icon"></use></svg>
                             </a>
 

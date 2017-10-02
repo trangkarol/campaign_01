@@ -46,6 +46,6 @@
     "photoswipe": "4.1.2",
     "vue-chartjs": "2.8.1",
     "vue-meta": "^1.2.0",
-    "vue-social-sharing": "^2.2.5"
+    "vue-social-sharing": "^2.2.6"
   }
 }

@@ -136,6 +136,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         }
 
         $deleteIds = array_diff($campaign->tags->pluck('id')->toArray(), $oldIds);
+        $newOldTags = array_diff($oldIds, $campaign->tags->pluck('id')->toArray());
 
         if ($deleteIds) {
             $campaign->tags()->detach($deleteIds);
@@ -144,6 +145,8 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         if ($newTags) {
             $campaign->tags()->createMany($newTags);
         }
+
+        $campaign->tags()->attach($newOldTags);
 
         return true;
     }
@@ -410,22 +413,25 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     */
     public function getCampaignRelated($campaign, $user)
     {
-        $tagIds = $campaign->tags()->pluck('tag_id')->all();
+        $tagIds = $campaign->tags->pluck('id')->all();
         $enday = Carbon::today()->format('Y-m-d');
         $campaignIds = $user->campaigns->pluck('id')->all();
-
-        $campaign = $campaignCheckLike = $this->whereHas('tags', function ($query) use ($tagIds) {
-            $query->whereIn('tag_id', $tagIds);
-        })
-        ->where('campaigns.status', Campaign::ACTIVE)
-        ->where('campaigns.id', '!=', $campaign->id)
-        ->whereNotIn('campaigns.id', $campaignIds);
+        $campaigns = $campaignCheckLike = $this
+            ->whereHas('tags', function ($query) use ($tagIds) {
+                $query->whereIn('tag_id', $tagIds);
+            })
+            ->whereHas('settings', function ($query) {
+                $query->where('key', config('settings.campaigns.status'))
+                    ->where('value', config('settings.value_of_settings.status.public'));
+            })
+            ->whereNull('campaigns.deleted_at')
+            ->where('campaigns.status', Campaign::ACTIVE)
+            ->where('campaigns.id', '!=', $campaign->id)
+            ->whereNotIn('campaigns.id', $campaignIds);
 
         $data = [];
-        $data['campaign'] = $campaign->with('media')
+        $data['campaign'] = $campaigns->with('media')
             ->paginate(config('settings.paginate_default'));
-
-        $data['checkLiked'] = $this->checkLike($campaignCheckLike, $user->id);
 
         return $data;
     }
@@ -434,7 +440,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     {
         $this->setGuard('api');
         $resutCampaign = $this->search($keyword, null, true)
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->whereHas('settings', function ($subQuery) {
                     $subQuery->where('key', config('settings.campaigns.status'))
                         ->where('value', config('settings.value_of_settings.status.public'));

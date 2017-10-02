@@ -73,32 +73,29 @@
 
                             <master-like
                                 :likes="activity.activitiable.likes"
-                                :checkLiked="checkLiked"
+                                :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
                                 :flag="nameActivity(activity.activitiable_type)"
                                 :type="'like'"
                                 :modelId="activity.activitiable.id"
                                 :numberOfComments="activity.activitiable.number_of_comments"
                                 :numberOfLikes="activity.activitiable.number_of_likes"
                                 :deleteDate="activity.activitiable.deleted_at"
-                                :showMore="true">
+                                :showMore="true"
+                                :roomLike="`user${currentPageUser.id}`">
                             </master-like>
 
                             <div class="control-block-button post-control-button">
                                 <master-like
                                     :likes="activity.activitiable.likes"
-                                    :checkLiked="checkLiked"
+                                    :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
                                     :flag="nameActivity(activity.activitiable_type)"
                                     :type="'like-infor'"
                                     :modelId="activity.activitiable.id"
                                     :numberOfComments="activity.activitiable.number_of_comments"
                                     :numberOfLikes="activity.activitiable.number_of_likes"
-                                    :deleteDate="activity.activitiable.deleted_at">
+                                    :deleteDate="activity.activitiable.deleted_at"
+                                    :roomLike="`user${currentPageUser.id}`">
                                 </master-like>
-                                <a href="javascript:void(0)" class="btn btn-control">
-                                    <svg class="olymp-comments-post-icon">
-                                        <use xlink:href="/frontend/icons/icons.svg#olymp-comments-post-icon"></use>
-                                    </svg>
-                                </a>
                                 <plugin-sidebar>
                                     <template scope="props" slot="sharing-social">
                                         <share-social-network
@@ -120,7 +117,8 @@
                             :classListComment="''"
                             :classFormComment="''"
                             :deleteDate="activity.activitiable.deleted_at"
-                            :canComment="true">
+                            :canComment="true"
+                            :roomLike="`user${currentPageUser.id}`">
                         </comment>
                     </div>
                 </div>
@@ -265,6 +263,18 @@
                     return activity.activitiable.campaign.title
                 }
             },
+            checkLikes(type, checkLiked) {
+                switch(type) {
+                    case 'App\\Models\\Campaign':
+                        return checkLiked.campaign
+                    case 'App\\Models\\Event':
+                        return checkLiked.event
+                    case 'App\\Models\\Action':
+                        return checkLiked.action
+                    default:
+                        return ''
+                }
+            },
             detailAction(actionId) {
                 this.showAction = true
                 this.getDetailAction(actionId)
@@ -278,6 +288,13 @@
                     noty({ text: message, force: true, container: false })
                 })
             },
+        },
+        sockets: {
+            newLike: function (data) {
+                if (this.user.id != data.user.id) {
+                    this.appendLike(data)
+                }
+            }
         },
         components: {
             LeftSidebar,

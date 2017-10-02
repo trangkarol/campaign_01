@@ -25,7 +25,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-if="campaignsClosed.total > 0" v-for="campaign in campaignsClosed.data">
+                                <tr v-if="campaignsClosed.total" v-for="campaign in campaignsClosed.data">
                                     <td class="forum title">
                                         <div class="forum-item">
                                             <img :src="campaign.media[0].image_medium" alt="forum">
@@ -63,6 +63,9 @@
                                             </div>
                                         </span>
                                     </td>
+                                </tr>
+                                <tr v-if="!campaignsClosed.total" class="no-campaign-closed">
+                                    {{ $t('campaigns.no_campaigns_are_closed') }}
                                 </tr>
                             </tbody>
                         </table>
@@ -227,6 +230,11 @@
                 .next-page {
                     float: right;
                 }
+            }
+
+            .no-campaign-closed {
+                font-size: 2em;
+                text-align: right;
             }
         }
     }
