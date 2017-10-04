@@ -41,7 +41,17 @@
         "list": "Confirmed donation",
         "list_of_donations_not_accepted": "List of donations not accepted",
         "waiting_accept": "Waiting accept",
-        "waiting": "Waiting"
+        "waiting": "Waiting",
+        "import_donation": "Import donation",
+        "select_or_leave_blank": "Select an user or leave blank",
+        "donation_status": "Donation status",
+        "donor_name": "Donor's name",
+        "donor_email": "Donor's email (optional)",
+        "donor_phone": "Donor's phone (optional)",
+        "donor_address": "Donor's address (optional)",
+        "note": "Note...",
+        "submit_and_go": "Submit and go to detail page",
+        "submit_and_continue": "Submit and continue"
     },
     "expenses": {
         "expense": "Expense",

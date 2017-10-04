@@ -242,6 +242,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         $campaign['check_owner'] = $campaign->owner()->wherePivot('user_id', $userId)->pluck('user_id')->all();
         // images campaign
         $campaign['campaign_images'] = $campaign->media()->withTrashed()->first();
+        $campaign['user'] = $campaign->activeUsers;
 
         return [
             'campaign' => $campaign,

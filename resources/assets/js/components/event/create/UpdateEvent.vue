@@ -534,12 +534,9 @@
                 })
             this.callApiGetDataGoal()
 
-            get(`event/check-permission/${this.pageId}`)
-                .then(res => {
-                    if (!res.data) {
-                        this.$router.push({ name: 'event.index', params: { slugEvent: this.pageId }})
-                    }
-                })
+            if (!this.event.manage) {
+                this.$router.replace('/not-found')
+            }
         }
     }
 </script>

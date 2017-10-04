@@ -35,9 +35,15 @@ class DonationController extends ApiController
         foreach ($request->get('goal_id') as $key => $value) {
             $donateData[$key]['goal_id'] = $value;
             $donateData[$key]['value'] = $request->get('value')[$key];
-            $donateData[$key]['user_id'] = $this->user->id;
-            $donateData[$key]['status'] = Donation::NOT_ACCEPT;
+            $donateData[$key]['user_id'] = $request->has('donor_name') ? null : $request->get('user_id', $this->user->id);
+            $donateData[$key]['status'] = (bool) ($request->has('status') ? $request->get('status')[$key] : Donation::NOT_ACCEPT);
             $donateData[$key]['campaign_id'] = $event->campaign_id;
+            $donateData[$key]['donor_name'] = $request->get('donor_name');
+            $donateData[$key]['donor_email'] = $request->get('donor_email');
+            $donateData[$key]['donor_phone'] = $request->get('donor_phone');
+            $donateData[$key]['donor_address'] = $request->get('donor_address');
+            $donateData[$key]['recipient_id'] = $request->get('recipient_id');
+            $donateData[$key]['note'] = $request->get('note');
         }
 
         return $this->doAction(function () use ($event, $donateData) {
@@ -100,7 +106,7 @@ class DonationController extends ApiController
                 'status' => $request->status,
             ])->load('user');
 
-            if ($donation->user_id != $this->user->id) {
+            if ($donation->user_id && $donation->user_id != $this->user->id) {
                 $event = $donation->event;
                 Notification::send($donation->user, new AcceptDonation($this->user, $event));
                 $this->sendNotification($donation->user_id, $event, AcceptDonation::class);

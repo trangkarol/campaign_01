@@ -38,6 +38,7 @@ import DonationList from '../components/event/donation/DonationList.vue'
 import DonationInfo from '../components/event/donation/DonationInfo.vue'
 import DonationReceived from '../components/event/donation/DonationReceived.vue'
 import DonationManage from '../components/event/donation/DonationManage.vue'
+import CreateDonation from '../components/event/donation/CreateDonation.vue'
 import Expense from '../components/event/expense/Expense.vue'
 import ListExpense from '../components/event/expense/ListExpense.vue'
 import CreateExpense from '../components/event/expense/CreateExpense.vue'
@@ -110,6 +111,7 @@ const router = [
                     children: [
                         { path: '', component: ListAction, name: 'event.index' },
                         { path: 'donation', component: DonationList, name: 'event.donation' },
+                        { path: 'create-donation', component: CreateDonation, name: 'event.create-donation' },
                         { path: 'info', component: InfoEvent, name: 'event.info' },
                         {
                             path: 'donation/:id',
