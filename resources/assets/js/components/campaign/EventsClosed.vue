@@ -33,7 +33,8 @@
                                 <tr v-for="event in eventsClosed.data">
                                     <td class="forum title">
                                         <div class="forum-item">
-                                            <img :src="event.media[0].image_medium" alt="forum">
+                                            <img :src="event.media[0].image_medium" v-if="event.media.length" alt="forum">
+                                            <img :src="imageEventDefault" v-else alt="forum">
                                             <div class="content">
                                                 <router-link
                                                     class="h6 notification-friend"
@@ -136,7 +137,8 @@
             idEvent: null,
             show: true,
             target: null,
-            isManager: false
+            isManager: false,
+            imageEventDefault: window.Laravel.settings.imageEventDefault
         }),
 
         created() {
@@ -248,6 +250,10 @@
                 font-size: 2em;
                 text-align: right;
             }
+        }
+
+        .togglebutton {
+            margin-bottom: 0px;
         }
     }
 
@@ -373,7 +379,7 @@
     }
 
     .forums-table td {
-        padding: 25px 25px;
+        padding: 0px 25px;
         text-align: center;
     }
 
@@ -407,6 +413,7 @@
 
     .forum-item .content {
         overflow: hidden;
+        padding-top: 30px;
     }
 
     .forum-item .title {

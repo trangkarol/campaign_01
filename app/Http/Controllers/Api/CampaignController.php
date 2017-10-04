@@ -377,12 +377,14 @@ class CampaignController extends ApiController
             }
         }
 
-        return $this->doAction(function () use ($campaign) {
-            $data = $this->campaignRepository->attendCampaign($campaign, $this->user);
+        return $this->doAction(function () use ($campaign, $flag) {
+            $data = $this->campaignRepository->attendCampaign($campaign, $this->user, $flag);
             $this->compacts['attend_campaign'] = $this->user;
 
-            foreach ($data['listReceiver'] as $receiver) {
-                $this->sendNotification($receiver->id, $campaign, $data['model']);
+            if ($flag == config('settings.flag_join')) {
+                foreach ($data['listReceiver'] as $receiver) {
+                    $this->sendNotification($receiver->id, $campaign, $data['model']);
+                }
             }
         });
     }

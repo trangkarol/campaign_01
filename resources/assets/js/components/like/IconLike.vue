@@ -14,8 +14,10 @@
                 <li v-for="(item, index) in like[flag][modelId]" v-if="index < 4">
                     <pre>{{ item.user.name }}</pre>
                 </li>
-                <li v-if="like[flag][modelId].numberOfLikes >= 4">
-                    <pre>{{ $t('post.like.and') + (like[flag][modelId].numberOfLikes - 4) + $t('post.like.more_like') }}</pre>
+                <li v-if="like[flag][modelId].numberOfLikes > 4">
+                    <pre>
+                        {{ $t('post.like.and') + ' ' + (like[flag][modelId].numberOfLikes - 4) + ' ' + $t('post.like.more_like') }}
+                    </pre>
                 </li>
             </ul>
             {{ like[flag][modelId].numberOfLikes }}

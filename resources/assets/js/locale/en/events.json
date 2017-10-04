@@ -16,6 +16,7 @@
     "close-event": "Close Event",
     "donation": {
         "donate": "Donate",
+        "donated": "donated",
         "donation_details": "Donation details",
         "title": "Donate for this event",
         "receive": "We have received",

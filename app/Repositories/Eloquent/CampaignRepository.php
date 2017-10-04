@@ -377,7 +377,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
      * @param  int $campaign, $userId
      * @return
      */
-    public function attendCampaign($campaign, $user)
+    public function attendCampaign($campaign, $user, $flag)
     {
         $campaign->users()->toggle([
             $user->id => [
@@ -386,15 +386,19 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
             ]
         ]);
 
-        $ownerCampaign = $campaign->owner;
-        $moderatorsCampaign = $campaign->moderators;
-        $listReceiver = $ownerCampaign->merge($moderatorsCampaign);
-        Notification::send($listReceiver->all(), new UserRequest($user, $campaign));
+        if ($flag == config('settings.flag_join')) {
+            $ownerCampaign = $campaign->owner;
+            $moderatorsCampaign = $campaign->moderators;
+            $listReceiver = $ownerCampaign->merge($moderatorsCampaign);
+            Notification::send($listReceiver->all(), new UserRequest($user, $campaign));
 
-        return [
-            'listReceiver' => $listReceiver,
-            'model' => UserRequest::class,
-        ];
+            return [
+                'listReceiver' => $listReceiver,
+                'model' => UserRequest::class,
+            ];
+        }
+
+        return true;
     }
 
     /**

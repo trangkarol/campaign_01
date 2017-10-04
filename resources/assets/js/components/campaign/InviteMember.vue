@@ -32,11 +32,7 @@
                         </div>
                         <span class="notification-icon">
                             <a href="javascript:void(0)" class="accept-request" @click="comfirmRequest(member.id)">
-                                <span class="icon-add without-text">
-                                    <svg class="olymp-happy-face-icon">
-                                        <use xlink:href="/frontend/icons/icons.svg#olymp-happy-face-icon"></use>
-                                    </svg>
-                                </span>
+                                <i class="fa fa-envelope-o" aria-hidden="true"></i>
                             </a>
                         </span>
                     </li>
@@ -233,26 +229,33 @@
                 background-color: #494c62;
             }
         }
-    }
-    .img-member {
-        width: 40px !important;
-        height: 40px !important;
-    }
 
-    .name-member {
-        max-width: 55% !important;
-    }
-
-    .searchbox {
-        position: relative;
-        .form-control {
-            padding: 10px 15px;
+        .accept-request {
+            background: #47dabe;
+            i {
+                font-size: 20px
+            }
         }
-        i {
-            position: absolute;
-            top: 11px;
-            font-size: 20px;
-            right: 15px;
+        .img-member {
+            width: 40px !important;
+            height: 40px !important;
+        }
+
+        .name-member {
+            max-width: 55% !important;
+        }
+
+        .searchbox {
+            position: relative;
+            .form-control {
+                padding: 10px 15px;
+            }
+            i {
+                position: absolute;
+                top: 11px;
+                font-size: 20px;
+                right: 15px;
+            }
         }
     }
 </style>

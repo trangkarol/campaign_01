@@ -18,6 +18,9 @@
                                 {{ timeAgo(event.created_at) }}
                             </div>
                         </div>
+                        <div class="more">
+                            <i aria-hidden="true" class="fa fa-calendar-check-o"></i>
+                        </div>
                     </div>
                     <list-image v-if="event.media.length" :listImage="event.media" ></list-image>
                     <router-link :to="{ name: 'event.index', params: { slugEvent: event.slug }}"
@@ -212,6 +215,18 @@ export default {
         border-bottom: 0px;
         .post-additional-info {
             margin-bottom: 20px;
+        }
+
+        .more {
+            padding: 10px;
+            padding-left: 11px;
+            border-radius: 70%;
+            border: 0;
+            margin: -10px 0px 0px 0px;
+            i {
+            font-size: 30px;
+                color: #404358;
+            }
         }
     }
 </style>

@@ -16,6 +16,7 @@
     "close-event": "Đóng sự kiện",
     "donation": {
         "donate": "Quyên góp",
+        "donated": "đã quyên góp",
         "donation_details": "Chi tiết quyên góp",
         "title": "Quyên góp cho sự kiện",
         "receive": "Chúng tôi đã nhận được",
@@ -27,7 +28,7 @@
         "goal_des": "Mục tiêu sự kiện",
         "received": "Đã nhận",
         "with": "với",
-        "donations": "quyên góp",
+        "donations": "sự quyên góp",
         "over": "vượt",
         "list_support": "Danh sách ngừoi hỗ trợ",
         "actions": "Hành động",

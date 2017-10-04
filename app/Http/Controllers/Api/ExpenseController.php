@@ -86,7 +86,7 @@ class ExpenseController extends ApiController
             $goal = $this->goalRepository->getInfoGoal($data['goal_id']);
             $data['expense_id'] = $this->compacts['expense']->id;
             $data['user_id'] = $this->user->id;
-            $this->actionRepository->createFromExpense($data, $goal);
+            $this->compacts['action'] = $this->actionRepository->createFromExpense($data, $goal);
         });
     }
 
@@ -106,7 +106,7 @@ class ExpenseController extends ApiController
             $goal = $this->goalRepository->getInfoGoal($data['expense']['goal_id']);
             $data['expense']['expense_id'] = $this->compacts['expense']->id;
             $data['expense']['user_id'] = $this->user->id;
-            $this->actionRepository->createFromExpense($data['expense'], $goal);
+            $this->compacts['action'] = $this->actionRepository->createFromExpense($data['expense'], $goal);
         });
     }
 

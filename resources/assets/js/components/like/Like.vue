@@ -230,11 +230,7 @@ export default {
         font-weight: initial;
     }
 
-    pre {
-        font-family: Roboto, -apple-system, system-ui, BlinkMacSystemFont,
-            "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
-        font-size: 0.812rem !important;
-        color: #edf2f6;
-        margin-bottom: 0px;
+    .names-people-likes {
+        width: 53%;
     }
 </style>

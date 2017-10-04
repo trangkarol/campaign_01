@@ -22,7 +22,7 @@ class ActivityRepository extends BaseRepository implements ActivityInterface
         $this->setGuard('api');
         $friendIds = $this->user->friends()->pluck('id')->all();
         $friendIds[] = $this->user->id;
-        $infoPaginate = $this->whereIn('activitiable_type', [
+        $infoPaginate = $this->withTrashed()->whereIn('activitiable_type', [
             Campaign::class,
             Event::class,
         ])
@@ -44,9 +44,19 @@ class ActivityRepository extends BaseRepository implements ActivityInterface
 
         $listActivity = $infoPaginate->each(function ($item) {
             if ($item->activitiable_type == Campaign::class) {
-                $item->load('activitiable.tags', 'activitiable.media' );
+                $item->load(['activitiable' => function ($query) {
+                    $query->withTrashed()->with(['media' => function ($subQuery) {
+                        $subQuery->withTrashed();
+                    }]);
+                }]);
             } else {
-                $item->load('activitiable.campaign', 'activitiable.media');
+                $item->load(['activitiable' => function ($query) {
+                    $query->withTrashed()->with(['campaign' => function ($subQuery1) {
+                        $subQuery1->withTrashed();
+                    }, 'media' => function ($subQuery2) {
+                        $subQuery2->withTrashed();
+                    }]);
+                }]);
             }
         });
 

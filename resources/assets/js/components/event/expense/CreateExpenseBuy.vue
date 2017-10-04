@@ -132,6 +132,8 @@
     import { post, get } from '../../../helpers/api'
     import Multiselect from 'vue-multiselect'
     import noty from '../../../helpers/noty'
+    import { mapActions } from 'vuex'
+
     export default {
         data: () => ({
             editorOption: {
@@ -179,7 +181,7 @@
 
         watch: {
             time() {
-                this.newExpense.expense.time = this.newExpense.expense.time? this.newExpense.expense.time : this.time
+                this.newExpense.expense.time = this.newExpense.expense.time ? this.newExpense.expense.time : this.time
             }
         },
 
@@ -198,6 +200,10 @@
         },
 
         methods: {
+            ...mapActions('event', [
+                'appendOneAction',
+            ]),
+
             selected(value, id) {
                 this.goal = this.dataGoals.filter(dataGoal => dataGoal.donation_type.name == value)[0]
                 this.newExpense.expense.goal_id = this.goal.id
@@ -244,6 +250,11 @@
                             this.newExpense.quality = ''
                             this.newExpense.name = ''
                             this.callApi()
+                            this.appendOneAction({ action: res.data.action })
+                            this.$socket.emit('created_action', {
+                                newAction: res.data.action,
+                                room: `event${this.pageId}`
+                            })
                             this.$router.push({ name: nameRouter, params: { event_id: this.pageId }})
                         })
                         .catch(err => {
