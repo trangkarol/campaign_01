@@ -7,8 +7,7 @@
     "description_action": "Description action",
     "edit_action": "Edit action",
     "delete_action": "Delete action",
-    "is_used": "is used",
-    "with_reason": "with reason:",
-    "at": "at",
+    "is_used": "is used at",
+    "with_reason": "With reason:",
     "update_action": "Update Action"
 }

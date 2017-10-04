@@ -8,10 +8,12 @@ use App\Exceptions\Api\UnknowException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use LRedis;
 
 class ApiController extends AbstractController
 {
     protected $guard = 'api';
+    private $redis;
 
     protected function trueJson()
     {
@@ -64,5 +66,18 @@ class ApiController extends AbstractController
         }
 
         return $this->trueJson();
+    }
+
+    public function sendNotification($receiver, $data, $modelName, $object)
+    {
+        $notification['type'] = $modelName;
+        $notification['data'] = [
+            'to' => $receiver,
+            'from' => $this->user,
+            $object => $data,
+        ];
+
+        $this->redis = LRedis::connection();
+        $this->redis->publish('getNotification', json_encode($notification));
     }
 }

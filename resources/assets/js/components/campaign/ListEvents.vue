@@ -2,13 +2,15 @@
     <div ref="scrollContainer" id ="data-loadmore">
         <div id="newsfeed-items-grid" v-if="events.total > 0">
             <div class="ui-block" v-for="event in events.data">
-                <article class="hentry post has-post-thumbnail thumb-full-width">
+                <article :class="{
+                    'event-close': event.deleted_at,
+                    'hentry post has-post-thumbnail thumb-full-width': true
+                }">
 
                     <div class="post__author author vcard inline-items" v-if="event.user">
                         <router-link :to="{ name: 'user.timeline', params: { slug: event.user.slug }}">
                             <img :src="event.user.image_thumbnail" :alt="event.user.name">
                         </router-link>
-
                         <div class="author-date">
                             <router-link :to="{ name: 'user.timeline', params: { slug: event.user.slug }}"
                                 class="h6 post__author-name fn">
@@ -205,17 +207,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .date-format {
-        font-size: 13px;
-        color: #bbb;
+    .event-close {
+        padding: 20px !important;
     }
 
     .post {
         padding: 25px 25px 0px 25px;
         border-bottom: 0px;
-        .post-additional-info {
-            margin-bottom: 20px;
-        }
 
         .more {
             padding: 10px;

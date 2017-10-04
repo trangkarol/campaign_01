@@ -2,10 +2,8 @@
     <div class="row">
         <div class="col-xl-6 push-xl-3 col-lg-12 push-lg-0 col-sm-12 col-xs-12" v-if="events != null">
             <list-events></list-events>
-
-            <a ref="loadmore" href="javascript:void(0)" class="btn btn-control btn-more" data-container="newsfeed-items-grid" v-if="events.total > 4">
-                <i  v-show="loading" class="fa fa-spinner fa-spin"></i>
-                <div class="ripple-container"></div>
+            <a ref="loadmore" href="javascript:void(0)" class="btn-load-more" data-container="newsfeed-items-grid" v-if="events.total > 4">
+                <i v-show="loading" class="fa fa-spinner fa-spin"></i>
             </a>
         </div>
 
@@ -63,4 +61,12 @@ export default {
 </script>
 
 <style lang="scss">
+    .btn-load-more {
+        text-align: center;
+        color: #888da8;
+        margin: 0px auto 5px;
+        display: block;
+        font-size: 25px;
+        padding-bottom: 15px;
+    }
 </style>

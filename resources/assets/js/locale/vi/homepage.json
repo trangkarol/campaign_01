@@ -58,7 +58,8 @@
         "user_donated": "đã quyên góp cho sự kiện của bạn",
         "accept_donate": "đã chấp nhận sự đóng góp của bạn trong sự kiện",
         "request_join": "đã yêu cầu tham gia chiến dịch",
-        "accept_request": "đã chấp nhận yêu cầu tham gia của bạn trong chiến dịch"
+        "accept_request": "đã chấp nhận yêu cầu tham gia của bạn trong chiến dịch",
+        "create_action": "đã tạo một hành động trong chiến dịch của bạn"
     },
     "share_to": "Chia sẻ",
     "address": "Địa chỉ",

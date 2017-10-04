@@ -71,8 +71,18 @@ class ActionController extends ApiController
             throw new UnknowException('Permission error: User can not create action.', UNAUTHORIZED);
         }
 
-        return $this->doAction(function () use ($data) {
-            $this->compacts['action'] = $this->actionRepository->create($data);
+        return $this->doAction(function () use ($data, $event) {
+            $result = $this->actionRepository->createAction($data, $event, $this->user);
+            $this->compacts['action'] = $result['action'];
+
+            if ($event->user_id != $this->user->id) {
+                $this->sendNotification(
+                    $event->user_id,
+                    $event,
+                    $result['modelName'],
+                    config('settings.type_notification.event')
+                );
+            }
         });
     }
 

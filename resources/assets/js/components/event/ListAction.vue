@@ -1,5 +1,5 @@
 <template>
-    <div class="list-action">
+    <div class="list-action-event">
         <div class="load-search" v-if="load_search"></div>
         <div class="empty center-block" v-if="isEmpty">
             <h2>
@@ -10,10 +10,6 @@
             <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="ui-block" v-for="(action, index) in actions.list_action.data" v-if="!(index % 2)">
                     <article class="hentry post has-post-thumbnail thumb-full-width">
-                        <span class="btn-next-without olymp-popup-right-arrow action-expense" v-if="action.expense_id">
-                            <i class="fa fa-usd" aria-hidden="true">
-                            </i>
-                        </span>
                         <div class="post__author author vcard inline-items">
                             <img :src="action.user.image_thumbnail" alt="author">
                             <div class="author-date">
@@ -26,18 +22,19 @@
                                     </time>
                                 </div>
                             </div>
-                            <div class="more" v-if="user.id === action.user_id && !action.expense_id">
-                                <svg class="olymp-three-dots-icon">
+                            <div class="more">
+                                <svg class="olymp-three-dots-icon" v-if="user.id === action.user_id && !action.expense_id">
                                     <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
                                 </svg>
-                                <ul class="more-dropdown">
-                                    <li v-if="user.id === action.user_id">
+                                <ul class="more-dropdown" v-if="user.id === action.user_id && !action.expense_id">
+                                    <li>
                                         <a href="javascript:void(0)" @click="updateAction(action)">{{ $t('actions.edit_action') }}</a>
                                     </li>
-                                    <li v-if="user.id === action.user_id">
+                                    <li>
                                         <a href="javascript:void(0)" @click="comfirmDelete(action.id)">{{ $t('actions.delete_action') }}</a>
                                     </li>
                                 </ul>
+                                <img v-if="!action.expense_id" class="img-action" src="/images/action.png">
                             </div>
                         </div>
                         <div class="post-thumb one-image" v-if="action.media.length === 1" @click="detailAction(action.id)">
@@ -63,17 +60,23 @@
                             href="javascript:void(0)"
                             data-toggle="modal"
                             data-target="#blog-post-popup"
-                            class="h2 post-title"
+                            class="title-donation h3 post-title"
                             @click="detailAction(action.id)">
-                            {{ showTextExpense(action.caption) }}
+                            <span class="color-primary">
+                                <img class="img-donation" src="/images/donation.png">
+                                {{ formatJson(action.caption, 1) }}
+                            </span>
+                            {{ $t('actions.is_used') + ' ' + formatJson(action.caption, 0) }}
                         </a>
-                        <show-text
-                            :text="action.description"
-                            :show_char=500
-                            :show="$t('events.show_more')"
-                            :hide="$t('events.show_less')">
-                        </show-text>
-
+                        <p class="reason" v-if="action.expense_id">{{ $t('actions.with_reason') }} </p>
+                        <div :class="{ 'show-reason': action.expense_id }">
+                            <show-text
+                                :text="action.description"
+                                :show_char=500
+                                :show="$t('events.show_more')"
+                                :hide="$t('events.show_less')">
+                            </show-text>
+                        </div>
                         <div class="control-block-button post-control-button">
                             <master-like
                                 :likes="action.likes"
@@ -105,10 +108,6 @@
             <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="ui-block" v-for="(action, index) in actions.list_action.data" v-if="index % 2">
                     <article class="hentry post has-post-thumbnail thumb-full-width">
-                        <span class="btn-next-without olymp-popup-right-arrow action-expense" v-if="action.expense_id">
-                            <i class="fa fa-usd" aria-hidden="true">
-                            </i>
-                        </span>
                         <div class="post__author author vcard inline-items">
                             <img :src="action.user.image_thumbnail" alt="author">
                             <div class="author-date">
@@ -121,11 +120,11 @@
                                     </time>
                                 </div>
                             </div>
-                            <div class="more" v-if="user.id === action.user_id && !action.expense_id">
-                                <svg class="olymp-three-dots-icon">
+                            <div class="more">
+                                <svg class="olymp-three-dots-icon" v-if="user.id === action.user_id && !action.expense_id">
                                     <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
                                 </svg>
-                                <ul class="more-dropdown">
+                                <ul class="more-dropdown" v-if="user.id === action.user_id && !action.expense_id">
                                     <li>
                                         <a href="javascript:void(0)" @click="updateAction(action)">{{ $t('actions.edit_action') }}</a>
                                     </li>
@@ -133,6 +132,7 @@
                                         <a href="javascript:void(0)" @click="comfirmDelete(action.id)">{{ $t('actions.delete_action') }}</a>
                                     </li>
                                 </ul>
+                                <img v-if="!action.expense_id" class="img-action" src="/images/action.png">
                             </div>
                         </div>
                         <div class="post-thumb one-image" v-if="action.media.length === 1" @click="detailAction(action.id)">
@@ -158,16 +158,23 @@
                             href="javascript:void(0)"
                             data-toggle="modal"
                             data-target="#blog-post-popup"
-                            class="h2 post-title"
+                            class="title-donation h3 post-title"
                             @click="detailAction(action.id)">
-                            {{ showTextExpense(action.caption) }}
+                            <span class="color-primary">
+                                <img class="img-donation" src="/images/donation.png">
+                                {{ formatJson(action.caption, 1) }}
+                            </span>
+                            {{ $t('actions.is_used') + ' ' + formatJson(action.caption, 0) }}
                         </a>
-                        <show-text
-                            :text="action.description"
-                            :show_char=500
-                            :show="$t('events.show_more')"
-                            :hide="$t('events.show_less')">
-                        </show-text>
+                        <p class="reason" v-if="action.expense_id">{{ $t('actions.with_reason') }} </p>
+                        <div :class="{ 'show-reason': action.expense_id }">
+                            <show-text
+                                :text="action.description"
+                                :show_char=500
+                                :show="$t('events.show_more')"
+                                :hide="$t('events.show_less')">
+                            </show-text>
+                        </div>
                         <div class="control-block-button post-control-button">
                             <master-like
                                 :likes="action.likes"
@@ -181,7 +188,6 @@
                                 :roomLike="`campaign${event.campaign_id}`">
                             </master-like>
                         </div>
-
                         <master-like
                             :likes="action.likes"
                             :checkLiked="actions.checkLikeAction"
@@ -195,7 +201,6 @@
                             :roomLike="`campaign${event.campaign_id}`">
                         </master-like>
                     </article>
-
                 </div>
             </div>
         </div>
@@ -361,13 +366,12 @@
                     })
             },
 
-            showTextExpense(data)
-            {
+            formatJson(data, type) {
                 var caption = JSON.parse(data);
 
-                return `${caption.cost} ${caption.nameQuality} ${caption.typeName}
-                    ${this.$i18n.t('actions.is_used')} ${this.$i18n.t('actions.at')}
-                    ${moment(caption.expenseTime, 'YYYY-MM-DD').format('L')}`
+                return (type)
+                    ? `${caption.cost} ${caption.nameQuality} ${caption.typeName}`
+                    : `${moment(caption.expenseTime, 'YYYY-MM-DD').format('L')}`
             }
         },
 
@@ -405,7 +409,7 @@
 </script>
 
 <style lang="scss">
-    .list-action {
+    .list-action-event {
         position: relative;
         .load-search {
             position: absolute;
@@ -502,5 +506,38 @@
                 font-size: 30px;
             }
         }
+
+        .img-donation {
+            width: 40px;
+            height: 40px;
+            margin-right: 5px;
+        }
+
+        .title-donation {
+            font-size: 27px;
+        }
+
+        .reason {
+            margin: 10px 0 0 !important;
+            display: inline-block;
+            color: #f45e3a;
+            margin-right: 3px !important;
+        }
+
+        .show-reason {
+            display: inline-block;
+        }
+
+        .img-action {
+            border-radius: 0px !important;
+            margin-left: 10px !important;
+            margin-right: -12px !important;
+            width: 30px !important;
+            height: 30px !important;
+        }
+    }
+
+    .color-primary {
+        color: #ff5e3a;
     }
 </style>
