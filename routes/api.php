@@ -136,7 +136,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::post('/create-comment/{modelId}/{parentId}/{flag}', 'CommentController@createComment')->name('create');
             Route::post('/update-comment/{id}/{flag}', 'CommentController@updateComment')->name('update');
             Route::get('/sub-comment/{parentId}', 'CommentController@getSubComment');
-            Route::get('/{modelId}/{flag}', 'CommentController@show');
+            Route::get('/{modelId}/{flag}/{idCurrent}', 'CommentController@show');
         });
 
         Route::group(['prefix' => '/donation'], function () {

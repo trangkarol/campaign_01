@@ -124,13 +124,13 @@ class CommentController extends ApiController
         });
     }
 
-    public function show($modelId, $flag)
+    public function show($modelId, $flag, $idCurrent)
     {
         $commentClass = new \ReflectionClass(Comment::class);
         $model = $commentClass->getNamespaceName() . '\\' . ucfirst($flag);
 
-        return $this->getData(function () use ($modelId, $model) {
-            $this->compacts['loadMore'] = $this->commentRepository->getComment($modelId, $model);
+        return $this->getData(function () use ($modelId, $model, $idCurrent) {
+            $this->compacts['loadMore'] = $this->commentRepository->getComment($modelId, $model, $idCurrent);
         });
     }
 

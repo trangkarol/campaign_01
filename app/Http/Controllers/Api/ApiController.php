@@ -6,6 +6,7 @@ use App\Http\Controllers\AbstractController;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\UnknowException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -64,5 +65,19 @@ class ApiController extends AbstractController
         }
 
         return $this->trueJson();
+    }
+
+    protected function reFormatPaginate(LengthAwarePaginator $paginate)
+    {
+        $currentPage = $paginate->currentPage();
+
+        return [
+            'total' => $paginate->total(),
+            'per_page' => $paginate->perPage(),
+            'current_page' => $currentPage,
+            'next_page' => ($paginate->lastPage() > $currentPage) ? $currentPage + 1 : null,
+            'prev_page' => $currentPage - 1 ?: null,
+            'data' => $paginate->items(),
+        ];
     }
 }
