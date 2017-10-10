@@ -28,7 +28,7 @@
             </li>
         </ul>
 
-        <div class="names-people-likes" v-if="like[flag][modelId].numberOfLikes == 0">
+        <div class="like-empty" v-if="like[flag][modelId].numberOfLikes == 0">
             {{ $t('post.like.like_first') }}
         </div>
         <div class="names-people-likes" v-else>
@@ -230,7 +230,12 @@ export default {
         font-weight: initial;
     }
 
+    .like-empty {
+        width: 63%;
+    }
+
     .names-people-likes {
-        width: 53%;
+        width: 48%;
+        margin-right: 0px;
     }
 </style>

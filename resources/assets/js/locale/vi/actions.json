@@ -7,8 +7,7 @@
     "description_action": "Chi tiết hành động",
     "edit_action": "Chỉnh sửa hành động",
     "delete_action": "Xóa hành động",
-    "is_used": "đã được sử dụng",
-    "with_reason": "với lý do:",
-    "at": "vào lúc",
+    "is_used": "đã được sử dụng vào lúc",
+    "with_reason": "Với lý do:",
     "update_action": "Cập nhật hành động"
 }

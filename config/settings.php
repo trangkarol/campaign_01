@@ -67,4 +67,8 @@ return [
     'not_manager' => 0,
     'image_event_default' => '/images/image_event_default.jpg',
     'default_avatar' => 'default_avatar.png',
+    'type_notification' => [
+        'event' => 'event',
+        'campaign' => 'campaign',
+    ],
 ];

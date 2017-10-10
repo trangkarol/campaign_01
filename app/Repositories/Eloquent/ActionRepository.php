@@ -3,10 +3,12 @@
 namespace App\Repositories\Eloquent;
 
 use Exception;
+use Notification;
 use Carbon\Carbon;
 use App\Models\Media;
 use App\Models\Action;
 use App\Models\Activity;
+use App\Notifications\CreateAction;
 use App\Traits\Common\UploadableTrait;
 use App\Exceptions\Api\UnknowException;
 use App\Exceptions\Api\NotFoundException;
@@ -49,7 +51,7 @@ class ActionRepository extends BaseRepository implements ActionInterface
         return parent::update($action->id, $inputs['data_action']);
     }
 
-    public function create($inputs)
+    public function createAction($inputs, $event, $user)
     {
         $action = parent::create($inputs['data_action']);
         $action->activities()->create([
@@ -62,7 +64,12 @@ class ActionRepository extends BaseRepository implements ActionInterface
             $action->media()->createMany($media);
         }
 
-        return $this->getOneAction($action->id);
+        Notification::send($event->user()->first(), new CreateAction($user, $event));
+
+        return [
+            'action' => $this->getOneAction($action->id),
+            'modelName' => CreateAction::class,
+        ];
     }
 
     public function getActionPaginate($action, $userId)

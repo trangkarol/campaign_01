@@ -18,6 +18,9 @@ export default {
     [types.FETCH_DATA](state, events) {
         let dataEvents = state.events
         events.data = [...dataEvents.data, ...events.data]
+        events.total = events.inforPage.total
+        events.last_page = events.inforPage.last_page
+        events.current_page = events.inforPage.current_page
         state.events = events
     },
 

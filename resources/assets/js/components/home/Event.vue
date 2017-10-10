@@ -1,6 +1,9 @@
 <template>
     <div class="ui-block">
-        <article class="hentry post has-post-thumbnail">
+        <article :class="{
+            'no-image': !event.media.length,
+            'hentry post has-post-thumbnail': true
+        }">
             <div class="post__author author vcard inline-items">
                 <img :src="owner.image_thumbnail" alt="author">
                 <div class="author-date">
@@ -65,8 +68,16 @@
 </script>
 
 <style lang="scss" scoped>
+    .no-image {
+        padding: 20px !important;
+    }
+
     .post {
         padding-bottom: 0px;
+
+        .post__author {
+            margin-bottom: 10px;
+        }
 
         .author-date {
             font-size: 14px;

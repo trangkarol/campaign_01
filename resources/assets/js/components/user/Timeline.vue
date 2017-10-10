@@ -74,7 +74,7 @@
                             <master-like
                                 :likes="activity.activitiable.likes"
                                 :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
-                                :flag="nameActivity(activity.activitiable_type)"
+                                :flag="flag(activity.activitiable_type)"
                                 :type="'like'"
                                 :modelId="activity.activitiable.id"
                                 :numberOfComments="activity.activitiable.number_of_comments"
@@ -88,7 +88,7 @@
                                 <master-like
                                     :likes="activity.activitiable.likes"
                                     :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
-                                    :flag="nameActivity(activity.activitiable_type)"
+                                    :flag="flag(activity.activitiable_type)"
                                     :type="'like-infor'"
                                     :modelId="activity.activitiable.id"
                                     :numberOfComments="activity.activitiable.number_of_comments"
@@ -113,7 +113,7 @@
                             :comments="activity.activitiable.comments"
                             :numberOfComments="activity.activitiable.number_of_comments"
                             :model-id ="activity.activitiable.id"
-                            :flag="nameActivity(activity.activitiable_type)"
+                            :flag="flag(activity.activitiable_type)"
                             :classListComment="''"
                             :classFormComment="''"
                             :deleteDate="activity.activitiable.deleted_at"
@@ -214,6 +214,18 @@
                         return this.$i18n.t('form.event')
                     case 'App\\Models\\Action':
                         return this.$i18n.t('form.action')
+                    default:
+                        return ''
+                }
+            },
+            flag(type) {
+                switch(type) {
+                    case 'App\\Models\\Campaign':
+                        return 'campaign'
+                    case 'App\\Models\\Event':
+                        return 'event'
+                    case 'App\\Models\\Action':
+                        return 'action'
                     default:
                         return ''
                 }

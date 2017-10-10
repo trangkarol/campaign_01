@@ -11,7 +11,6 @@ use App\Repositories\Contracts\DonationInterface;
 use App\Notifications\AcceptDonation;
 use App\Notifications\UserDonate;
 use Notification;
-use LRedis;
 
 class DonationController extends ApiController
 {
@@ -55,7 +54,12 @@ class DonationController extends ApiController
 
             if ($event->user_id != $this->user->id) {
                 Notification::send($event->user, new UserDonate($this->user, $event));
-                $this->sendNotification($event->user_id, $event, UserDonate::class);
+                $this->sendNotification(
+                    $event->user_id,
+                    $event,
+                    UserDonate::class,
+                    config('settings.type_notification.event')
+                );
             }
         });
     }
@@ -103,7 +107,12 @@ class DonationController extends ApiController
             if ($donation->user_id != $this->user->id) {
                 $event = $donation->event;
                 Notification::send($donation->user, new AcceptDonation($this->user, $event));
-                $this->sendNotification($donation->user_id, $event, AcceptDonation::class);
+                $this->sendNotification(
+                    $donation->user_id,
+                    $event,
+                    AcceptDonation::class,
+                    config('settings.type_notification.event')
+                );
             }
         });
     }
@@ -137,18 +146,5 @@ class DonationController extends ApiController
         return $this->doAction(function () use ($donation) {
             $this->compacts['donation'] = $this->donationRepository->delete($donation->id);
         });
-    }
-
-    public function sendNotification($receiver, $event, $modelName)
-    {
-        $notification['type'] = $modelName;
-        $notification['data'] = [
-            'to' => $receiver,
-            'from' => $this->user,
-            'event' => $event,
-        ];
-
-        $this->redis = LRedis::connection();
-        $this->redis->publish('getNotification', json_encode($notification));
     }
 }

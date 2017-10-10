@@ -76,6 +76,12 @@
 </script>
 
 <style lang="scss" scoped>
+    .post-thumb {
+        img {
+            width: initial;
+        }
+    }
+
     .post-block-photo {
         div {
             background-position: 50% 25%;

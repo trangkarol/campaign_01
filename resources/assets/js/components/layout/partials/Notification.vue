@@ -110,6 +110,28 @@
             <i class="fa fa-check-square-o" aria-hidden="true"></i>
         </span>
     </li>
+
+    <!-- notification when Owner campaign accept request's user -->
+    <li :class="{ 'un-read': !notification.read_at }"
+        @click="redirect(notification)"
+        v-else-if="notification.type == 'App\\Notifications\\CreateAction'">
+        <div class="author-thumb">
+            <img :src="notification.data.from.image_thumbnail" alt="author">
+        </div>
+        <div class="notification-event">
+            <div>
+                <b>{{ notification.data.from.name }}</b>
+                {{ $t('homepage.header.create_action') }}
+                <b class="notification-to">{{ notification.data.event.title }}</b>.
+            </div>
+            <span class="notification-date">
+                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+            </span>
+        </div>
+        <span class="notification-icon">
+            <img src="\images\action.png" alt="action" class="img-action">
+        </span>
+    </li>
 </template>
 
 <script>
@@ -140,6 +162,12 @@
                     case 'App\\Notifications\\UserDonate':
                     case 'App\\Notifications\\AcceptDonation':
                         this.$router.push({ name: 'event.donation', params: {
+                            slug: notification.data.event.campaign_id,
+                            slugEvent: notification.data.event.slug
+                        }})
+                        break
+                    case 'App\\Notifications\\CreateAction':
+                        this.$router.push({ name: 'event.index', params: {
                             slug: notification.data.event.campaign_id,
                             slugEvent: notification.data.event.slug
                         }})
@@ -184,5 +212,11 @@
 
     .notification-to {
         color: #ff5e3a !important;
+    }
+
+    .img-action {
+        margin-right: -5px;
+        width: 25px;
+        height: 25px;
     }
 </style>

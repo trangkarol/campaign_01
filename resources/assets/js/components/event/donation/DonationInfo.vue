@@ -66,7 +66,7 @@
                                 <span class="period">
                                     {{ $t('events.donation.with')
                                         + " " + info.count
-                                        + $t('events.donation.donations')
+                                        + " " + $t('events.donation.donations')
                                     }}
                                 </span>
                             </div>

@@ -82,7 +82,7 @@
         </div>
 
         <div class="ui-block">
-            <member :flagShowListMember.sync="flag_show_list_member"></member>
+            <member :flagShowListMember.sync="flag_show_list_member" v-if="checkInvite()"></member>
             <div class="ui-block-title">
                 <h6 class="title">{{ $t('campaigns.list-members') }}</h6>
                 <a href="javascript:void(0)" class="more" style="display: none;">

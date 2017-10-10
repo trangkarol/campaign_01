@@ -6,7 +6,7 @@
                     <div class="mfp-figure mfp-with-anim">
                         <button :title="$t('user.sidebar.close')" @click="closePopup" class="mfp-close">×</button>
                         <figure>
-                            <img class="mfp-img" alt="photo" :src="listPhoto[index].image_large">
+                            <img class="mfp-img" alt="photo" :src="listPhoto[index].image_default">
                             <figcaption>
                                 <div class="mfp-bottom-bar">
                                     <div class="mfp-title"></div>

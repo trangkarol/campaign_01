@@ -120,7 +120,12 @@ class CampaignController extends ApiController
         return $this->doAction(function () use ($data) {
             $acceptRequestModel = $this->campaignRepository->changeStatusUser($data);
             $this->compacts['change_status'] = $data['userRequest'];
-            $this->sendNotification($data['userRequest']->id, $data['campaign'], $acceptRequestModel);
+            $this->sendNotification(
+                $data['userRequest']->id,
+                $data['campaign'],
+                $acceptRequestModel,
+                config('settings.type_notification.campaign')
+            );
         });
     }
 
@@ -383,7 +388,12 @@ class CampaignController extends ApiController
 
             if ($flag == config('settings.flag_join')) {
                 foreach ($data['listReceiver'] as $receiver) {
-                    $this->sendNotification($receiver->id, $campaign, $data['model']);
+                    $this->sendNotification(
+                        $receiver->id,
+                        $campaign,
+                        $data['model'],
+                        config('settings.type_notification.campaign')
+                    );
                 }
             }
         });
@@ -549,7 +559,11 @@ class CampaignController extends ApiController
                 ? config('settings.is_manager')
                 : config('settings.not_manager');
             $this->compacts['members'] = $this->campaignRepository->inviteUser($data);
-            $this->sendNotification($data['invitedUser']->id, $data['campaign'], InviteUser::class);
+            $this->sendNotification(
+                $data['invitedUser']->id,
+                $data['campaign'], InviteUser::class,
+                config('settings.type_notification.campaign')
+            );
         });
     }
 
@@ -567,18 +581,5 @@ class CampaignController extends ApiController
             $this->compacts['user'] = $this->user;
             $this->compacts['is_manager'] = $this->campaignRepository->acceptInvitation($data);
         });
-    }
-
-    public function sendNotification($receiver, $campaign, $modelName)
-    {
-        $notification['type'] = $modelName;
-        $notification['data'] = [
-            'to' => $receiver,
-            'from' => $this->user,
-            'campaign' => $campaign,
-        ];
-
-        $this->redis = LRedis::connection();
-        $this->redis->publish('getNotification', json_encode($notification));
     }
 }

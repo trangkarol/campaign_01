@@ -62,8 +62,8 @@
 
                         <p>
                             <span class="ui-block-title about-action">
-                                <p v-if="!dataAction.expense_id" class='caption-of-action'>{{ dataAction.caption }}</p>
-                                <p v-else class='caption-of-action'>{{ showTextExpense(dataAction.caption) }}</p>
+                                <p v-if="!dataAction.expense_id" class='h3 caption-of-action'>{{ dataAction.caption }}</p>
+                                <p v-else class='h3 caption-of-action'>{{ showTextExpense(dataAction.caption) }}</p>
                                 <show-text
                                     :text="dataAction.description"
                                     :show_char=500
@@ -270,8 +270,8 @@
             showTextExpense(data) {
                 var caption = JSON.parse(data);
 
-                return `${caption.cost} ${caption.nameQuality} ${caption.typeName}
-                    ${this.$i18n.t('actions.is_used')} ${this.$i18n.t('actions.at')}
+                return `${caption.cost} ${caption.nameQuality}
+                    ${caption.typeName} ${this.$i18n.t('actions.is_used')}
                     ${moment(caption.expenseTime, 'YYYY-MM-DD').format('DD/MM/YYYY')}`
             }
         },
@@ -328,11 +328,15 @@
             .caption-of-action {
                 display: block;
                 font-size: 25px;
-                font-weight: 500;
+                margin-bottom: 17px;
             }
             span {
                 display: block;
             }
+        }
+
+        .ui-block-title {
+            padding: 0px 25px;
         }
     }
 </style>
