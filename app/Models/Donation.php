@@ -26,6 +26,12 @@ class Donation extends BaseModel
         'campaign_id',
         'goal_id',
         'status',
+        'note',
+        'recipient_id',
+        'donor_name',
+        'donor_email',
+        'donor_phone',
+        'donor_address',
     ];
 
     protected $dates = ['deleted_at'];

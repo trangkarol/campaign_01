@@ -8,12 +8,12 @@
             <ul class="notification-list">
                 <li v-for="donation in donations.not_received">
                     <div class="author-thumb">
-                        <img :src="donation.user.image_thumbnail" alt="author" style="max-height: 100%">
+                        <img :src="donation.user ? donation.user.image_thumbnail : '/images/faved-page8.jpg'" alt="author" style="max-height: 100%">
                     </div>
                     <div class="notification-event">
                         <router-link
-                            :to="{ name: 'user.timeline', params: { slug: donation.user.slug }}"
-                            class="h6 notification-friend">{{ donation.user.name }}
+                            :to="{ name: 'user.timeline', params: { slug: donation.user ? donation.user.slug : null }}"
+                            class="h6 notification-friend">{{ donation.donor_name || donation.user.name }}
                         </router-link>
                         {{ $t('events.donation.donate')
                             + " " + donation.value + " "
@@ -34,7 +34,7 @@
                                     :data-id="donation.id"
                                     :data-value="donation.value"
                                     :data-time="donation.donated_at"
-                                    :data-user="donation.user.name">
+                                    :data-user="donation.donor_name || donation.user.name">
                             </label>
                         </div>
                     </span>
@@ -50,12 +50,12 @@
             <ul class="notification-list">
                 <li v-for="donation in donations.received">
                     <div class="author-thumb">
-                        <img :src="donation.user.image_thumbnail" alt="author" style="max-height: 100%">
+                        <img :src="donation.user ? donation.user.image_thumbnail : '/images/faved-page8.jpg'" alt="author" style="max-height: 100%">
                     </div>
                     <div class="notification-event">
                         <router-link
-                            :to="{ name: 'user.timeline', params: { slug: donation.user.slug }}"
-                            class="h6 notification-friend">{{ donation.user.name }}
+                            :to="{ name: 'user.timeline', params: { slug: donation.user ? donation.user.slug : null }}"
+                            class="h6 notification-friend">{{ donation.donor_name || donation.user.name }}
                         </router-link>
                         {{ $t('events.donation.donate')
                             + " " + donation.value
@@ -141,22 +141,16 @@
                 }).show();
             }
         },
+        created() {
+            if (!this.event.manage) {
+                this.$router.replace('/not-found')
+            }
+        },
         mounted() {
             $.material.init()
         },
         updated() {
             $.material.init()
-        },
-        beforeRouteEnter(to, from, next) {
-            const slugEvent = to.params.slugEvent
-            const id = Number.isInteger(slugEvent) ? slugEvent : slugEvent.substr(slugEvent.lastIndexOf('-') + 1)
-            get(`event/check-permission/${id}`)
-                .then(res => {
-                    if (res.data)
-                        next()
-                    else
-                        next('/')
-                })
         }
     }
 </script>

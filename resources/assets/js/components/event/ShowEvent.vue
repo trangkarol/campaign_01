@@ -144,7 +144,6 @@
             numberLike: 0,
             model: 'event',
             showExpense: false,
-            isManager: false,
             showConfirm: false,
             pageType: 'event',
             imageEventDefault: window.Laravel.settings.imageEventDefault
@@ -158,6 +157,9 @@
             ...mapState('auth', {
                 user: state => state.user
             }),
+            isManager() {
+                return this.event.manage
+            }
         },
 
         mounted() {
@@ -222,16 +224,6 @@
                 }
             }
         },
-        created() {
-            get(`event/check-permission/${this.pageId}`)
-                .then(res => {
-                    this.isManager = res.data
-                })
-                .catch(res => {
-
-                })
-        },
-
         components: {
             Slider,
             SliderItem,

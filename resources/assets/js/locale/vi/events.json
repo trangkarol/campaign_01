@@ -39,10 +39,20 @@
         "yes": "Có",
         "no": "Không",
         "manage": "Quản lý quyên góp",
-        "list": "Xác nhận quyên góp",
+        "list": "Quyên góp đã nhận",
         "list_of_donations_not_accepted": "Danh sách các quyên góp chưa được xác nhận",
         "waiting_accept": "Đang đợi sự chấp nhận",
-        "waiting": "Đang đợi"
+        "waiting": "Đang đợi",
+        "import_donation": "Nhập quyên góp",
+        "select_or_leave_blank": "Chọn một thành viên hoặc để trống",
+        "donation_status": "Trạng thái quyên góp",
+        "donor_name": "Tên nhà tài trợ",
+        "donor_email": "Email của nhà tài trợ (tùy chọn)",
+        "donor_phone": "Số điện thoại của nhà tài trợ (tùy chọn)",
+        "donor_address": "Địa chỉ của nhà tài trợ (tùy chọn)",
+        "note": "Ghi chú...",
+        "submit_and_go": "Gửi và chuyển đến trang chi tiết",
+        "submit_and_continue": "Gửi và tiếp tục"
     },
     "expenses": {
         "expense": "Chi tiêu",

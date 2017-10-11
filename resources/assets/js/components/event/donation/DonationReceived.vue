@@ -8,13 +8,13 @@
                 <ul class="notification-list">
                     <li v-for="donation in donations">
                         <div class="author-thumb">
-                            <img :src="donation.user.image_thumbnail" alt="author" style="max-height: 100%">
+                            <img :src="donation.user ? donation.user.image_thumbnail : '/images/faved-page8.jpg'" alt="author" style="max-height: 100%">
                         </div>
                         <div class="notification-event">
                             <router-link
-                                :to="{name: 'user.timeline', params: { slug: donation.user.slug }}">
+                                :to="{name: 'user.timeline', params: { slug: donation.user ? donation.user.slug : null }}">
                                 <a href="javascript:void(0)" class="h6 notification-friend">
-                                    {{ donation.user.name }}
+                                    {{ donation.donor_name || donation.user.name }}
                                 </a>
                             </router-link>
                             {{ $t('events.donation.donate')
@@ -42,13 +42,13 @@
                 <ul class="notification-list">
                     <li v-for="donation in donationsHaveNotReceived">
                         <div class="author-thumb">
-                            <img :src="donation.user.image_thumbnail" alt="author" style="max-height: 100%">
+                            <img :src="donation.user ? donation.user.image_thumbnail : '/images/faved-page8.jpg'" alt="author" style="max-height: 100%">
                         </div>
                         <div class="notification-event">
                             <router-link
-                                :to="{name: 'user.timeline', params: { slug: donation.user.slug }}">
+                                :to="{name: 'user.timeline', params: { slug: donation.user ? donation.user.slug : null }}">
                                 <a href="javascript:void(0)" class="h6 notification-friend">
-                                    {{ donation.user.name }}
+                                    {{ donation.donor_name || donation.user.name }}
                                 </a>
                             </router-link>
                             {{ $t('events.donation.donated')

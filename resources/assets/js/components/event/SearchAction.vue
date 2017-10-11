@@ -59,6 +59,14 @@
                         <a href="">{{ $t('events.donation.donation_details') }}</a>
                     </router-link>
                     <router-link
+                        v-if="event.complete_percent.length && event.manage"
+                        :to="{ name: 'event.create-donation' }"
+                        class="cat-list__item"
+                        active-class="active"
+                        tag="li">
+                        <a href="">{{ $t('events.donation.import_donation') }}</a>
+                    </router-link>
+                    <router-link
                         v-if="event.complete_percent.length"
                         :to="{ name: 'expense.list' }"
                         class="cat-list__item"

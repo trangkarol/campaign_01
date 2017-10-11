@@ -186,13 +186,6 @@ class EventController extends ApiController
         });
     }
 
-    public function checkIfUserCanManageEvent($id)
-    {
-        $event = $this->eventRepository->withTrashed()->findOrFail($id);
-
-        return response()->json($this->user->can('manage', $event));
-    }
-
     public function destroy($id)
     {
         $event = $this->eventRepository->findOrFail($id);
