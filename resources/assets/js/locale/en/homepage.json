@@ -59,7 +59,8 @@
         "accept_donate": "has accepted your donation in the event",
         "request_join": "requested to join campaign",
         "accept_request": "has accepted your request to join in the campaign",
-        "create_action": "created in your event"
+        "create_action": "created in your event",
+        "create_event": "created a new event"
     },
     "share_to": "Share to",
     "address": "Address",

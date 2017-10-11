@@ -3,9 +3,11 @@
 namespace App\Repositories\Eloquent;
 
 use Exception;
+use Notification;
 use App\Models\Event;
 use App\Models\Media;
 use App\Models\Activity;
+use App\Notifications\CreateEvent;
 use App\Traits\Common\UploadableTrait;
 use App\Exceptions\Api\UnknowException;
 use App\Exceptions\Api\NotFoundException;
@@ -89,7 +91,14 @@ class EventRepository extends BaseRepository implements EventInterface
             }
         }
 
-        return $event;
+        $listReceiver = $data['campaign']->activeUsers->all();
+        Notification::send($listReceiver, new CreateEvent($data['data_event']['user_id'], $event->id));
+
+        return [
+            'listReceiver' => $listReceiver,
+            'modelName' => CreateEvent::class,
+            'event' => $event,
+        ];
     }
 
     private function createDataMedias($data)

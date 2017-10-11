@@ -44,7 +44,7 @@ redisClient.on('message', function (channel, data) {
 
 notificationClient.on('message', function (channel, data) {
     let notification = JSON.parse(data)
-    io.sockets.in(notification.data.to).emit('getNotification', { data: notification })
+    io.sockets.in(notification.notifiable_id).emit('getNotification', { data: notification })
 })
 
 redisClient.on('error', function (err) {

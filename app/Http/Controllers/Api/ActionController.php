@@ -72,7 +72,7 @@ class ActionController extends ApiController
         }
 
         return $this->doAction(function () use ($data, $event) {
-            $result = $this->actionRepository->createAction($data, $event, $this->user);
+            $result = $this->actionRepository->createAction($data, $event, $this->user->id);
             $this->compacts['action'] = $result['action'];
 
             if ($event->user_id != $this->user->id) {

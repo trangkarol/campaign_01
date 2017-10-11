@@ -110,7 +110,7 @@ class CampaignController extends ApiController
             'campaign' => $campaign,
             'flag' => $flag,
             'userRequest' => $userRequest,
-            'sender' => $this->user,
+            'sender' => $this->user->id,
         ];
 
         if ($this->user->cannot('changeStatusUser', $campaign)) {
@@ -120,12 +120,15 @@ class CampaignController extends ApiController
         return $this->doAction(function () use ($data) {
             $acceptRequestModel = $this->campaignRepository->changeStatusUser($data);
             $this->compacts['change_status'] = $data['userRequest'];
-            $this->sendNotification(
-                $data['userRequest']->id,
-                $data['campaign'],
-                $acceptRequestModel,
-                config('settings.type_notification.campaign')
-            );
+
+            if ($data['flag'] == Campaign::FLAG_APPROVE) {
+                $this->sendNotification(
+                    $data['userRequest']->id,
+                    $data['campaign'],
+                    $acceptRequestModel,
+                    config('settings.type_notification.campaign')
+                );
+            }
         });
     }
 
@@ -571,7 +574,8 @@ class CampaignController extends ApiController
             $this->compacts['members'] = $this->campaignRepository->inviteUser($data);
             $this->sendNotification(
                 $data['invitedUser']->id,
-                $data['campaign'], InviteUser::class,
+                $data['campaign'],
+                InviteUser::class,
                 config('settings.type_notification.campaign')
             );
         });

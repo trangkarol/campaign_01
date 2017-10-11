@@ -56,22 +56,24 @@ class EventController extends ApiController
         $input['data_event']['user_id'] = $this->user->id;
         $input['other'] = $request->only('settings', 'files');
         $input['donations'] = $this->qualityRepository->getOrCreate($request->get('donations'));
-        $campaign = $this->campaignRepository->find($input['data_event']['campaign_id']);
+        $input['campaign'] = $this->campaignRepository->find($input['data_event']['campaign_id']);
 
-        return $this->doAction(function () use ($input, $campaign) {
-            if ($this->user->cant('createEvent', $campaign)) {
+        return $this->doAction(function () use ($input) {
+            if ($this->user->cant('createEvent', $input['campaign'])) {
                 throw new UnknowException('Have error when create event');
             }
 
-            $this->compacts['event'] = $this->eventRepository->create($input);
+            $result = $this->eventRepository->create($input);
+
+            $this->compacts['event'] = $result['event'];
             $this->redis = LRedis::connection();
-            $feature = $campaign
+            $feature = $input['campaign']
                 ->settings()
                 ->where('key', config('settings.campaigns.status'))
                 ->first();
             $this->redis->publish('createEvent', json_encode([
                 'info' => $this->compacts['event']->load('campaign', 'media'),
-                'hashtag' => $campaign->hashtag,
+                'hashtag' => $input['campaign']->hashtag,
                 'type' => Event::class,
                 'user' => $this->user,
                 'name' => Activity::CREATE,
@@ -79,6 +81,17 @@ class EventController extends ApiController
                     ? $feature->value
                     : config('settings.value_of_settings.status.private'),
             ]));
+
+            foreach($result['listReceiver'] as $receiver) {
+                if ($receiver->id != $this->user->id) {
+                    $this->sendNotification(
+                        $receiver->id,
+                        $result['event'],
+                        $result['modelName'],
+                        config('settings.type_notification.event')
+                    );
+                }
+            }
         });
     }
 

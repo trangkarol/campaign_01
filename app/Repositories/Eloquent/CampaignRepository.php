@@ -347,12 +347,12 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
                 'user_id' => $data['userRequest']->id,
                 'name' => Activity::JOIN,
             ]);
-            Notification::send($data['userRequest'], new AcceptRequest($data['sender'], $data['campaign']));
+            Notification::send($data['userRequest'], new AcceptRequest($data['sender'], $data['campaign']->id));
 
             return AcceptRequest::class;
         }
 
-        $data['campaign']->users()->detach($data['user_id']);
+        $data['campaign']->users()->detach($data['userRequest']->id);
 
         return true;
     }
@@ -391,7 +391,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
             $ownerCampaign = $campaign->owner;
             $moderatorsCampaign = $campaign->moderators;
             $listReceiver = $ownerCampaign->merge($moderatorsCampaign);
-            Notification::send($listReceiver->all(), new UserRequest($user, $campaign));
+            Notification::send($listReceiver->all(), new UserRequest($user->id, $campaign->id));
 
             return [
                 'listReceiver' => $listReceiver,
@@ -683,7 +683,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     public function inviteUser($data)
     {
         $this->setGuard('api');
-        Notification::send($data['invitedUser'], new InviteUser($this->user, $data['campaign']));
+        Notification::send($data['invitedUser'], new InviteUser($this->user->id, $data['campaign']->id));
 
         return $data['campaign']->users()->toggle([
             $data['invitedUser']->id => [

@@ -11,7 +11,7 @@ class AcceptDonation extends Notification
 {
     use Queueable;
 
-    private $campaign;
+    private $event;
     private $user;
     /**
      * Create a new notification instance.
@@ -38,7 +38,6 @@ class AcceptDonation extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'to' => $notifiable->id,
             'from' => $this->user,
             'event' => $this->event,
         ];

@@ -7,6 +7,7 @@ use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\UnknowException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Exception;
 use LRedis;
 
@@ -70,9 +71,10 @@ class ApiController extends AbstractController
 
     public function sendNotification($receiver, $data, $modelName, $object)
     {
+        $notification['notifiable_id'] = $receiver;
         $notification['type'] = $modelName;
+        $notification['created_at'] = Carbon::now()->toDateTimeString();
         $notification['data'] = [
-            'to' => $receiver,
             'from' => $this->user,
             $object => $data,
         ];
