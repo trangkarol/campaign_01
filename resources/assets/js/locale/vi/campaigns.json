@@ -77,7 +77,18 @@
         "and": "và",
         "finished": "đã kết thúc",
         "actions": "các hành động",
-        "not_enought_data": "Không đủ dữ liệu cho số liệu thống kê"
+        "not_enought_data": "Không đủ dữ liệu cho số liệu thống kê",
+        "more": "Nhiều hơn",
+        "join_at": "Tham gia lúc",
+        "guest": "Quyên góp bởi khách",
+        "percent": "Tỷ lệ",
+        "info": "{0} đã quyên góp {1} lần trong {2} sự kiện"
+    },
+        "roles": {
+        "owner": "Người khởi tạo",
+        "moderator": "Quản lý",
+        "member": "Thành viên",
+        "blocked": "Thành viên bị cấm"
     },
     "events_closed": "Các sự kiện đã đóng",
     "delete_at": "Xóa lúc",

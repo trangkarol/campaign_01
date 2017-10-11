@@ -242,6 +242,7 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         $campaign['check_owner'] = $campaign->owner()->wherePivot('user_id', $userId)->pluck('user_id')->all();
         // images campaign
         $campaign['campaign_images'] = $campaign->media()->withTrashed()->first();
+        $campaign['user'] = $campaign->activeUsers;
 
         return [
             'campaign' => $campaign,
@@ -535,16 +536,6 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
     {
         return $campaign
             ->load([
-                'media',
-                'owner',
-                'activeUsers',
-                'settings' => function ($setting) {
-                    $setting->whereIn('key', [
-                        config('settings.campaigns.status'),
-                        config('settings.campaigns.start_day'),
-                        config('settings.campaigns.end_day'),
-                    ]);
-                },
                 'events.settings' => function ($setting) {
                     $setting->whereIn('key', [
                         config('settings.events.start_day'),
@@ -560,6 +551,23 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
                 'events.goals.donationType.quality',
                 'events.goals.expenses',
             ]);
+    }
+
+    public function statisticWithUser(Campaign $campaign)
+    {
+        return $campaign->load([
+            'approvedUsers' => function ($user) {
+                $user->orderBy('campaign_user.created_at');
+            },
+            'approvedUsers.donations' => function ($donation) use ($campaign) {
+                $donation->with(['event', 'goal.donationType.quality'])->where('campaign_id', $campaign->id)
+                    ->whereStatus(Donation::ACCEPT);
+            },
+            'donations' => function ($donation) use ($campaign) {
+                $donation->with('event', 'user', 'goal.donationType.quality')->whereStatus(Donation::ACCEPT)
+                    ->whereNotIn('user_id', $campaign->activeUsers()->pluck('users.id')->all());
+            },
+        ]);
     }
 
     public function getEventsClosed($campaignId)

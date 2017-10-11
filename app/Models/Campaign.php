@@ -145,6 +145,11 @@ class Campaign extends BaseModel
         return $this->getUserByRole(['owner', 'moderator', 'member']);
     }
 
+    public function approvedUsers()
+    {
+        return $this->users()->wherePivot('status', static::APPROVED);
+    }
+
     public function blockeds()
     {
         return $this->getUserByRole('blocked')->get();
