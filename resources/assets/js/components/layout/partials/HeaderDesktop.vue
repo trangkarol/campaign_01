@@ -1,5 +1,8 @@
 <template lang="html">
-    <header class="header" id="site-header">
+    <header :class="{
+        header: true,
+        'model-action': showAction
+        }" id="site-header">
         <div class="page-title">
             <h6>
                 <router-link :to="{ name: 'homepage' }">
@@ -70,12 +73,12 @@
             </div>
             <div class="control-block" v-if="authenticated">
                 <!-- Component friends -->
-                <div class="control-icon more has-items" @click="markRead(0)">
-                    <svg class="olymp-happy-face-icon">
+                <div class="control-icon more div-friend has-items">
+                    <svg class="olymp-happy-face-icon" @click.stop="markRead(0)">
                         <use xlink:href="/frontend/icons/icons.svg#olymp-happy-face-icon"></use>
                     </svg>
                     <div class="label-avatar bg-blue" v-show="count">{{ count }}</div>
-                    <div class="more-dropdown more-with-triangle triangle-top-center">
+                    <div id="friend-suggest" class="more-dropdown more-with-triangle triangle-top-center" v-show="showFriend">
                         <div class="ui-block-title ui-block-title-small">
                             <h6 class="title">{{ $t('messages.friend_popup') }}</h6>
                             <a href="javascript:void(0)" style="display: none;">{{ $t('messages.find_friend') }}</a>
@@ -88,10 +91,20 @@
                                         <img :src="request.avatar" alt="author" id="img-author-showAvatar">
                                     </div>
                                     <div class="notification-event" v-if="!request.accept">
-                                        <a href="#" class="h6 notification-friend">{{ request.userName }}</a>
+                                        <router-link :to="{ name: 'user.timeline', params: { slug: request.userId } }"
+                                            class="h6 notification-friend">
+                                                {{ request.userName }}
+                                            <span class="author-subtitle">{{ user.email }}</span>
+                                        </router-link>
                                     </div>
                                     <div class="notification-event" v-else>
-                                        {{ $t('messages.you_and') }}<a href="#" class="h6 notification-friend">{{ request.userName }}</a>{{ $t('messages.became_friend') }}<a href="#" class="notification-link"></a>.
+                                        {{ $t('messages.you_and') }}
+                                        <router-link :to="{ name: 'user.timeline', params: { slug: request.userId } }"
+                                            class="h6 notification-friend">
+                                                {{ request.userName }}
+                                            <span class="author-subtitle">{{ user.email }}</span>
+                                        </router-link>
+                                        {{ $t('messages.became_friend') }}.
                                     </div>
                                     <span class="notification-icon" v-if="!request.accept">
                                         <a href="javascript:void(0)"
@@ -119,19 +132,26 @@
                                         </svg>
                                     </div>
                                 </li>
+                                <li class="notification-empty" v-if="!listRequest.length">
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    {{ $t('homepage.header.invite_empty') }}
+                                </li>
                             </ul>
                         </div>
-                        <a href="javascript:void(0)" @click="getListRequest()" class="view-all bg-blue" v-show="count">{{ $t('messages.show_more') }}</a>
+                        <a href="javascript:void(0)" @click="getListRequest()" class="view-all bg-blue" v-if="count">
+                            {{ $t('messages.show_more') }}
+                        </a>
+                         <a href="javascript:void(0)" class="view-all bg-blue" v-else></a>
                     </div>
                 </div>
 
                 <!-- Component chat -->
-                <div class="control-icon more has-items">
-                    <svg class="olymp-chat---messages-icon">
+                <div class="control-icon div-messages more has-items">
+                    <svg class="olymp-chat---messages-icon" @click.stop="showChatMessages">
                         <use xlink:href="/frontend/icons/icons.svg#olymp-chat---messages-icon"></use>
                     </svg>
                     <div class="label-avatar bg-purple" v-show="countReadMessage">{{ countReadMessage }}</div>
-                    <div class="more-dropdown more-with-triangle triangle-top-center">
+                    <div id="show-messages" class="more-dropdown more-with-triangle triangle-top-center" v-show="showMessage">
                         <div class="ui-block-title ui-block-title-small">
                             <h6 class="title">{{ $t('homepage.header.chat_message') }}</h6>
                             <a href="#" style="display:none;">Mark all as read</a>
@@ -168,11 +188,13 @@
                                         </svg>
                                     </div>
                                 </li>
+                                <li class="notification-empty" v-if="!messages.length">
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    {{ $t('homepage.header.message_empty') }}
+                                </li>
                             </ul>
                         </div>
-                        <a href="javascript:void(0)" class="view-all bg-purple" @click="getMessagesNotification">
-                            {{ $t('messages.more_messages') }}
-                        </a>
+                        <a href="javascript:void(0)" class="view-all bg-purple"></a>
                     </div>
                 </div>
 
@@ -196,7 +218,12 @@
                                     :notification="notification"
                                     :key="index"
                                     :totalUnreadNotifications.sync="totalUnreadNotifications"
-                                    :show.sync="show">
+                                    :show.sync="show"
+                                    :showAction.sync="showAction"
+                                    :dataAction.sync="dataAction.list_action"
+                                    :checkLikeActions.sync="dataAction.checkLikeAction"
+                                    :checkPermission.sync="checkPermission">
+                                    >
                                 </notification>
                                 <li class="li-loading" v-show="loading">
                                     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -270,7 +297,7 @@
                         <div class="ui-block-title ui-block-title-small">
                             <h6 class="title">{{ $t('homepage.header.choose_language') }}</h6>
                         </div>
-                        <div class="mCustomScrollbar ps ps--theme_default ps--active-y" data-mcs-theme="dark" data-ps-id="a157eff2-42d1-dbd0-3583-bc5f938692d2">
+                        <div class="mCustomScrollbar ps ps--theme_default ps--active-y" data-mcs-theme="dark">
                             <ul class="notification-list friend-requests">
                                 <li @click.prevent="changeLanguage('vi')">
                                     <div class="author-thumb">
@@ -313,10 +340,18 @@
                 <router-link to="/register">{{ $t('homepage.header.register') }}</router-link>
             </div>
         </div>
+
+        <action-detail
+            :showAction.sync="showAction"
+            :dataAction.sync="dataAction.list_action"
+            :checkLikeActions.sync="dataAction.checkLikeAction"
+            :canComment.sync="checkPermission">
+        </action-detail>
     </header>
 </template>
 
 <script>
+import ActionDetail from '../../event/ActionDetail.vue'
 import { mapState, mapActions } from 'vuex'
 import {
     logout,
@@ -351,7 +386,12 @@ export default {
         page: 1,
         totalPage: 1,
         loading: false,
-        show: false
+        show: false,
+        showFriend: false,
+        showMessage: false,
+        showAction: false,
+        dataAction: [],
+        checkPermission: true
     }),
     created () {
         this.lang = !!localStorage.getItem('locale') ? localStorage.getItem('locale') : window.Laravel.locale
@@ -377,10 +417,10 @@ export default {
                 }
 
                 this.countReadMessage = this.messages[index].read || this.countReadMessage == 0
-                        ? this.countReadMessage
-                        : this.countReadMessage - 1
-                    this.messages[index].read = true
-                    this.messages[index].class = ''
+                    ? this.countReadMessage
+                    : this.countReadMessage - 1
+                this.messages[index].read = true
+                this.messages[index].class = ''
             })
         }
     },
@@ -404,6 +444,10 @@ export default {
             if (e.target.id != 'detail-notification' && vm.show && !$('#detail-notification').find(e.target).length) {
                vm.show = false
                vm.markReadNotifications()
+            } else if (e.target.id != 'friend-suggest' && vm.showFriend && !$('#friend-suggest').find(e.target).length) {
+                vm.showFriend = false
+            } else if (e.target.id != 'show-messages' && vm.showMessage && !$('#show-messages').find(e.target).length) {
+                vm.showMessage = false
             }
         })
 
@@ -451,7 +495,8 @@ export default {
 
         getListNotification() {
             if (!this.show) {
-                this.show = true
+                this.showMessage = false
+                this.showFriend = false
 
                 if (!this.listNotification.length || this.totalUnreadNotifications) {
                     this.loading = true
@@ -472,9 +517,10 @@ export default {
                         })
                 }
             } else {
-                this.show = false
                 this.markReadNotifications()
             }
+
+            this.show = !this.show
         },
 
         loadMoreNotification() {
@@ -516,6 +562,11 @@ export default {
         },
 
         /*--- List message ---*/
+        showChatMessages() {
+            this.showMessage = !this.showMessage
+            this.show = false
+            this.showFriend = false
+        },
         getMessagesNotification() {
             if (this.continue) {
                 get(`${showNotification}?paginate=${this.paginate}`)
@@ -675,6 +726,10 @@ export default {
                 })
         },
         markRead(type) {
+            this.showFriend = !this.showFriend
+            this.showMessage = false
+            this.show = false
+
             if (this.count) {
                 post(markRead, { type: type })
                     .then(res => {
@@ -766,7 +821,8 @@ export default {
         }
     },
     components: {
-        Notification
+        Notification,
+        ActionDetail
     },
 
     sockets: {
@@ -869,7 +925,7 @@ export default {
     }
 }
 
-.div-notification {
+.div-notification, .div-friend, .div-messages {
     .ul-notification {
         overflow-y: scroll;
         max-height: 300px;
@@ -1059,5 +1115,9 @@ export default {
 
 .message-unread {
     background-color: rgb(236, 239, 241) !important;
+}
+
+.model-action {
+    z-index: 23;
 }
 </style>

@@ -20,7 +20,7 @@
                         ref="myVueDropzone"
                         id="dropzone"
                         url="/api/file/upload-image-for-editor"
-                        @vdropzone-success-multiple="showSuccess"
+                        @vdropzone-success="showSuccess"
                         @vdropzone-error="showError"
                         :thumbnailWidth="100"
                         :thumbnailHeight="100"
@@ -51,7 +51,7 @@ export default {
         dropzoneOptions: {
             autoProcessQueue: true,
             uploadMultiple: true,
-            parallelUploads: 2,
+            parallelUploads: 1,
             maxNumberOfFiles: 1000,
             maxFileSize: 1,
             acceptedFileTypes: 'image/*',

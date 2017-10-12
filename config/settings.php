@@ -70,5 +70,6 @@ return [
     'type_notification' => [
         'event' => 'event',
         'campaign' => 'campaign',
+        'comment' => 'comment',
     ],
 ];

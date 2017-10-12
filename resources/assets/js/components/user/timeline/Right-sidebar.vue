@@ -567,7 +567,6 @@
             margin-right: 5px;
         }
     }
-
     .image-user {
         width: 100%;
         height: 78px;
@@ -575,5 +574,14 @@
         background-position: 50% 25%;
         background-size: cover;
         background-repeat: no-repeat;
+    }
+    .w-faved-page {
+        li {
+            margin: 0 7px 7px 0;
+        }
+        img {
+            width: 34px;
+            height: 34px;
+        }
     }
 </style>

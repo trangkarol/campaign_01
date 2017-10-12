@@ -46,23 +46,19 @@ class CommentController extends ApiController
             throw new UnknowException('Permission error: User can not create comment in this post.');
         }
 
-        return $this->doAction(function () use ($data, $model) {
-            $this->compacts['createComment'] = $this->commentRepository->createComment($data, $model);
+        return $this->doAction(function () use ($data, $model, $flag) {
+            $result = $this->commentRepository->createComment($data, $model, $flag);
+            $this->compacts['createComment'] = $result['comment'];
+            $this->compacts['numberComment'] = $result['numberComment'];
 
-            if ($this->compacts['createComment']->parent_id == config('settings.comment_parent')) {
-                $numberComment = $model->number_of_comments + 1;
-                $model->update([
-                    'number_of_comments' => $numberComment
-                ]);
-            } else {
-                $comment = $this->commentRepository->findOrFail($this->compacts['createComment']->parent_id);
-                $numberComment = $comment->number_of_comments + 1;
-                $comment->update([
-                    'number_of_comments' => $numberComment
-                ]);
+            if ($result['receiver'] != $data['user_id']) {
+                $this->sendNotification(
+                    $result['receiver'],
+                    $result['comment'],
+                    $result['type'],
+                    config('settings.type_notification.comment')
+                );
             }
-
-            $this->compacts['numberComment'] = $numberComment;
         });
     }
 
@@ -73,7 +69,8 @@ class CommentController extends ApiController
         $modelId = $comment->commentable_id;
 
         $commentClass = new \ReflectionClass($this->commentRepository);
-        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($flag . 'Repository'))->findOrFail($comment->commentable_id);
+        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($flag . 'Repository'))
+            ->findOrFail($comment->commentable_id);
 
         if ($this->user->cant('update', $comment)) {
             throw new UnknowException('Permission error: User can not edit this comment.');
@@ -98,7 +95,8 @@ class CommentController extends ApiController
         $data = $request->only('modelId', 'flag');
 
         $commentClass = new \ReflectionClass($this->commentRepository);
-        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($data['flag'] . 'Repository'))->findOrFail($data['modelId']);
+        $model = app($commentClass->getNamespaceName() . '\\' . ucfirst($data['flag'] . 'Repository'))
+            ->findOrFail($data['modelId']);
 
         if ($this->user->cant('delete', $comment)) {
             throw new UnknowException('Permission error: User can not edit this comment.');

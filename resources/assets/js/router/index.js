@@ -20,7 +20,6 @@ import MasterUser from '../components/user/MasterUser.vue'
 import Timeline from '../components/user/Timeline.vue'
 import Photo from '../components/user/Photo.vue'
 import Video from '../components/user/Video.vue'
-import About from '../components/user/About.vue'
 import Auth from '../components/auth/Auth.vue'
 import PasswordReset from '../components/auth/PasswordReset.vue'
 import PasswordForm from '../components/auth/PasswordForm.vue'
@@ -79,7 +78,6 @@ const router = [
                 { path: '/', component: Timeline, name: 'user.timeline' },
                 { path: 'friends', component: Friend, name: 'user.friends' },
                 { path: 'photo', component: Photo, name: 'user.photo' },
-                { path: 'about', component: About, name: 'user.about' },
                 { path: 'video', component: Video, name: 'user.video' },
                 { path: 'list-campaign-close', component: ListCampaignClose, name: 'user.list_campaign_close' },
                 { path: ':path', component: CampaignUser, name: 'user.campaign' },

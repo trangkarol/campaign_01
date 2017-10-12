@@ -2,8 +2,10 @@
 
 namespace App\Repositories\Eloquent;
 
+use Notification;
 use App\Models\Comment;
 use App\Models\Activity;
+use App\Notifications\UserComment;
 use App\Exceptions\Api\UnknowException;
 use App\Repositories\Contracts\CommentInterface;
 use Illuminate\Support\Facades\Event;
@@ -15,7 +17,7 @@ class CommentRepository extends BaseRepository implements CommentInterface
         return Comment::class;
     }
 
-    public function createComment($data, $model)
+    public function createComment($data, $model, $flag)
     {
         if (empty($data) || empty($model)) {
             throw new UnknowException('Data is null');
@@ -31,7 +33,34 @@ class CommentRepository extends BaseRepository implements CommentInterface
             ]
         ]);
 
-        return $comment;
+        if ($data['parent_id']) {
+            $commentParent = $this->findOrFail($data['parent_id']);
+            $numberComment = $commentParent->number_of_comments + 1;
+            $receiver = $commentParent->user()->first();
+            $commentParent->update([
+                'number_of_comments' => $numberComment,
+            ]);
+        } else {
+            $numberComment = $model->number_of_comments + 1;
+            $receiver = ($flag == config('settings.type_notification.campaign'))
+                ? $model->owner()->first()
+                : $model->user()->first();
+            $model->update([
+                'number_of_comments' => $numberComment,
+            ]);
+        }
+
+        if ($receiver->id != $data['user_id']) {
+            $send = true;
+            Notification::send($receiver, new UserComment($data['user_id'], $comment->id));
+        }
+
+        return [
+            'comment' => $comment->load('commentable'),
+            'numberComment' => $numberComment,
+            'receiver' => $receiver->id,
+            'type' => UserComment::class,
+        ];
     }
 
     public function updateComment($data, $comment, $user)

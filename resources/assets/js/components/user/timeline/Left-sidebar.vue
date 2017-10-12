@@ -20,11 +20,6 @@
                             <span class="text">{{ currentPageUser.address }}</span>
                         </li>
                     </ul>
-
-                    <div class="widget w-socials">
-                        <h6 class="title"></h6>
-                        <router-link class="social-item bg-facebook" :to="{ name: 'campaign.create'}">Create Campain</router-link>
-                    </div>
                 </div>
             </div>
 
