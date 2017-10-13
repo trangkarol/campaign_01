@@ -30,7 +30,7 @@
         "with": "với",
         "donations": "sự quyên góp",
         "over": "vượt",
-        "list_support": "Danh sách ngừoi hỗ trợ",
+        "list_support": "Danh sách người hỗ trợ",
         "actions": "Hành động",
         "dont_have_donation": "Chưa có quyên góp nào trong sự kiện này",
         "accept_confirm": "Bạn đã nhận được sự hỗ trợ này chưa? Hành động này không thể được hoàn tác.",
@@ -52,7 +52,10 @@
         "donor_address": "Địa chỉ của nhà tài trợ (tùy chọn)",
         "note": "Ghi chú...",
         "submit_and_go": "Gửi và chuyển đến trang chi tiết",
-        "submit_and_continue": "Gửi và tiếp tục"
+        "submit_and_continue": "Gửi và tiếp tục",
+        "confirmed": "Đã xác nhận",
+        "unconfimred": "Chờ xác nhận",
+        "clear_filter": "Xóa bộ lọc"
     },
     "expenses": {
         "expense": "Chi tiêu",

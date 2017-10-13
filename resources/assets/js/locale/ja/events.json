@@ -51,7 +51,10 @@
         "donor_address": "Donor's address (optional)",
         "note": "Note...",
         "submit_and_go": "Submit and go to detail page",
-        "submit_and_continue": "Submit and continue"
+        "submit_and_continue": "Submit and continue",
+        "confirmed": "Confirmed",
+        "unconfimred": "Unconfimred",
+        "clear_filter": "Clear filter"
     },
     "expenses": {
         "expense": "Expense",

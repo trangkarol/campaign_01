@@ -232,11 +232,11 @@ export default {
             return {
                 members: this.data.users ? this.data.users.filter((user) => {
                         return user.name.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0 ||
-                            user.email.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0
+                            (user.email && user.email.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0)
                     }) : [],
                 guests: this.data.users ? Object.values(this.data.guests).filter((user) => {
                     return user[0].user.name.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0 ||
-                        user[0].user.email.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0
+                        (user.email && user[0].user.email.toLowerCase().trim().indexOf(this.search.toLowerCase().trim()) >= 0)
                     }) : []
             }
         }

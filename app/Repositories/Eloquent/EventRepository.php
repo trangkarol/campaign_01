@@ -265,4 +265,23 @@ class EventRepository extends BaseRepository implements EventInterface
     {
         return $this->withTrashed()->whereIn('campaign_id', $campaignPublic)->lists('id')->all();
     }
+
+    public function listDonations(Event $event, $params)
+    {
+        $query = $event->donations();
+
+        if ($params['searchKey']) {
+            $query->search($params['searchKey'], null, true);
+        }
+
+        unset($params['searchKey']);
+
+        foreach ($params as $key => $value) {
+            if ($value) {
+                $query->where($key, $value);
+            }
+        }
+
+        return $query->with(['user', 'goal.donationType.quality'])->paginate();
+    }
 }
