@@ -236,4 +236,15 @@ class EventController extends ApiController
             $this->compacts['openEvent'] = $this->eventRepository->openFromEvent($event);
         });
     }
+
+    public function listDonations($id, Request $request)
+    {
+        $event = $this->eventRepository->withTrashed()->findOrFail($id);
+        $params = $request->only('status', 'searchKey', 'user_id', 'goal_id');
+
+        return $this->getData(function () use ($event, $params) {
+            $this->authorize('view', $event);
+            $this->compacts['donations'] = $this->eventRepository->listDonations($event, $params);
+        });
+    }
 }

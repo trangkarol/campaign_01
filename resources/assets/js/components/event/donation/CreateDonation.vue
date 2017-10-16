@@ -102,10 +102,10 @@
                                 <div class="col-lg-8 offset-lg-2">
                                     <div class="row">
                                         <div class="col-lg-6">
-                                            <button @click.prevent="handleRequest(true)" class="btn btn-blue btn-md full-width" :disabled="!goals.length">Gởi và chuyển đến trang chi tiết</button>
+                                            <button @click.prevent="handleRequest(true)" class="btn btn-blue btn-md full-width" :disabled="!goals.length">{{ $t('events.donation.submit_and_go') }}</button>
                                         </div>
                                         <div class="col-lg-6">
-                                            <button @click.prevent="handleRequest()" class="btn btn-blue btn-md full-width" :disabled="!goals.length">Gởi và tiếp tục</button>
+                                            <button @click.prevent="handleRequest()" class="btn btn-blue btn-md full-width" :disabled="!goals.length">{{ $t('events.donation.submit_and_continue') }}</button>
                                         </div>
                                     </div>
                                 </div>

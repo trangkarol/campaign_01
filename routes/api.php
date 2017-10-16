@@ -115,6 +115,7 @@ Route::group(['namespace' => 'Api', 'middleware' => ['xssProtection']], function
             Route::post('like/{eventId}', 'EventController@like')->name('like');
             Route::get('show/{id}', 'EventController@show');
             Route::get('donation', 'EventController@getTypeQuality')->name('getTypeQuality');
+            Route::get('{id}/list-donations', 'EventController@listDonations')->name('event.donations');
             Route::delete('delete/{id}', 'EventController@destroy');
             Route::get('/get-info-event/{id}', 'EventController@getInfoEvent')->name('getInfoEvent');
             Route::patch('open/{id}', 'EventController@openEvent');

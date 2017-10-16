@@ -532,11 +532,9 @@
                     this.showMap = true
                     this.initImageDropzone()
                 })
-            this.callApiGetDataGoal()
+                .catch(() => this.$router.replace('/not-found'))
 
-            if (!this.event.manage) {
-                this.$router.replace('/not-found')
-            }
+            this.callApiGetDataGoal()
         }
     }
 </script>

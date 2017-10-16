@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Nicolaslopezj\Searchable\SearchableTrait;
 use Carbon\Carbon;
 
 class Donation extends BaseModel
 {
-    use SoftDeletes;
+    use SoftDeletes, SearchableTrait;
 
     // Donation's status
     const ACCEPT = 1;
@@ -37,6 +38,18 @@ class Donation extends BaseModel
     protected $dates = ['deleted_at'];
 
     protected $appends = ['donated_at'];
+
+    protected $searchable = [
+        'columns' => [
+            'donations.donor_name' => 10,
+            'donations.donor_email' => 10,
+            'users.name' => 10,
+            'users.email' => 10,
+        ],
+        'joins' => [
+            'users' => [ 'users.id', 'donations.user_id' ],
+        ],
+    ];
 
     public function user()
     {
