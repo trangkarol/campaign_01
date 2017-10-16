@@ -3,29 +3,36 @@
         <div class="ui-block-title">
             <h6 class="title">{{ $t('homepage.campaigns_may_join') }}</h6>
         </div>
-        <ul class="widget w-friend-pages-added notification-list friend-requests">
-            <li class="inline-items" v-for="campaign in listCampaign">
-                <div class="author-thumb">
+        <ol class="widget w-playlist">
+            <li class="js-open-popup" v-for="campaign in listCampaign">
+                <div class="playlist-thumb">
                     <img :src="campaign.media[0].image_medium" alt="author">
+                    <div class="overlay"></div>
+                    <a href="javascript:void(0)" class="play-icon">
+                        <svg class="olymp-music-play-icon-big">
+                            <use xlink:href="icons/icons-music.svg#olymp-music-play-icon-big"></use>
+                        </svg>
+                    </a>
                 </div>
-                <div class="notification-event">
-                    <router-link class="h6 notification-friend" :to="{ name: 'campaign.timeline', params: { slug: campaign.slug }}">
+                <div class="composition">
+                    <router-link class="composition-name" :to="{ name: 'campaign.timeline', params: { slug: campaign.slug }}">
                         <span v-if="campaign.title.length < 51">{{ campaign.title }}</span>
                         <span v-else>{{ campaign.title.substr(0, 50) }}...</span>
                     </router-link>
-                    <span class="chat-message-item">
-                        <span class="tag-info" v-for="tag in campaign.tags">{{ tag.name }}</span>
-                    </span>
+                    <a href="javascript:void(0)" class="composition-author">
+                        Tags:
+                        <span v-for="(tag, index) in campaign.tags">
+                            {{ tag.name }}<span v-if="index < campaign.tags.length - 1">, </span>
+                        </span>
+                    </a>
                 </div>
-                <span class="notification-icon">
-                    <router-link :to="{ name: 'campaign.timeline', params: { slug: campaign.slug }}">
-                        <svg class="olymp-star-icon">
-                            <use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use>
-                        </svg>
-                    </router-link>
-                </span>
+                <div class="composition-time">
+                    <svg class="olymp-star-icon">
+                        <use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use>
+                    </svg>
+                </div>
             </li>
-        </ul>
+        </ol>
     </div>
 </template>
 
@@ -59,24 +66,24 @@
 </script>
 
 <style lang="scss" scoped>
-    .author-thumb img {
-        width: 36px;
-        height: 36px;
-    }
+    .js-open-popup {
+        img {
+            width: 40px;
+            height: 40px;
+        }
+        .composition {
+            width: 60%;
+        }
 
-    .tag-info {
-        padding: 2px 7px;
-        color: white;
-        display: inline-block;
-        margin: 3px 1px 3px 1px;
-        border-radius: 4px;
-        background: #3f4257;
-        font-weight: bold;
-    }
-
-    .notification-list {
-        li {
-            padding: 15px 15px;
+        .composition-time {
+            padding-top: 4px;
+            padding-right: 3px;
+            [class^="olymp-"] {
+                height: 17px;
+                width: 20px;
+                fill: #9a9fbe;
+                display: inline-block;
+            }
         }
     }
 </style>

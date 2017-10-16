@@ -15,9 +15,6 @@
                                             <router-link :to="{ name: 'user.timeline', params: { slug: user.slug }}">{{ $t('campaigns.timeline') }}</router-link>
                                         </li>
                                         <li>
-                                            <router-link :to="{ name: 'user.about', params: { slug: user.slug }}">About</router-link>
-                                        </li>
-                                        <li>
                                             <router-link :to="{ name: 'user.friends', params: { slug: user.slug }}">{{ $t('user.friend.friends') }}</router-link>
                                         </li>
                                     </ul>
@@ -51,6 +48,11 @@
                                                     <li>
                                                         <router-link :to="{ name: 'user.campaign', params: { slug: user.slug, path: 'owned-campaign' }}">
                                                             {{ $t('user.label.owned_campaign') }}
+                                                        </router-link>
+                                                    </li>
+                                                    <li>
+                                                        <router-link :to="{ name: 'campaign.create'}">
+                                                            {{ $t('campaigns.create_campaign') }}
                                                         </router-link>
                                                     </li>
                                                 </ul>
@@ -158,7 +160,9 @@
         <image-modal :show.sync="show">
             <template slot="header">{{ modalTitle }}</template>
             <a class="upload-photo-item" @click.prevent="type == 'avatar' ? showUpload('#url_file') : showUpload('#head_photo')">
-                <svg class="olymp-computer-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-computer-icon"></use></svg>
+                <svg class="olymp-computer-icon">
+                    <use xlink:href="/frontend/icons/icons.svg#olymp-computer-icon"></use>
+                </svg>
                 <h6>{{ $t('user.upload.upload_photo') }}</h6>
                 <span>{{ $t('user.upload.upload_photo_desc') }}</span><br/>
                 <span v-show="type == 'avatar' ? errors.has('url_file') : errors.has('head_photo')" class="material-input text-danger">
@@ -167,9 +171,9 @@
             </a>
 
             <a href="#" class="upload-photo-item" @click.prevent="handleShowAll(true)">
-
-                <svg class="olymp-photos-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-photos-icon"></use></svg>
-
+                <svg class="olymp-photos-icon">
+                    <use xlink:href="/frontend/icons/icons.svg#olymp-photos-icon"></use>
+                </svg>
                 <h6>{{ $t('user.upload.choose_from_my_photo') }}</h6>
                 <span>{{ $t('user.upload.choose_from_my_photo_desc') }}</span>
             </a>

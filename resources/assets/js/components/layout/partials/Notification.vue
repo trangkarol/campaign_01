@@ -154,20 +154,105 @@
             <i aria-hidden="true" class="fa fa-calendar-check-o"></i>
         </span>
     </li>
+
+    <!-- notification when user comment -->
+    <li :class="{ 'un-read': !notification.read_at }"
+        @click="redirect(notification)"
+        v-else-if="notification.type == 'App\\Notifications\\UserComment'">
+        <div class="author-thumb">
+            <img :src="notification.data.from.image_thumbnail" alt="author">
+        </div>
+        <div class="notification-event">
+            <div>
+                <b>{{ notification.data.from.name }}</b>
+                <span v-if="notification.data.comment.parent_id">
+                    {{ $t('homepage.header.replied_comment') }}
+                </span>
+                <span v-else>{{ $t('homepage.header.commented') }}</span>
+                <span v-if="notification.data.comment.commentable_type == 'App\\Models\\Campaign'">
+                    {{ $t('homepage.header.campaign') }}
+                    <b class="title-of-event">
+                        {{ notification.data.comment.commentable.title }}
+                    </b>
+                </span>
+                <span v-else-if="notification.data.comment.commentable_type == 'App\\Models\\Event'">
+                    {{ $t('homepage.header.event') }}
+                    <b class="title-of-event">
+                        {{ notification.data.comment.commentable.title }}
+                    </b>
+                </span>
+                <span v-else>
+                    {{ $t('homepage.header.action') }}
+                    <b class="title-of-event">
+                        {{ notification.data.comment.commentable.caption }}
+                    </b>
+                </span>
+            </div>
+            <span class="notification-date">
+                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+            </span>
+        </div>
+        <span class="notification-icon">
+            <i v-if="notification.data.comment.parent_id" aria-hidden="true" class="fa fa-reply-all"></i>
+            <svg class="olymp-speech-balloon-icon" v-else>
+                <use xlink:href="/frontend/icons/icons.svg#olymp-speech-balloon-icon"></use>
+            </svg>
+        </span>
+        <div class="comment-photo">
+            <img :src="notification.data.from.image_thumbnail" alt="photo">
+            <span>“{{ notification.data.comment.content }}”</span>
+        </div>
+    </li>
+
 </template>
 
 <script>
-    export default {
-        props: [
-            'notification',
-            'totalUnreadNotifications',
-            'show',
-        ],
+    import { mapState, mapActions } from 'vuex'
+    import ActionDetail from '../../event/ActionDetail.vue'
 
+    export default {
+        data: () => ({
+
+        }),
+        props: {
+            notification: {},
+            totalUnreadNotifications: 0,
+            show: false,
+            showAction: {},
+            dataAction: {},
+            checkLikeActions: {},
+            checkPermission: true
+        },
+        computed: {
+            ...mapState('auth', {
+                user: state => state.user,
+            })
+        },
+        components : {
+            ActionDetail,
+        },
         methods: {
+            ...mapActions('action', [
+                'getDetailAction',
+            ]),
             timeAgo(time) {
                 return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
             },
+            detailAction(actionId) {
+                this.getDetailAction(actionId)
+                .then(data => {
+                    this.$emit('update:showAction', true)
+                    this.$emit('update:dataAction', data.actions.list_action)
+                    this.$emit('update:checkPermission', data.checkPermission)
+                    this.$emit('update:checkLikeActions', data.actions.checkLikeAction)
+                })
+                .catch(err => {
+                    this.$emit('update:showAction', false)
+                    const message = this.$i18n.t('messages.message-fail')
+                    noty({ text: message, force: true, container: false })
+                })
+            },
+
             redirect(notification) {
                 switch (notification.type) {
                     case 'App\\Notifications\\InviteUser':
@@ -195,12 +280,24 @@
                             slugEvent: notification.data.event.slug
                         }})
                         break
+                    case 'App\\Notifications\\UserComment':
+                        if (notification.data.comment.commentable_type == 'App\\Models\\Campaign') {
+                            this.$router.push({ name: 'user.timeline', params: { slug: this.user.slug }})
+                        } else if (notification.data.comment.commentable_type == 'App\\Models\\Event') {
+                            this.$router.push({ name: 'event.index', params: {
+                                slug: notification.data.comment.commentable.campaign_id,
+                                slugEvent: notification.data.comment.commentable.slug
+                            }})
+                        } else {
+                            this.detailAction(notification.data.comment.commentable.id)
+                        }
+                        break
                     default: this.$router.push({ name: 'homepage' })
                 }
 
                 this.$emit('update:totalUnreadNotifications', 0)
                 this.$emit('update:show', false)
-            },
+            }
         }
     }
 </script>
@@ -237,6 +334,10 @@
         color: #4a4d62;
     }
 
+    .fa-reply-all {
+        color: #8fb7b1;
+    }
+
     .title-of-event {
         color: #ff5e3a !important;
     }
@@ -249,5 +350,16 @@
         margin-right: -5px;
         width: 25px;
         height: 25px;
+    }
+
+    .olymp-speech-balloon-icon {
+        fill: rgb(175, 202, 198);
+    }
+
+    .comment-photo {
+        img {
+            height: 30px;
+            width: 30px;
+        }
     }
 </style>

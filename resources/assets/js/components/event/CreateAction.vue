@@ -184,7 +184,7 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .background-modal {
         position: fixed;
         top: 0;

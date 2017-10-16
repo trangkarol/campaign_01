@@ -519,12 +519,17 @@ class UserRepository extends BaseRepository implements UserInterface
             ->where('type', '<>', MakeFriend::class)
             ->paginate(config('pagination.notification'));
         $nameSpace = new \ReflectionClass($this);
+        $convert = [];
 
         foreach($notifications->items() as $key => $notify) {
             $object = array_keys($notify->data)[1];
-            $convert[$key]['data'][$object] = app($nameSpace->getNamespaceName() . '\\' . ucfirst($object . 'Repository'))
+            $dataModel = app($nameSpace->getNamespaceName() . '\\' . ucfirst($object . 'Repository'))
                 ->withTrashed()
                 ->findOrFail($notify->data[$object]);
+            if ($object == 'comment') {
+                $dataModel = $dataModel->load('commentable');
+            }
+            $convert[$key]['data'][$object] = $dataModel;
             $convert[$key]['data']['from'] = $this->find($notify->data['from']);
             $convert[$key]['created_at'] = $notify->created_at->toDateTimeString();
             $convert[$key]['notifiable_id'] = $notify->notifiable_id;
