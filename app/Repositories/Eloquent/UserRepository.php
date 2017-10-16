@@ -514,10 +514,28 @@ class UserRepository extends BaseRepository implements UserInterface
 
     public function listNotification($user)
     {
-        return $this->getIfUser($user)
+        $notifications = $this->getIfUser($user)
             ->notifications()
             ->where('type', '<>', MakeFriend::class)
             ->paginate(config('pagination.notification'));
+        $nameSpace = new \ReflectionClass($this);
+
+        foreach($notifications->items() as $key => $notify) {
+            $object = array_keys($notify->data)[1];
+            $convert[$key]['data'][$object] = app($nameSpace->getNamespaceName() . '\\' . ucfirst($object . 'Repository'))
+                ->withTrashed()
+                ->findOrFail($notify->data[$object]);
+            $convert[$key]['data']['from'] = $this->find($notify->data['from']);
+            $convert[$key]['created_at'] = $notify->created_at->toDateTimeString();
+            $convert[$key]['notifiable_id'] = $notify->notifiable_id;
+            $convert[$key]['read_at'] = $notify->read_at ? $notify->read_at->toDateTimeString() : null;
+            $convert[$key]['type'] = $notify->type;
+        }
+
+        return [
+            'last_page' => $notifications->lastPage(),
+            'data' => $convert,
+        ];
     }
 
     public function totalUnreadNotifications()

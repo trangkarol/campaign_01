@@ -38,7 +38,6 @@ class InviteUser extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'to' => $notifiable->id,
             'from' => $this->user,
             'campaign' => $this->campaign,
         ];

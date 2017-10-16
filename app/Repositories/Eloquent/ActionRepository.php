@@ -64,7 +64,7 @@ class ActionRepository extends BaseRepository implements ActionInterface
             $action->media()->createMany($media);
         }
 
-        Notification::send($event->user()->first(), new CreateAction($user, $event));
+        Notification::send($event->user()->first(), new CreateAction($user, $event->id));
 
         return [
             'action' => $this->getOneAction($action->id),

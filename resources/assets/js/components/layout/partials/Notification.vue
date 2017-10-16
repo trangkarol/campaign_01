@@ -10,7 +10,7 @@
             <div>
                 <b>{{ notification.data.from.name }}</b>
                 {{ $t('homepage.header.invited_join') }}
-                <b class="notification-to">{{ notification.data.campaign.title }}</b>.
+                <b class="title-of-campaign">{{ notification.data.campaign.title }}</b>.
             </div>
             <span class="notification-date">
                 <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
@@ -34,7 +34,7 @@
             <div>
                 <b>{{ notification.data.from.name }}</b>
                 {{ $t('homepage.header.user_donated') }}
-                <b class="notification-to">{{ notification.data.event.title }}</b>.
+                <b class="title-of-event">{{ notification.data.event.title }}</b>.
             </div>
             <span class="notification-date">
                 <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
@@ -56,7 +56,7 @@
             <div>
                 <b>{{ notification.data.from.name }}</b>
                 {{ $t('homepage.header.accept_donate') }}
-                <b class="notification-to">{{ notification.data.event.title }}</b>.
+                <b class="title-of-event">{{ notification.data.event.title }}</b>.
             </div>
             <span class="notification-date">
                 <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
@@ -78,7 +78,7 @@
             <div>
                 <b>{{ notification.data.from.name }}</b>
                 {{ $t('homepage.header.request_join') }}
-                <b class="notification-to">{{ notification.data.campaign.title }}</b>.
+                <b class="title-of-campaign">{{ notification.data.campaign.title }}</b>.
             </div>
             <span class="notification-date">
                 <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
@@ -100,7 +100,7 @@
             <div>
                 <b>{{ notification.data.from.name }}</b>
                 {{ $t('homepage.header.accept_request') }}
-                <b class="notification-to">{{ notification.data.campaign.title }}</b>.
+                <b class="title-of-campaign">{{ notification.data.campaign.title }}</b>.
             </div>
             <span class="notification-date">
                 <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
@@ -111,7 +111,7 @@
         </span>
     </li>
 
-    <!-- notification when Owner campaign accept request's user -->
+    <!-- notification when user create action -->
     <li :class="{ 'un-read': !notification.read_at }"
         @click="redirect(notification)"
         v-else-if="notification.type == 'App\\Notifications\\CreateAction'">
@@ -122,7 +122,7 @@
             <div>
                 <b>{{ notification.data.from.name }}</b>
                 {{ $t('homepage.header.create_action') }}
-                <b class="notification-to">{{ notification.data.event.title }}</b>.
+                <b class="title-of-event">{{ notification.data.event.title }}</b>.
             </div>
             <span class="notification-date">
                 <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
@@ -130,6 +130,28 @@
         </div>
         <span class="notification-icon">
             <img src="\images\action.png" alt="action" class="img-action">
+        </span>
+    </li>
+
+    <!-- notification when user create event -->
+    <li :class="{ 'un-read': !notification.read_at }"
+        @click="redirect(notification)"
+        v-else-if="notification.type == 'App\\Notifications\\CreateEvent'">
+        <div class="author-thumb">
+            <img :src="notification.data.from.image_thumbnail" alt="author">
+        </div>
+        <div class="notification-event">
+            <div>
+                <b>{{ notification.data.from.name }}</b>
+                {{ $t('homepage.header.create_event') }}
+                <b class="title-of-event">{{ notification.data.event.title }}</b>.
+            </div>
+            <span class="notification-date">
+                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+            </span>
+        </div>
+        <span class="notification-icon">
+            <i aria-hidden="true" class="fa fa-calendar-check-o"></i>
         </span>
     </li>
 </template>
@@ -167,6 +189,7 @@
                         }})
                         break
                     case 'App\\Notifications\\CreateAction':
+                    case 'App\\Notifications\\CreateEvent':
                         this.$router.push({ name: 'event.index', params: {
                             slug: notification.data.event.campaign_id,
                             slugEvent: notification.data.event.slug
@@ -210,8 +233,16 @@
         color: #ffa58f;
     }
 
-    .notification-to {
+    .fa-calendar-check-o {
+        color: #4a4d62;
+    }
+
+    .title-of-event {
         color: #ff5e3a !important;
+    }
+
+    .title-of-campaign {
+        color: #4abda7 !important;
     }
 
     .img-action {

@@ -59,7 +59,7 @@ class DonationController extends ApiController
                 ->get();
 
             if ($event->user_id != $this->user->id) {
-                Notification::send($event->user, new UserDonate($this->user, $event));
+                Notification::send($event->user, new UserDonate($this->user->id, $event->id));
                 $this->sendNotification(
                     $event->user_id,
                     $event,
@@ -112,7 +112,7 @@ class DonationController extends ApiController
 
             if ($donation->user_id && $donation->user_id != $this->user->id) {
                 $event = $donation->event;
-                Notification::send($donation->user, new AcceptDonation($this->user, $event));
+                Notification::send($donation->user, new AcceptDonation($this->user->id, $event->id));
                 $this->sendNotification(
                     $donation->user_id,
                     $event,
