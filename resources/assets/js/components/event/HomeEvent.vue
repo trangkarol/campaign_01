@@ -47,7 +47,7 @@
             .catch(err => {
                 this.$Progress.fail()
                 if (err.response.data.http_status.code == 404 || err.response.data.http_status.code == 401) {
-                    this.$router.push({ name: 'not_found' })
+                    this.$router.replace('/not-found')
                 }
             })
         },

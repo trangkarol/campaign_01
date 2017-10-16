@@ -124,7 +124,7 @@
                 .catch(res => {
                     if (err.response.data.http_status.code == 404 ||
                         err.response.data.http_status.code == 401) {
-                        this.$router.push({ name: 'not_found' })
+                        this.$router.replace('/not-found')
                     }
 
                     const message = err.response.data.http_status.messages
