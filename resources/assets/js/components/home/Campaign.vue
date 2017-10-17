@@ -11,7 +11,7 @@
                         </router-link>
                         <div class="event__date">
                             <time class="published">
-                                {{ timeAgo(campaign.created_at) }}
+                                <timeago :since="campaign.created_at"/>
                             </time>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
 
                             <div class="place inline-items">
                                 <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                <div><span>{{ $t('homepage.start_day') + ': ' + timeAgo(campaign.created_at) }}</span></div>
+                                <div><span>{{ $t('homepage.start_day') }}: <timeago :since="campaign.created_at"/></span></div>
                             </div>
 
                             <router-link class="btn bg-primary btn-sm full-width"
@@ -74,11 +74,6 @@
         props: {
             campaign: {},
             owner: {}
-        },
-        methods: {
-            timeAgo(time) {
-                return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-            }
         }
     }
 </script>

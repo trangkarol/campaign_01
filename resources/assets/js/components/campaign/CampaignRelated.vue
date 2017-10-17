@@ -41,7 +41,7 @@
                                 <div class="content">
                                     <p>{{ campaign.title }}</p>
 
-                                    <span class="sub-title">{{ timeAgo(campaign.created_at) }}</span>
+                                    <span class="sub-title"><timeago :since="campaign.created_at"/></span>
 
                                     <div class="swiper-container" data-slide="fade">
                                         <div class="swiper-wrapper">
@@ -169,9 +169,6 @@ export default {
         },
         cancel() {
             this.flagComfirm = false
-        },
-        timeAgo(time) {
-            return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
         },
         memberLength(members) {
             if (members > 6) {

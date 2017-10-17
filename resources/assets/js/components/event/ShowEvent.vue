@@ -40,7 +40,7 @@
                                         :to="{ name: 'user.timeline', params: { slug: event.user.slug } }">
                                         <i class="fa fa-user" aria-hidden="true"></i> {{ event.user.name }}
                                     </router-link>
-                                    <i class="fa fa-clock-o"></i> {{ timeAgo(event.created_at) }}
+                                    <i class="fa fa-clock-o"></i> <timeago :since="event.created_at"/>
                                 </div>
                             </div>
                             <master-like
@@ -168,10 +168,6 @@
         },
 
         methods: {
-            timeAgo(time) {
-                return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-            },
-
             ...mapActions('event', [
                 'like_event'
             ]),

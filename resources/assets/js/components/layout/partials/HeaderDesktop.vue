@@ -465,9 +465,6 @@ export default {
             'logout',
             'getListFollow'
         ]),
-        timeAgo(time) {
-            return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-        },
         handleLogout() {
             post(logout).then(res => {
                 this.logout()

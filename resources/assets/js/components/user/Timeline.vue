@@ -41,9 +41,7 @@
                                         "<span class="title-event">{{ belongTo(activity) }}</span>"
                                     </router-link>
                                     <div class="post__date">
-                                        <time class="published">
-                                            {{ timeAgo(activity.activitiable.created_at) }}
-                                        </time>
+                                        <timeago class="published" :since="activity.activitiable.created_at"/>
                                     </div>
                                 </div>
                             </div>
@@ -202,10 +200,6 @@
             ...mapActions('action', [
                 'getDetailAction',
             ]),
-
-            timeAgo(time) {
-                return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-            },
             nameActivity(type) {
                 switch(type) {
                     case 'App\\Models\\Campaign':

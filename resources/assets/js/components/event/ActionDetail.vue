@@ -24,7 +24,7 @@
                                     <div class="content">
                                         <a href="javascript:void(0)" class="h6 title">{{ dataAction.caption }}</a>
                                         <time class="published" datetime="2017-03-24T18:18">
-                                            {{ timeAgo(dataAction.created_at) }}
+                                            <timeago :since="dataAction.created_at"/>
                                         </time>
                                     </div>
                                 </div>
@@ -54,7 +54,7 @@
                                 </router-link>
                                 <div class="post__date">
                                     <time class="published" datetime="2017-03-24T18:18">
-                                        {{ timeAgo(dataAction.created_at) }}
+                                        <timeago :since="dataAction.created_at"/>
                                     </time>
                                 </div>
                             </div>
@@ -167,10 +167,6 @@
                 this.$emit('update:showAction', false)
                 this.$emit('update:dataAction', {})
                 this.$emit('update:checkLikeActions', {})
-            },
-
-            timeAgo(time) {
-                return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
             },
 
             swiper() {

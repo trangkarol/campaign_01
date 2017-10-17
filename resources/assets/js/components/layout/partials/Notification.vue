@@ -13,7 +13,7 @@
                 <b class="title-of-campaign">{{ notification.data.campaign.title }}</b>.
             </div>
             <span class="notification-date">
-                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+                <timeago class="entry-date updated" :since="notification.created_at"/>
             </span>
         </div>
         <span class="notification-icon">
@@ -37,7 +37,7 @@
                 <b class="title-of-event">{{ notification.data.event.title }}</b>.
             </div>
             <span class="notification-date">
-                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+                <timeago class="entry-date updated" :since="notification.created_at"/>
             </span>
         </div>
         <span class="notification-icon">
@@ -59,7 +59,7 @@
                 <b class="title-of-event">{{ notification.data.event.title }}</b>.
             </div>
             <span class="notification-date">
-                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+                <timeago class="entry-date updated" :since="notification.created_at"/>
             </span>
         </div>
         <span class="notification-icon">
@@ -81,7 +81,7 @@
                 <b class="title-of-campaign">{{ notification.data.campaign.title }}</b>.
             </div>
             <span class="notification-date">
-                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+                <timeago class="entry-date updated" :since="notification.created_at"/>
             </span>
         </div>
         <span class="notification-icon">
@@ -103,7 +103,7 @@
                 <b class="title-of-campaign">{{ notification.data.campaign.title }}</b>.
             </div>
             <span class="notification-date">
-                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+                <timeago class="entry-date updated" :since="notification.created_at"/>
             </span>
         </div>
         <span class="notification-icon">
@@ -125,7 +125,7 @@
                 <b class="title-of-event">{{ notification.data.event.title }}</b>.
             </div>
             <span class="notification-date">
-                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+                <timeago class="entry-date updated" :since="notification.created_at"/>
             </span>
         </div>
         <span class="notification-icon">
@@ -147,7 +147,7 @@
                 <b class="title-of-event">{{ notification.data.event.title }}</b>.
             </div>
             <span class="notification-date">
-                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+                <timeago class="entry-date updated" :since="notification.created_at"/>
             </span>
         </div>
         <span class="notification-icon">
@@ -189,7 +189,7 @@
                 </span>
             </div>
             <span class="notification-date">
-                <time class="entry-date updated">{{ timeAgo(notification.created_at) }}</time>
+                <timeago class="entry-date updated" :since="notification.created_at"/>
             </span>
         </div>
         <span class="notification-icon">
@@ -235,9 +235,6 @@
             ...mapActions('action', [
                 'getDetailAction',
             ]),
-            timeAgo(time) {
-                return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-            },
             detailAction(actionId) {
                 this.getDetailAction(actionId)
                 .then(data => {

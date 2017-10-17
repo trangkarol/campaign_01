@@ -18,7 +18,7 @@
                                 </router-link>
                                 <div class="post__date">
                                     <time class="published" datetime="2017-03-24T18:18">
-                                        {{ timeAgo(action.created_at) }}
+                                        <timeago :since="action.created_at"/>
                                     </time>
                                 </div>
                             </div>
@@ -116,7 +116,7 @@
                                 </router-link>
                                 <div class="post__date">
                                     <time class="published" datetime="2017-03-24T18:18">
-                                        {{ timeAgo(action.created_at) }}
+                                        <timeago :since="action.created_at"/>
                                     </time>
                                 </div>
                             </div>
@@ -291,10 +291,6 @@
         },
 
         methods: {
-            timeAgo(time) {
-                return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-            },
-
             ...mapActions('event', [
                 'load_action',
                 'removeAction',

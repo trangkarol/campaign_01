@@ -17,7 +17,7 @@
                                 {{ event.user.name }}
                             </router-link>
                             <div class="post__date">
-                                {{ timeAgo(event.created_at) }}
+                                <timeago :since="event.created_at"/>
                             </div>
                         </div>
                         <div class="more">
@@ -148,9 +148,6 @@ export default {
         ...mapActions('like', [
             'appendLike',
         ]),
-        timeAgo(time) {
-            return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-        },
         checkComemnt() {
             if (this.campaign.status) {
                 if ((this.campaign.status['value'] == 0 && this.checkJoinCampaign == 3)
