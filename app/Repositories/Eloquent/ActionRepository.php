@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Media;
 use App\Models\Action;
 use App\Models\Activity;
+use App\Notifications\UserComment;
 use App\Notifications\CreateAction;
 use App\Traits\Common\UploadableTrait;
 use App\Exceptions\Api\UnknowException;
@@ -64,9 +65,17 @@ class ActionRepository extends BaseRepository implements ActionInterface
             $action->media()->createMany($media);
         }
 
-        Notification::send($event->user()->first(), new CreateAction($user, $event->id));
+        $event = $action->event()->first();
+        $listReceiver = $event->campaign()
+            ->first()
+            ->activeUsers
+            ->where('id', '<>', $inputs['data_action']['user_id'])
+            ->all();
+
+        Notification::send( $listReceiver, new CreateAction($user, $event->id));
 
         return [
+            'listReceiver' => $listReceiver,
             'action' => $this->getOneAction($action->id),
             'modelName' => CreateAction::class,
         ];
@@ -143,6 +152,7 @@ class ActionRepository extends BaseRepository implements ActionInterface
     {
         if (!is_null($eventIds)) {
             $actions = $this->model->whereIn('event_id', $eventIds);
+
             $actions->get()->each(function ($action) {
                 $action->comments()->delete();
                 $action->likes()->delete();
@@ -245,11 +255,23 @@ class ActionRepository extends BaseRepository implements ActionInterface
             throw new NotFoundException('Not found action with expense_id:' . $expenseId, NOT_FOUND);
         }
 
-        return $action->forceDelete();
+        return $this->forceDelete($action);
     }
 
     public function forceDelete($action)
     {
+        $data = $action->comments->map(function ($comment) {
+            return json_encode([
+                    'from' => $comment->user_id,
+                    'comment' => $comment->id,
+                ]);
+        });
+
+        \DB::table('notifications')
+            ->where('type', UserComment::class)
+            ->whereIn('data', $data->all())
+            ->delete();
+
         $action->comments()->forceDelete();
         $action->likes()->forceDelete();
         $action->activities()->forceDelete();
