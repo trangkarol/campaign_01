@@ -10,9 +10,9 @@ import { config, dictionary } from './validation/config'
 import VueProgressBar from 'vue-progressbar'
 import * as configPlugin from './config'
 import * as VueGoogleMaps from 'vue2-google-maps'
-import VueTimeago from 'vue-timeago'
 import Master from './components/Master.vue'
-import SocialSharing from 'vue-social-sharing';
+import SocialSharing from 'vue-social-sharing'
+import TimeAgo from './components/libs/TimeAgo'
 
 // import editor quill
 import VueQuillEditor from 'vue-quill-editor'
@@ -28,7 +28,6 @@ import socketio from 'socket.io-client'
 Vue.use(VueSocketio, socketio(':' + window.Laravel.port_connect_server))
 Vue.use(VueQuillEditor)
 Vue.use(VueI18n)
-Vue.use(VueTimeago, configPlugin.timeago)
 Vue.use(VueProgressBar, configPlugin.topProgressBar)
 
 // Register rules vee-validation
@@ -38,7 +37,7 @@ for (let rule in rules) {
 }
 
 Validator.updateDictionary(dictionary);
-let lang = !!localStorage.getItem('locale') ? localStorage.getItem('locale') : window.Laravel.locale
+let lang = localStorage.getItem('locale') || window.Laravel.locale
 
 const i18n = new VueI18n({
     locale: lang,
@@ -79,3 +78,5 @@ Vue.directive('tooltip', function (el, binding) {
         trigger: 'hover'
     })
 })
+
+Vue.component('timeago', TimeAgo)

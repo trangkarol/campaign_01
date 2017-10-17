@@ -51,7 +51,7 @@
                                         class="title p">
                                     </show-text>
 
-                                    <span class="sub-title">{{ timeAgo(photo.created_at) }}</span>
+                                    <span class="sub-title"><timeago :since="photo.created_at"/></span>
 
                                     <div class="swiper-container" data-slide="fade">
                                         <div class="swiper-wrapper">
@@ -156,9 +156,6 @@ export default {
         ...mapActions('action', [
             'getDetailAction',
         ]),
-        timeAgo(time) {
-            return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-        },
         memberLength(members) {
             if (members > 6) {
                 return members -6

@@ -30,17 +30,6 @@ export const editorOption = {
     }
 }
 
-// Config VueTimeago
-export const timeago = {
-    name: 'timeago', // component name, `timeago` by default
-    locale: 'en-US',
-    locales: {
-        // you will need json-loader in webpack 1
-        'en-US': require('vue-timeago/locales/en-US.json')
-    }
-}
-
-// Config VueTimeago
 export const topProgressBar = {
     color: '#08ddc1',
     failedColor: '#ff5e3a',
@@ -55,6 +44,5 @@ export const topProgressBar = {
 export default {
     config,
     editorOption,
-    timeago,
     topProgressBar
 }

@@ -181,9 +181,6 @@
                 'loadMoreMembers',
                 'listMember'
             ]),
-            timeAgo(time) {
-                return moment(time, "YYYY-MM-DD h:mm:ss").fromNow()
-            },
             listMembers(campaignId) {
                 this.listMember({
                     campaignId: this.pageId,
