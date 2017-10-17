@@ -31,7 +31,10 @@
                                     </fieldset>
 
                                     <fieldset class="form-group label-floating is-select" :class="{ 'has-danger': errors.has('email') }">
-                                        <label class="control-label">{{ $t('events.donation.donor_email') }}</label>
+                                        <label class="control-label">
+                                            {{ $t('events.donation.donor_email') }}
+                                            ({{ $t('events.donation.optional') }})
+                                        </label>
                                         <input type="text" name="email" v-model="selectedUser.email" class="form-control"
                                             :disabled="!!selectedUser.id" v-validate="'email|max:255'">
                                         <span v-show="errors.has('email')" class="material-input text-danger">
@@ -40,7 +43,10 @@
                                     </fieldset>
 
                                     <fieldset class="form-group label-floating is-select" :class="{ 'has-danger': errors.has('phone') }">
-                                        <label class="control-label">{{ $t('events.donation.donor_phone') }}</label>
+                                        <label class="control-label">
+                                            {{ $t('events.donation.donor_phone') }}
+                                            ({{ $t('events.donation.optional') }})
+                                        </label>
                                         <input type="text" name="phone" v-model="selectedUser.phone" class="form-control"
                                             :disabled="!!selectedUser.id" v-validate="'max:15'">
                                         <span v-show="errors.has('phone')" class="material-input text-danger">
@@ -49,7 +55,10 @@
                                     </fieldset>
 
                                     <fieldset class="form-group label-floating is-select" :class="{ 'has-danger': errors.has('address') }">
-                                        <label class="control-label">{{ $t('events.donation.donor_address') }}</label>
+                                        <label class="control-label">
+                                            {{ $t('events.donation.donor_address') }}
+                                            ({{ $t('events.donation.optional') }})
+                                        </label>
                                         <input type="text" name="address" v-model="selectedUser.address" class="form-control"
                                             :disabled="!!selectedUser.id" v-validate="'max:255'">
                                         <span v-show="errors.has('address')" class="material-input text-danger">
@@ -91,7 +100,7 @@
                                     </div>
 
                                     <fieldset v-show="goals.length" class="form-group label-floating" :class="{ 'has-danger': errors.has('note') }">
-                                        <label class="control-label">{{ $t('events.donation.note') }}</label>
+                                        <label class="control-label">{{ $t('events.donation.note') }}...</label>
                                         <textarea name="note" class="form-control" v-model="note" v-validate="'max:255'"></textarea>
                                         <span v-show="errors.has('note')" class="material-input text-danger">
                                             {{ errors.first('note') }}
