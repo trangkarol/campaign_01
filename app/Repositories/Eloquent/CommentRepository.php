@@ -4,7 +4,6 @@ namespace App\Repositories\Eloquent;
 
 use Notification;
 use App\Models\Comment;
-use App\Models\Activity;
 use App\Notifications\UserComment;
 use App\Exceptions\Api\UnknowException;
 use App\Repositories\Contracts\CommentInterface;
@@ -24,14 +23,6 @@ class CommentRepository extends BaseRepository implements CommentInterface
         }
 
         $comment = $model->comments()->create($data);
-
-        Event::fire('add.activity', [
-            [
-                'model' => $comment,
-                'user_id' => $data['user_id'],
-                'action' => Activity::CREATE
-            ]
-        ]);
 
         if ($data['parent_id']) {
             $commentParent = $this->findOrFail($data['parent_id']);
@@ -67,14 +58,6 @@ class CommentRepository extends BaseRepository implements CommentInterface
     {
         $comment->update($data);
 
-        Event::fire('add.activity', [
-            [
-                'model' => $comment,
-                'user_id' => $user->id,
-                'action' => Activity::UPDATE
-            ]
-        ]);
-
         return $comment;
     }
 
@@ -106,15 +89,16 @@ class CommentRepository extends BaseRepository implements CommentInterface
         $comment->activities()->forceDelete();
         $comment->likes()->forceDelete();
         $comment->subComment()->forceDelete();
-        $comment->forceDelete();
+        $data = [
+            'from' => $comment->user_id,
+            'comment' => $comment->id,
+        ];
+        \DB::table('notifications')
+            ->where('type', UserComment::class)
+            ->where('data', json_encode($data))
+            ->delete();
 
-        Event::fire('add.activity', [
-            [
-                'model' => $comment,
-                'user_id' => $user->id,
-                'action' => Activity::DELETE
-            ]
-        ]);
+        $comment->forceDelete();
 
         return true;
     }

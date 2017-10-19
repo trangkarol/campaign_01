@@ -21,8 +21,8 @@
                     </router-link>
                     <a href="javascript:void(0)" class="composition-author">
                         Tags:
-                        <span v-for="(tag, index) in campaign.tags">
-                            {{ tag.name }}<span v-if="index < campaign.tags.length - 1">, </span>
+                        <span v-for="(tag, index) in campaign.tags" class="info-tag">
+                            {{ tag.name }}
                         </span>
                     </a>
                 </div>
@@ -84,6 +84,15 @@
                 fill: #9a9fbe;
                 display: inline-block;
             }
+        }
+
+        .info-tag {
+            padding: 0px 5px;
+            color: white;
+            margin: 1px;
+            display: inline-block;
+            border-radius: 2px;
+            background: #4a4d62;
         }
     }
 </style>

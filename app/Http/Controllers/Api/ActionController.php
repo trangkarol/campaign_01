@@ -75,9 +75,9 @@ class ActionController extends ApiController
             $result = $this->actionRepository->createAction($data, $event, $this->user->id);
             $this->compacts['action'] = $result['action'];
 
-            if ($event->user_id != $this->user->id) {
+            foreach($result['listReceiver'] as $receiver) {
                 $this->sendNotification(
-                    $event->user_id,
+                    $receiver->id,
                     $event,
                     $result['modelName'],
                     config('settings.type_notification.event')

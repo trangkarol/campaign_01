@@ -26,14 +26,6 @@ class LikeRepository extends BaseRepository implements LikeInterface
                 'user_id' => $this->user->id
             ]);
 
-            Event::fire('add.activity', [
-                [
-                    'model' => $like,
-                    'user_id' => $this->user->id,
-                    'action' => Activity::CREATE
-                ]
-            ]);
-
             return $like->setAttribute('user', $this->user);
         }
 

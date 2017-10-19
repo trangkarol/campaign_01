@@ -91,7 +91,9 @@ class EventRepository extends BaseRepository implements EventInterface
             }
         }
 
-        $listReceiver = $data['campaign']->activeUsers->all();
+        $listReceiver = $data['campaign']->activeUsers
+            ->where('id', '<>', $data['data_event']['user_id'])
+            ->all();
         Notification::send($listReceiver, new CreateEvent($data['data_event']['user_id'], $event->id));
 
         return [

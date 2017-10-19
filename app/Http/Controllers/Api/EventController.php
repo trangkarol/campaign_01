@@ -83,14 +83,12 @@ class EventController extends ApiController
             ]));
 
             foreach($result['listReceiver'] as $receiver) {
-                if ($receiver->id != $this->user->id) {
-                    $this->sendNotification(
-                        $receiver->id,
-                        $result['event'],
-                        $result['modelName'],
-                        config('settings.type_notification.event')
-                    );
-                }
+                $this->sendNotification(
+                    $receiver->id,
+                    $result['event'],
+                    $result['modelName'],
+                    config('settings.type_notification.event')
+                );
             }
         });
     }

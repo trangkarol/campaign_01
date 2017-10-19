@@ -265,4 +265,10 @@ export default {
 }
 </script>
 <style lang="scss">
+    .friends-harmonic {
+        img {
+            height: 32px;
+            width: 32px;
+        }
+    }
 </style>
