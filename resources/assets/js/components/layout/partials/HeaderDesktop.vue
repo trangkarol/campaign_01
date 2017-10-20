@@ -94,7 +94,7 @@
                                         <router-link :to="{ name: 'user.timeline', params: { slug: request.userId } }"
                                             class="h6 notification-friend">
                                                 {{ request.userName }}
-                                            <span class="author-subtitle">{{ user.email }}</span>
+                                            <span class="author-subtitle">{{ request.email }}</span>
                                         </router-link>
                                     </div>
                                     <div class="notification-event" v-else>
@@ -102,7 +102,6 @@
                                         <router-link :to="{ name: 'user.timeline', params: { slug: request.userId } }"
                                             class="h6 notification-friend">
                                                 {{ request.userName }}
-                                            <span class="author-subtitle">{{ user.email }}</span>
                                         </router-link>
                                         {{ $t('messages.became_friend') }}.
                                     </div>

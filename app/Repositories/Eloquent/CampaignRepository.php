@@ -634,22 +634,24 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
             ->get();
 
         if ($campaignsInvolve->isEmpty()) {
-            $campaignsInvolve = $this->whereHas('settings', function ($query) {
+            $campaignsInvolve = $this->whereHas('users', function ($query) use ($campaignsUserJoined) {
+                $query->whereNotIn('campaign_id', $campaignsUserJoined);
+            })
+            ->whereHas('settings', function ($query) {
                 $query->where('key', config('settings.campaigns.status'))
                     ->where('value', config('settings.value_of_settings.status.public'));
-                })
-                ->whereHas('settings', function ($query) {
-                    $query->where('key', config('settings.campaigns.end_day'))
-                        ->where('value', '>', Carbon::now()->format('Y-m-d'))
-                        ->orWhere(function ($subQuery) {
-                            $subQuery->where('key', config('settings.campaigns.end_day'))
-                                ->where('value', '');
-                        });
-                })
-                ->with('media', 'tags')
-                ->inRandomOrder()
-                ->take(config('settings.campaigns_involve'))
-                ->get();
+            })
+            ->whereHas('settings', function ($query) {
+                $query->where('key', config('settings.campaigns.end_day'))
+                    ->where('value', '>', Carbon::now()->format('Y-m-d'))
+                    ->orWhere(function ($subQuery) {
+                        $subQuery->where('key', config('settings.campaigns.end_day'))->where('value', '');
+                    });
+            })
+            ->with('media', 'tags')
+            ->inRandomOrder()
+            ->take(config('settings.campaigns_involve'))
+            ->get();
         }
 
         return $campaignsInvolve;

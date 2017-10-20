@@ -11,119 +11,130 @@
                     </div>
                     <span>{{ $t('user.activity_empty') }}</span>
                 </div>
-
                 <div v-else>
                     <div id="newsfeed-items-grid">
-                    <div class="ui-block" v-for="(activity, index) in listActivity">
-                        <article class="hentry post has-post-thumbnail thumb-full-width">
-                            <div class="post__author author vcard inline-items">
-                                <img :src="currentPageUser.image_thumbnail" alt="author" class="image-auth">
-                                <div class="author-date">
-                                    <router-link class="h6 post__author-name fn"
-                                        :to="{ name: 'user.timeline', params: { slug: currentPageUser.slug }}">
-                                        {{ currentPageUser.name }}
-                                    </router-link>
-                                    {{ detemineAction(activity) }}
-                                    <span class="span-event">{{ nameActivity(activity.activitiable_type) }}</span>
-                                    <router-link class="link-event" :to="url(activity.activitiable_type, activity.activitiable)">
-                                        "<span class="title-event">{{ title(activity) }}</span>"
-                                    </router-link>
-                                    <span v-if="activity.activitiable_type != 'App\\Models\\Campaign'">
-                                        - {{ $t('homepage.in_campaign') }}</span>
-                                    <router-link class="link-event"
-                                        v-if="activity.activitiable_type == 'App\\Models\\Event'"
-                                        :to="url('App\\Models\\Campaign', activity.activitiable.campaign)">
-                                        "<span class="title-event">{{ belongTo(activity) }}</span>"
-                                    </router-link>
-                                    <router-link class="link-event"
-                                        v-if="activity.activitiable_type == 'App\\Models\\Action'"
-                                        :to="url('App\\Models\\Campaign', activity.activitiable.event.campaign)">
-                                        "<span class="title-event">{{ belongTo(activity) }}</span>"
-                                    </router-link>
-                                    <div class="post__date">
-                                        <timeago class="published" :since="activity.activitiable.created_at"/>
+                        <div class="ui-block" v-for="(activity, index) in listActivity">
+                            <article class="hentry post has-post-thumbnail thumb-full-width"
+                            v-if="activity.activitiable_type != 'App\\Models\\Campaign'">
+                                <div class="post__author author vcard inline-items">
+                                    <img :src="currentPageUser.image_thumbnail" alt="author" class="image-auth">
+                                    <div class="author-date">
+                                        <router-link class="h6 post__author-name fn"
+                                            :to="{ name: 'user.timeline', params: { slug: currentPageUser.slug }}">
+                                            {{ currentPageUser.name }}
+                                        </router-link>
+                                        {{ detemineAction(activity) }}
+                                        <span class="span-event">{{ nameActivity(activity.activitiable_type) }}</span>
+                                        <router-link class="link-event" :to="url(activity.activitiable_type, activity.activitiable)">
+                                            "<span class="title-event">{{ title(activity) }}</span>"
+                                        </router-link>
+                                        <span v-if="activity.activitiable_type != 'App\\Models\\Campaign'">
+                                            - {{ $t('homepage.in_campaign') }}
+                                        </span>
+                                        <router-link class="link-event"
+                                            v-if="activity.activitiable_type == 'App\\Models\\Event'"
+                                            :to="url('App\\Models\\Campaign', activity.activitiable.campaign)">
+                                            "<span class="title-event">{{ belongTo(activity) }}</span>"
+                                        </router-link>
+                                        <router-link class="link-event"
+                                            v-if="activity.activitiable_type == 'App\\Models\\Action'"
+                                            :to="url('App\\Models\\Campaign', activity.activitiable.event.campaign)">
+                                            "<span class="title-event">{{ belongTo(activity) }}</span>"
+                                        </router-link>
+                                        <div class="post__date">
+                                            <timeago class="published" :since="activity.activitiable.created_at"/>
+                                        </div>
+                                    </div>
+                                    <div class="more">
+                                        <i aria-hidden="true"
+                                            class="fa fa-calendar-check-o"
+                                            v-if="activity.activitiable_type == 'App\\Models\\Event'">
+                                        </i>
+                                        <img v-else class="img-action" src="/images/action.png">
                                     </div>
                                 </div>
-                            </div>
-                            <list-image v-if="activity.activitiable.media.length" :listImage="activity.activitiable.media"></list-image>
-                            <a href="javascript:void(0)"
-                                @click="detailAction(activity.activitiable_id)"
-                                v-if="activity.activitiable_type == 'App\\Models\\Action'"
-                                :to="url(activity.activitiable_type, activity.activitiable)"
-                                class="h2 post-title">
-                                {{ activity.activitiable.caption }}
-                            </a>
-                            <router-link v-else
-                                :to="url(activity.activitiable_type, activity.activitiable)"
-                                class="h2 post-title">
-                                {{ activity.activitiable.title }}
-                            </router-link>
-
-                            <p>
-                                <show-text
-                                    :text="activity.activitiable.description"
-                                    :show_char=850
-                                    :number_char_show=700
-                                    :show="$t('events.show_more')"
-                                    :hide="$t('events.show_less')">
-                                </show-text>
-                            </p>
-
-                            <master-like
-                                :likes="activity.activitiable.likes"
-                                :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
-                                :flag="flag(activity.activitiable_type)"
-                                :type="'like'"
-                                :modelId="activity.activitiable.id"
-                                :numberOfComments="activity.activitiable.number_of_comments"
-                                :numberOfLikes="activity.activitiable.number_of_likes"
-                                :deleteDate="activity.activitiable.deleted_at"
-                                :showMore="true"
-                                :roomLike="`user${currentPageUser.id}`">
-                            </master-like>
-
-                            <div class="control-block-button post-control-button">
+                                <list-image
+                                    v-if="activity.activitiable.media.length"
+                                    :listImage="activity.activitiable.media">
+                                </list-image>
+                                <a href="javascript:void(0)"
+                                    @click="detailAction(activity.activitiable_id)"
+                                    v-if="activity.activitiable_type == 'App\\Models\\Action'"
+                                    :to="url(activity.activitiable_type, activity.activitiable)"
+                                    class="h2 post-title">
+                                    {{ activity.activitiable.caption }}
+                                </a>
+                                <router-link v-else
+                                    :to="url(activity.activitiable_type, activity.activitiable)"
+                                    class="h2 post-title">
+                                    {{ activity.activitiable.title }}
+                                </router-link>
+                                <p>
+                                    <show-text
+                                        :text="activity.activitiable.description"
+                                        :show_char=850
+                                        :number_char_show=700
+                                        :show="$t('events.show_more')"
+                                        :hide="$t('events.show_less')">
+                                    </show-text>
+                                </p>
                                 <master-like
                                     :likes="activity.activitiable.likes"
                                     :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
                                     :flag="flag(activity.activitiable_type)"
-                                    :type="'like-infor'"
+                                    :type="'like'"
                                     :modelId="activity.activitiable.id"
                                     :numberOfComments="activity.activitiable.number_of_comments"
                                     :numberOfLikes="activity.activitiable.number_of_likes"
                                     :deleteDate="activity.activitiable.deleted_at"
+                                    :showMore="true"
                                     :roomLike="`user${currentPageUser.id}`">
                                 </master-like>
-                                <plugin-sidebar>
-                                    <template scope="props" slot="sharing-social">
-                                        <share-social-network
-                                            :url="url(activity.activitiable_type, activity.activitiable)"
-                                            :title="activity.activitiable.title"
-                                            :description="activity.activitiable.description"
-                                            :isSocialSharing="props.isPopupShare">
-                                        </share-social-network>
-                                    </template>
-                                </plugin-sidebar>
-                            </div>
-                        </article>
-
-                        <comment
-                            :comments="activity.activitiable.comments"
-                            :numberOfComments="activity.activitiable.number_of_comments"
-                            :model-id ="activity.activitiable.id"
-                            :flag="flag(activity.activitiable_type)"
-                            :classListComment="''"
-                            :classFormComment="''"
-                            :deleteDate="activity.activitiable.deleted_at"
-                            :canComment="true"
-                            :roomLike="`user${currentPageUser.id}`">
-                        </comment>
+                                <div class="control-block-button post-control-button">
+                                    <master-like
+                                        :likes="activity.activitiable.likes"
+                                        :checkLiked="checkLikes(activity.activitiable_type, checkLiked)"
+                                        :flag="flag(activity.activitiable_type)"
+                                        :type="'like-infor'"
+                                        :modelId="activity.activitiable.id"
+                                        :numberOfComments="activity.activitiable.number_of_comments"
+                                        :numberOfLikes="activity.activitiable.number_of_likes"
+                                        :deleteDate="activity.activitiable.deleted_at"
+                                        :roomLike="`user${currentPageUser.id}`">
+                                    </master-like>
+                                    <plugin-sidebar>
+                                        <template scope="props" slot="sharing-social">
+                                            <share-social-network
+                                                :url="url(activity.activitiable_type, activity.activitiable)"
+                                                :title="activity.activitiable.title"
+                                                :description="activity.activitiable.description"
+                                                :isSocialSharing="props.isPopupShare">
+                                            </share-social-network>
+                                        </template>
+                                    </plugin-sidebar>
+                                </div>
+                            </article>
+                            <campaign-post v-else
+                                :type="activity.name"
+                                :campaign="activity.activitiable"
+                                :owner="user">
+                            </campaign-post>
+                            <comment v-if="activity.activitiable_type != 'App\\Models\\Campaign'"
+                                :comments="activity.activitiable.comments"
+                                :numberOfComments="activity.activitiable.number_of_comments"
+                                :model-id ="activity.activitiable.id"
+                                :flag="flag(activity.activitiable_type)"
+                                :classListComment="''"
+                                :classFormComment="''"
+                                :deleteDate="activity.activitiable.deleted_at"
+                                :canComment="true"
+                                :roomLike="`user${currentPageUser.id}`">
+                            </comment>
+                        </div>
                     </div>
-                </div>
-                <a href="javascript:void(0)" class="btn btn-control btn-more">
-                    <i class="fa fa-spinner fa-pulse fa-spin fa-5x" v-if="loading"></i>
-                </a>
-
+                    <a href="javascript:void(0)" class="btn btn-control btn-more">
+                        <i class="fa fa-spinner fa-pulse fa-spin fa-5x" v-if="loading"></i>
+                    </a>
                 </div>
             </div>
             <!-- end Main Content -->
@@ -153,6 +164,7 @@
     import LeftSidebar from './timeline/Left-sidebar.vue'
     import RightSidebar from './timeline/Right-sidebar.vue'
     import MasterLike from '../like/MasterLike.vue'
+    import CampaignPost from './CampaignPost.vue'
     import Comment from '../comment/Comment.vue'
     import ActionDetail from '../event/ActionDetail.vue'
     import sideWaypoint from '../../helpers/mixin/sideWaypoint'
@@ -311,7 +323,8 @@
             ShowText,
             ShareSocialNetwork,
             PluginSidebar,
-            ListImage
+            ListImage,
+            CampaignPost
         },
     }
 </script>
@@ -370,6 +383,21 @@
 
         .span-event{
             color: #fe5d39;
+        }
+
+        .more {
+            i {
+                font-size: 30px;
+                color: #404358;
+            }
+
+            .img-action {
+                border-radius: 0px !important;
+                margin-left: 10px !important;
+                margin-right: -12px !important;
+                width: 30px !important;
+                height: 30px !important;
+            }
         }
     }
 </style>

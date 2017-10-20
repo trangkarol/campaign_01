@@ -4,20 +4,19 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div class="tab-pane active" id="album-page" role="tabpanel" v-if="listPhotos.list_action">
-
                     <div class="photo-album-wrapper" v-if="listPhotos.list_action.total > 0">
-
                         <div class="photo-album-item-wrap col-4-width" v-for="photo in listPhotos.list_action.data">
                             <div class="photo-album-item" data-mh="album-item">
                                 <div class="photo-item" v-if="photo.media != null">
-
                                     <a href="javascript:void(0)">
                                         <img :src="photo.media[0].image_small" alt="photo">
                                     </a>
-
                                     <div class="overlay overlay-dark"></div>
-                                    <a href="javascript:void(0)" class="more"><svg class="olymp-three-dots-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use></svg></a>
-
+                                    <a href="javascript:void(0)" class="more">
+                                        <svg class="olymp-three-dots-icon">
+                                            <use xlink:href="/frontend/icons/icons.svg#olymp-three-dots-icon"></use>
+                                        </svg>
+                                    </a>
                                     <master-like
                                         :likes="photo.likes"
                                         :checkLiked="listPhotos.checkLikeAction"
@@ -31,7 +30,6 @@
                                         :deleteDate="photo.deleted_at"
                                         :roomLike="`campaign${pageId}`">
                                     </master-like>
-
                                     <a href="javascript:void(0)"
                                         data-toggle="modal"
                                         data-target="#open-photo-popup-v2"
@@ -39,7 +37,6 @@
                                         @click="detailAction(photo.id)">
                                     </a>
                                 </div>
-
                                 <div class="content">
                                     <show-text
                                         :type="false"
@@ -50,9 +47,7 @@
                                         :number_char_show=200
                                         class="title p">
                                     </show-text>
-
                                     <span class="sub-title"><timeago :since="photo.created_at"/></span>
-
                                     <div class="swiper-container" data-slide="fade">
                                         <div class="swiper-wrapper">
                                             <div class="swiper-slide">
@@ -71,7 +66,6 @@
                                                     </li>
                                                 </ul>
                                             </div>
-
                                             <div class="swiper-slide">
                                                 <div class="friend-count" data-swiper-parallax="-500">
                                                     <a href="javascript:void(0)" class="friend-count-item"   >
@@ -88,20 +82,21 @@
                                         <div class="swiper-pagination"></div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                     <div class="photo-album-wrapper" v-else>
-                        <div class="ui-block">
-                            <article class="hentry post">
-                                {{ $t('messages.not_found_photo') }}
-                            </article>
+                        <div class="page-description">
+                            <div class="icon">
+                                <svg class="olymp-star-icon left-menu-icon">
+                                    <use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use>
+                                </svg>
+                            </div>
+                            <span>{{ $t('messages.not_found_photo') }}</span>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
         <action-detail
             :showAction.sync="showAction"
