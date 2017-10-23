@@ -77,7 +77,7 @@
         "close": "Close (Esc)"
     },
     "photo": {
-        "gallery": "’s Photo Gallery",
+        "gallery": "Photo Gallery Of",
         "header": "Header Photos",
         "delete": "Delete this photo",
         "dont_have_images": "Don't have any photo."

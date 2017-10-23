@@ -92,10 +92,13 @@
                         </div>
                     </div>
                     <div class="tab-content" v-else>
-                        <div class="ui-block">
-                            <article class="hentry post">
-                                {{ $t('messages.not_found_campaign') }}
-                            </article>
+                        <div class="page-description">
+                            <div class="icon">
+                                <svg class="olymp-star-icon left-menu-icon">
+                                    <use xlink:href="/frontend/icons/icons.svg#olymp-star-icon"></use>
+                                </svg>
+                            </div>
+                            <span>{{ $t('messages.not_found_campaign') }}</span>
                         </div>
                     </div>
                 </div>

@@ -235,7 +235,7 @@ export default {
     }
 
     .names-people-likes {
-        width: 48%;
+        width: 46%;
         margin-right: 0px;
     }
 </style>

@@ -117,7 +117,7 @@
     import { mapState, mapActions, mapGetters } from 'vuex'
     import { del, get } from '../../../helpers/api'
     import DetailImage from '../DetailImage.vue'
-    import { EventBus } from '../../../EventBus.js';
+    import { EventBus } from '../../../EventBus.js'
 
     export default {
         data: () => ({

@@ -5,7 +5,7 @@
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="ui-block responsive-flex">
                         <div class="ui-block-title">
-                            <div class="h6 title">{{ currentPageUser.name + $t('user.photo.gallery') }}</div>
+                            <div class="h6 title">{{ $t('user.photo.gallery') + ' ' + currentPageUser.name }}</div>
                         </div>
                     </div>
                 </div>
