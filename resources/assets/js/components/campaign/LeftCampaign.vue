@@ -28,11 +28,11 @@
                         <span class="title">{{ $t('campaigns.address') }}:</span>
                         <span class="text">{{ campaign.address }}</span>
                     </li>
-                    <li v-if="campaign.owner != null">
+                    <li v-if="campaign.owner.length && campaign.owner[0].email.length">
                         <span class="title">{{ $t('campaigns.email') }}:</span>
                         <a href="javascript:void(0)" class="text">{{ campaign.owner[0].email }}</a>
                     </li>
-                    <li v-if="campaign.owner != null">
+                    <li v-if="campaign.owner.length">
                         <span class="title">{{ $t('campaigns.phone') }}:</span>
                         <a href="javascript:void(0)" class="text">{{ campaign.owner[0].phone }}</a>
                     </li>
