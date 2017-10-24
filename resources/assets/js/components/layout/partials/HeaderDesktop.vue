@@ -422,6 +422,10 @@ export default {
                 this.messages[index].class = ''
             })
         }
+
+        EventBus.$on('seen', () => {
+            this.markReadNotifications()
+        })
     },
     computed: {
         ...mapState('auth', {

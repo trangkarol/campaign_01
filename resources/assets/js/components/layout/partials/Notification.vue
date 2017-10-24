@@ -208,6 +208,7 @@
 
 <script>
     import { mapState, mapActions } from 'vuex'
+    import { EventBus } from '../../../EventBus.js'
     import ActionDetail from '../../event/ActionDetail.vue'
 
     export default {
@@ -292,6 +293,7 @@
                     default: this.$router.push({ name: 'homepage' })
                 }
 
+                EventBus.$emit('seen')
                 this.$emit('update:totalUnreadNotifications', 0)
                 this.$emit('update:show', false)
             }
