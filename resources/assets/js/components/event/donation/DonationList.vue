@@ -44,8 +44,8 @@
                         <fieldset class="form-group">
                             <select ref="select" class="selectpicker form-control" size="auto" v-model="params.status">
                                 <option value="">{{ $t('events.expenses_statistic.all') }}</option>
-                                <option :value="true">{{ $t('events.donation.confirmed') }}</option>
-                                <option :value="false">{{ $t('events.donation.unconfimred') }}</option>
+                                <option :value="1">{{ $t('events.donation.confirmed') }}</option>
+                                <option :value="0">{{ $t('events.donation.unconfimred') }}</option>
                             </select>
                         </fieldset>
                     </div>
@@ -63,14 +63,14 @@
                         <fieldset class="form-group">
                             <select ref="select" class="selectpicker form-control" size="auto" v-model="params.user_id">
                                 <option value="">{{ $t('events.expenses_statistic.all') }}</option>
-                                <option :value="user.id" v-for="user in campaign.user">{{ user.name }}</option>
+                                <option :value="u.id" v-for="u in campaign.user" :key="u.id">{{ u.name }}</option>
                             </select>
                         </fieldset>
                     </div>
 
                     <form class="w-search" @submit.prevent>
                         <div class="form-group with-button">
-                            <input class="form-control" type="text" :placeholder="$t('events.search') + '...'" v-model="params.searchKey">
+                            <input class="form-control" type="text" :placeholder="$t('events.search') + '...'" v-model.lazy="params.searchKey">
                             <button>
                                 <svg class="olymp-magnifying-glass-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-magnifying-glass-icon"></use></svg>
                             </button>

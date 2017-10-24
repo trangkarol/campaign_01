@@ -72,6 +72,10 @@ export const update_donate = ({ commit }, payload) => {
         })
 }
 
+export const setDonationList = ({ commit }, data) => {
+    commit(types.UPDATE_DONATION, data)
+}
+
 export const change_donate_status = ({ commit }, data) => {
     patch(`donation/update-status/${data.id}`, { status: data.status })
         .then(res => {
@@ -92,6 +96,7 @@ export const updateDataAction = ({ commit }, data) => {
     commit(types.UPDATE_ACTION, data)
 }
 
+
 export default {
     get_event,
     load_action,
@@ -102,5 +107,6 @@ export default {
     change_donate_status,
     removeAction,
     appendOneAction,
-    updateDataAction
+    updateDataAction,
+    setDonationList
 }

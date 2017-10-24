@@ -17,7 +17,7 @@ class DonationPolicy extends BasePolicy
      */
     public function manage(User $user, Donation $donation)
     {
-        return $user->id === $donation->user_id
+        return ($user->id === $donation->user_id && $donation->status == Donation::NOT_ACCEPT)
             || $user->can('manage', $donation->event);
     }
 }

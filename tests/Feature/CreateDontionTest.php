@@ -305,7 +305,8 @@ class CreateDonationTest extends TestCase
     public function testUpdateDonationButItWasAcceptedThenFail()
     {
         $faker = \Faker\Factory::create();
-        $user = factory(User::class)->create();
+        $owner = factory(User::class)->create();
+        $member = factory(User::class)->create();
         $campaign = factory(Campaign::class)->create([
             'status' => Campaign::ACTIVE,
             'hashtag' => $faker->unique()->name,
@@ -313,42 +314,42 @@ class CreateDonationTest extends TestCase
         $roleCampaign = Role::where('name', Role::ROLE_OWNER)->where('type', Role::TYPE_CAMPAIGN)->first();
         $roleMemberCampaign = Role::where('name', Role::ROLE_MEMBER)->where('type', Role::TYPE_CAMPAIGN)->first();
         $campaign->users()->attach([
-            $user->id => [
-                'role_id' => $roleMemberCampaign->id,
-                'status' => CAMPAIGN::APPROVED,
-            ],
-        ]);
-        $campaign->users()->attach([
-            $user->id => [
+            $owner->id => [
                 'role_id' => $roleCampaign->id,
                 'status' => CAMPAIGN::APPROVED,
             ],
         ]);
+        $campaign->users()->attach([
+            $member->id => [
+                'role_id' => $roleMemberCampaign->id,
+                'status' => CAMPAIGN::APPROVED,
+            ],
+        ]);
         $event = factory(Event::class)->create([
-            'user_id' => $user->id,
+            'user_id' => $owner->id,
             'campaign_id' => $campaign->id,
         ]);
         $donation = factory(Donation::class)->create([
-            'user_id' => $user->id,
+            'user_id' => $member->id,
             'event_id' => $event->id,
             'campaign_id' => $event->campaign_id,
             'goal_id' => 5,
             'value' => 1001,
             'status' => CAMPAIGN::APPROVED,
         ]);
-        $this->actingAs($user, 'api');
+        $this->actingAs($member, 'api');
         $response = $this->json('PATCH', route('donation.update', ['id' => $donation->id]), [
             'goal_id' => 6,
             'value' => 69,
         ], [
-            'HTTP_Authorization' => 'Bearer ' . $user->createToken('myToken')->accessToken,
+            'HTTP_Authorization' => 'Bearer ' . $member->createToken('myToken')->accessToken,
         ]);
 
         $response->assertStatus(INTERNAL_SERVER_ERROR)->assertJsonFragment([
             'http_status' => [
                 'code' => INTERNAL_SERVER_ERROR,
                 'status' => false,
-                'message' => 'Error: This donation was accepted, you can not edit it.',
+                'message' => 'This action is unauthorized.',
             ],
         ]);
     }

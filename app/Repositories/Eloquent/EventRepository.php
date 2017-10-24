@@ -288,11 +288,11 @@ class EventRepository extends BaseRepository implements EventInterface
         unset($params['searchKey']);
 
         foreach ($params as $key => $value) {
-            if ($value) {
+            if ($value !== null) {
                 $query->where($key, $value);
             }
         }
 
-        return $query->with(['user', 'goal.donationType.quality'])->paginate();
+        return $query->with(['user', 'goal.donationType.quality'])->latest()->paginate();
     }
 }

@@ -123,21 +123,32 @@ class DonationController extends ApiController
         });
     }
 
-    public function update(DonationRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $donation = $this->donationRepository->findOrFail($id);
-        $data = $request->only('goal_id', 'value');
 
-        if ($this->user->cannot('manage', $donation)) {
-            throw new UnknowException('Permission error: User can not change this donation.');
-        }
+        $data = $request->only(
+            'donor_name',
+            'donor_email',
+            'donor_address',
+            'donor_phone',
+            'goal_id',
+            'value',
+            'status',
+            'note'
+        );
 
-        if ($donation->status && $this->user->id == $donation->user_id) {
-            throw new UnknowException('Error: This donation was accepted, you can not edit it.');
-        }
+        $data['status'] = $data['status'] === '' ? Donation::NOT_ACCEPT : $data['status'];
+
+        $data = array_filter($data, function ($value) {
+            return $value !== null;
+        });
 
         return $this->doAction(function () use ($data, $donation) {
-            $this->compacts['donation'] = $this->donationRepository->update($donation->id, $data);
+            $this->authorize('manage', $donation);
+            $this->compacts['donation'] = $this->donationRepository
+                ->update($donation->id, $data)
+                ->load(['goal.donationType.quality', 'user']);
         });
     }
 
