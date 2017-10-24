@@ -166,6 +166,7 @@
     import CreateAction from './CreateAction.vue'
     import Modal from '../libs/SelectImageModal.vue'
     import Message from '../libs/Modal.vue'
+    import { EventBus } from '../../EventBus.js'
 
     export default {
         data: () => {
@@ -217,6 +218,7 @@
                         .then(res => {
                             this.showModal = false
                             this.showMessage = true
+                            EventBus.$emit('newDonation')
                         })
                 })
             },

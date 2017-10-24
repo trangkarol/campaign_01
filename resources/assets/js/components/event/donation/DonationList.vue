@@ -101,6 +101,7 @@
     import { mapActions, mapState } from 'vuex'
     import List from './List'
     import { get } from '../../../helpers/api.js'
+    import { EventBus } from '../../../EventBus.js'
 
     export default {
         data() {
@@ -177,6 +178,12 @@
         },
         created() {
             this.getDonations()
+            EventBus.$on('newDonation', () => {
+                this.hasData = true
+                this.page = 0
+                this.donations = []
+                this.getDonations()
+            })
         },
         mounted() {
             this.progresbar()
