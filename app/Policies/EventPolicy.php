@@ -31,7 +31,7 @@ class EventPolicy extends BasePolicy
     public function manage(User $user, Event $event)
     {
         return $user->id === $event->user_id
-            || $user->can('manage', $event->campaign);
+            || $event->campaign->getUserByRole([Role::ROLE_OWNER, Role::ROLE_MODERATOR])->get()->contains($user);
     }
 
     public function comment(User $user, Event $event)

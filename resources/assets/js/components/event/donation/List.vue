@@ -75,8 +75,8 @@
                         </tr>
                         <td colspan="4" class="text-center text-uppercase"><strong>{{ $t('events.donation.donation_details') }}</strong></td>
                         <tr v-for="(value, key) in selectedDonation">
-                            <th scope="row">{{ $t(`events.donation.${key}`) }} <template v-if="canEdit">(*)</template></th>
-                            <td v-if="!show.includes(key)" @click.ctrl="canEdit ? showUpdateForm(key, value) : null">{{ value }}</td>
+                            <th scope="row">{{ $t(`events.donation.${key}`) }} <template v-if="canEdit  && key != 'status' || event.manage">(*)</template></th>
+                            <td v-if="!show.includes(key)" @click.ctrl="canEdit && key != 'status' || event.manage ? showUpdateForm(key, value) : null">{{ value }}</td>
                             <td v-else>
                                 <fieldset :class="{ 'has-danger': errors.has(`${key}`) }">
                                     <textarea
@@ -111,7 +111,7 @@
                             <button @click="showView = false" class="btn btn-secondary" style="margin-bottom: 0">{{ $t('form.cancel') }}</button>
                             <button @click="handleUpdate" class="btn btn-primary" style="margin-bottom: 0">{{ $t('form.button.save') }}</button>
                         </td>
-                        <tr v-if="canEdit">
+                        <tr v-if="canEdit || event.manage">
                             <td colspan="4" align="right" v-html="$t('events.donation.dblclick_to_edit')"></td>
                         </tr>
                     </tbody>
@@ -159,8 +159,7 @@
                 return this.event.complete_percent
             },
             canEdit() {
-                return (!!this.user && this.selected.user_id == this.user.id && this.selected.status == 0)
-                    || this.event.manage
+                return !!this.user && this.selected.user_id == this.user.id && this.selected.status == 0
             },
             selectedUser() {
                 if (Object.keys(this.selected).length !== 0) {
@@ -205,7 +204,6 @@
                 this.showDelete = true
             },
             handleDelete() {
-                console.log(this.selected.goal_id, this.selected.id)
                 del(`donation/donation/${this.selected.id}`)
                     .then(res => {
                         let donationIndex = this.donations.findIndex(d => d.id == this.selected.id)
