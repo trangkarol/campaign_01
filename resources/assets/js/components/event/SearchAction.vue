@@ -16,20 +16,18 @@
                         <div class="align-right">
                             <button
                                 v-if="!event.deleted_at && event.isMember"
-                                href="#"
                                 class="btn btn-primary btn-md-2 bg-breez"
-                                data-toggle="modal"
-                                data-target="#update-header-photo"
                                 @click="createAction">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
                                 {{ $t('events.create_action') }}
                             </button>
-                            <a href="#"
-                                class="btn btn-control bg-purple"
+                            <button
                                 v-if="!event.deleted_at && event.complete_percent.length"
+                                class="btn btn-primary btn-md-2 bg-purple"
                                 @click.prevent="showModal = true">
-                                <i class="fa fa-gift"></i>
-                            </a>
+                                <i class="fa fa-gift size-md"></i>
+                                {{ $t('events.donation.donate') }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -272,10 +270,5 @@
     }
     .cat-list-bg-style {
         margin: 20px 0;
-    }
-    .btn-control {
-        > i {
-            font-size: 30px;
-        }
     }
 </style>

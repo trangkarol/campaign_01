@@ -1,7 +1,7 @@
 <template lang="html">
     <div class="fixed-sidebar right" :class="{ open: isOpen }">
         <div class="fixed-sidebar-right sidebar--small" id="sidebar-right">
-            <div class="mCustomScrollbar" data-mcs-theme="dark" id="listClose">
+            <div class="mCustomScrollbar" data-mcs-theme="dark" id="listClose" v-if="authenticated">
                 <ul class="chat-users" v-for="friend in listUsers">
                     <li class="inline-items" @click="addChatComponent(friend.id, friend.name, true, friend.slug)">
                         <div class="author-thumb">
@@ -26,7 +26,7 @@
             </a>
         </div>
         <div class="fixed-sidebar-right sidebar--large" id="sidebar-right-1">
-            <div class="mCustomScrollbar" data-mcs-theme="dark" id="listOpen">
+            <div class="mCustomScrollbar" data-mcs-theme="dark" id="listOpen" v-if="authenticated">
                 <div class="ui-block-title ui-block-title-small">
                     <a href="javascript:void(0)" class="title">{{ $t('chat.close_friends') }}s</a>
                     <a href="javascript:void(0)">{{ $t('chat.settings') }}</a>
