@@ -62,6 +62,7 @@ export function authGuard(routes) {
         if (store.state.auth.authenticated) {
             next()
         } else {
+            window.Laravel.url_after_login = to.path
             next('/login')
         }
     })
