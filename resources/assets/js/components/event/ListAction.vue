@@ -511,6 +511,7 @@
 
         .title-donation {
             font-size: 27px;
+            display: block;
         }
 
         .reason {
