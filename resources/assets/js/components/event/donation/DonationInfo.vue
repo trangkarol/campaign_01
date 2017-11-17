@@ -110,7 +110,7 @@
                         :aria-valuenow="infoNotAccepted.percent"
                         aria-valuemin="0"
                         :aria-valuemax="infoNotAccepted.percent > 100 ? Math.round(infoNotAccepted.percent) : 100">
-                        {{  infoNotAccepted.percent > 100 ? 100 : Math.round(infoNotAccepted.percent) + '% '
+                        {{ infoNotAccepted.percent > 100 ? 100 : Math.round(infoNotAccepted.percent) + '% '
                             + $t('events.donation.waiting_accept') }}
                     </div>
                     <div

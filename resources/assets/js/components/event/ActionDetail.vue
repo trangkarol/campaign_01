@@ -1,8 +1,7 @@
 <template>
     <div v-if="showAction">
-        <div class="background-modal">
-        </div>
-        <div class="modal fade show wrap-action" id="open-photo-popup-v1" style="display: block" v-if="dataAction">
+        <div class="modal fade show wrap-action" id="open-photo-popup-v1" style="display: block"
+            v-if="dataAction" @click.self="close">
             <div class="modal-dialog ui-block window-popup open-photo-popup open-photo-popup-v1">
                 <a href="javascript:void(0)" @click="close" class="close icon-close" data-dismiss="modal" aria-label="Close">
                     <svg class="olymp-close-icon">
@@ -33,9 +32,17 @@
 
                         <!--Prev Next Arrows-->
 
-                        <svg class="btn-next-without olymp-popup-right-arrow"><use xlink:href="/frontend/icons/icons.svg#olymp-popup-right-arrow"></use></svg>
+                        <div class="btn-next-without">
+                            <svg class="olymp-popup-right-arrow">
+                                <use xlink:href="/frontend/icons/icons.svg#olymp-popup-right-arrow"></use>
+                            </svg>
+                        </div>
 
-                        <svg class="btn-prev-without olymp-popup-left-arrow"><use xlink:href="/frontend/icons/icons.svg#olymp-popup-left-arrow"></use></svg>
+                        <div class="btn-prev-without">
+                            <svg class="olymp-popup-left-arrow">
+                                <use xlink:href="/frontend/icons/icons.svg#olymp-popup-left-arrow"></use>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -288,17 +295,8 @@
 </script>
 
 <style lang="scss" scoped>
-    .background-modal {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 1000;
-        background: black;
-        opacity: 0.5
-    }
     .wrap-action {
+        background: rgba(0, 0, 0, 0.53);
         overflow-y: scroll;
         &::-webkit-scrollbar {
             display: none;
@@ -333,6 +331,22 @@
 
         .ui-block-title {
             padding: 0px 25px;
+        }
+
+        .btn-next-without {
+            right: 0px;
+            text-align: right;
+        }
+
+        .btn-prev-without {
+            left: 0px;
+            text-align: left;
+        }
+
+        .btn-next-without, .btn-prev-without {
+            width: 30%;
+            height: 100%;
+            padding-top: 56%;
         }
     }
 </style>
