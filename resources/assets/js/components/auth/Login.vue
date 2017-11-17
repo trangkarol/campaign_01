@@ -108,7 +108,11 @@ export default {
                     .then(registered => {
                         if (registered) {
                             this.$Progress.finish()
-                            this.$router.push('/')
+                            if (window.Laravel.url_after_login) {
+                                this.$router.push(window.Laravel.url_after_login)
+                            } else {
+                                this.$router.push("/")
+                            }
                         }
                     })
                     .catch(err => {

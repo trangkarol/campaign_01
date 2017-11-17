@@ -32,6 +32,8 @@ export const login = ({ commit }, data) => {
 };
 
 export const logout = ({ commit }) => {
+    commit('SET_LOADING', false, { root: true });
+    window.Laravel.url_after_login = null
     commit(types.LOGOUT);
 };
 
