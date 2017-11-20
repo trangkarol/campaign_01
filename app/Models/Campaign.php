@@ -155,6 +155,11 @@ class Campaign extends BaseModel
         return $this->getUserByRole('blocked')->get();
     }
 
+    public function expenses()
+    {
+        return $this->hasManyThrough(Expense::class, Event::class);
+    }
+
     public function isMember()
     {
         $roleId = Role::where('name', Role::ROLE_MEMBER)->first()->id;

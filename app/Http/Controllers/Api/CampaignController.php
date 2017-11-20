@@ -456,6 +456,8 @@ class CampaignController extends ApiController
         return $this->getData(function () use ($campaign) {
             $this->authorize('view', $campaign);
             $this->compacts['data'] = $this->campaignRepository->getExportData($campaign);
+            $this->compacts['expenses'] = $this->campaignRepository->expensesOfCampaign($campaign);
+            $this->compacts['donates'] = $this->campaignRepository->donationsOfCampaign($campaign);
         });
     }
 

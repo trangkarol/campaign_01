@@ -717,4 +717,35 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
 
         return $member->pivot->is_manager;
     }
+
+    public function expensesOfCampaign($campaign)
+    {
+        $expenses = $campaign->expenses()->select(
+            \DB::raw('*'),
+            \DB::raw("DATE_FORMAT(expenses.time, '%m-%Y') AS month")
+        )->with([
+            'goal.donationType.quality',
+            'products',
+        ])->get();
+
+        return $expenses->groupBy('month')->transform(function ($item, $k) {
+            return $item->groupBy('goal.donation_type_id');
+        });
+    }
+
+    public function donationsOfCampaign($campaign)
+    {
+        $donation = $campaign->donations()->select(
+            \DB::raw('*'),
+            \DB::raw("DATE_FORMAT(donations.created_at, '%m-%Y') AS month")
+        )->where('status', Donation::ACCEPT)
+        ->with([
+            'goal.expenses.products',
+            'goal.donationType.quality',
+        ])->get();
+
+        return $donation->groupBy('month')->transform(function ($item, $k) {
+            return $item->groupBy('goal.donation_type_id');
+        });
+    }
 }

@@ -20,7 +20,6 @@
             'locale' => config('app.locale'),
             'fallbackLocale' => config('app.fallback_locale'),
             'url' => url('/'),
-            'url_after_login' => null,
             'languages' => config('settings.locale'),
             'settings' => [
                 'campaigns' => config('settings.campaigns'),

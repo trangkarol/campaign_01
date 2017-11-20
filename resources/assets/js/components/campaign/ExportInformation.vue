@@ -1,6 +1,6 @@
 <template>
 <transition name="modal">
-    <div class="modal v-modal-mask wrap-action" id="private-event" style="display: block" v-show="show">
+    <div class="modal v-modal-mask wrap-action" id="private-event" style="display: block">
         <div class="modal-dialog ui-block window-popup event-private-public private-event">
             <a href="#" class="close icon-close" data-dismiss="modal" aria-label="Close" @click.prevent="closeModal">
                 <svg class="olymp-close-icon"><use xlink:href="/frontend/icons/icons.svg#olymp-close-icon"></use></svg>
@@ -60,6 +60,102 @@
                                         - {{ campaign.end_day.value | localeDate }}
                                     </template>
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row table-header">
+                                <div class="col-md-1">
+                                    <a class="place inline-items post-add-icon">
+                                        <svg class="olymp-small-calendar-icon">
+                                            <use xlink:href="/frontend/icons/icons.svg#olymp-small-calendar-icon"></use>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <div class="col-md-11">
+                                    <div class="row">
+                                        <div class="col-md-2">{{ $t('campaigns.statistic.donate') }}</div>
+                                        <div class="col-md-2">{{ $t('campaigns.statistic.received') }}</div>
+                                        <div class="col-md-1">{{ $t('campaigns.statistic.spent') }}</div>
+                                        <div class="col-md-1">{{ $t('campaigns.statistic.remain') }}</div>
+                                        <div class="col-md-6">{{ $t('campaigns.statistic.note') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row" v-for="month in getMonth()">
+                                <div class="col-md-1 month-statistic">{{month}}</div>
+                                <div class="col-md-11">
+                                    <div class="row hover-change" v-for="(donate, donationTypeId) in data.donations[month]">
+                                        <div class="col-md-2 statistic-padding">
+                                            {{ totalOfReceived(donate).name }}
+                                        </div>
+                                        <div class="col-md-2 statistic-padding">
+                                            {{ totalOfReceived(donate).total }}
+                                        </div>
+                                        <div class="col-md-1 statistic-padding">
+                                            {{ totalOfSpent(month, donationTypeId).total }}
+                                        </div>
+                                        <div class="col-md-1 statistic-padding">
+                                            {{
+                                                totalOfReceived(donate).total - totalOfSpent(month, donationTypeId).total
+                                            }}
+                                            {{
+                                                totalRemain(totalOfReceived(donate).name, totalOfReceived(donate).total - totalOfSpent(month, donationTypeId, true).total)
+                                            }}
+                                        </div>
+                                        <div class="col-md-6 note">
+                                            <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                                            <span><input class="input-sm"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="row hover-change" v-for="(expense, donationTypeId) in data.expenses[month]">
+                                        <div class="col-md-2 statistic-padding">
+                                            {{ totalOfSpent(month, donationTypeId).name }}
+                                        </div>
+                                        <div class="col-md-2 statistic-padding">
+                                            {{ 0 }}
+                                        </div>
+                                        <div class="col-md-1 statistic-padding">
+                                            {{ totalOfSpent(month, donationTypeId).total }}
+                                        </div>
+                                        <div class="col-md-1 statistic-padding">
+                                            {{
+                                                0 - totalOfSpent(month, donationTypeId).total
+                                            }}
+                                            {{
+                                                totalRemain(totalOfSpent(month, donationTypeId).name,
+                                                0 - totalOfSpent(month, donationTypeId, true).total)
+                                            }}
+                                        </div>
+                                        <div class="col-md-6 note">
+                                            <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                                            <input  class="input-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row table-header">{{ $t('campaigns.statistic.total') }}</div>
+                            <div class="row">
+                                <div class="col-md-1 month-statistic"></div>
+                                <div class="col-md-11">
+                                    <div class="row hover-change" v-for="(value, name) in total">
+                                        <div class="col-md-2 statistic-padding">
+                                            {{ name }}
+                                        </div>
+                                        <div class="col-md-2 statistic-padding">
+                                            {{ value }}
+                                        </div>
+                                        <div class="col-md-8 note">
+                                            <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                                            <span><input class="input-sm"/></span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -202,7 +298,8 @@ export default {
     props: ['show', 'data'],
     data() {
         return {
-            settings: window.Laravel.settings
+            settings: window.Laravel.settings,
+            total: {}
         }
     },
     computed: mapState('campaign', ['campaign']),
@@ -211,6 +308,7 @@ export default {
             this.$emit('update:show', false)
         },
         reload() {
+            this.total = {}
             this.$emit('reload')
         },
         getDay(settings, key) {
@@ -230,6 +328,41 @@ export default {
         },
         print() {
             window.print()
+        },
+
+        totalOfReceived(donates) {
+            let result = {}
+            result.name = `${donates[0].goal.donation_type.name}(${donates[0].goal.donation_type.quality.name})`
+            result.total = _.sum(donates.map(donate => donate.value ))
+            return result
+        },
+
+        totalOfSpent(month, key, isdelete=false) {
+            let result = {}
+            let expenses = this.data.expenses[month][key]
+            if (expenses) {
+                result.total = _.sum(this.data.expenses[month][key].map(expense => expense.cost ))
+                result.name = `${expenses[0].goal.donation_type.name}(${expenses[0].goal.donation_type.quality.name})`
+                if (isdelete) {
+                    delete this.data.expenses[month][key]
+                }
+            } else {
+                result.total = 0
+                result.name = ''
+            }
+            return result
+        },
+
+        getMonth() {
+            return _.uniq([..._.keys(this.data.donations), ..._.keys(this.data.expenses)])
+        },
+
+        totalRemain(name, remain) {
+            if (this.total[name]) {
+                this.total[name] += remain
+            } else {
+                this.total[name] = remain
+            }
         }
     },
     filters: {
@@ -261,6 +394,7 @@ export default {
     }
     .modal-dialog {
         overflow-y: initial !important;
+        width: 1025px !important;
     }
     .tab-content {
         max-height: 50vh;
@@ -307,6 +441,37 @@ export default {
         font-size: 13px;
         svg {
             fill: #c10d4a;
+        }
+    }
+
+    .private-event {
+        .month-statistic {
+            font-weight: bold;
+            color: #474b4c;
+            padding: 5px 0px;
+        }
+        .table-header {
+            background: #eceff0;
+            padding: 5px 0px;
+            font-weight: bold;
+            color: #474b4c;
+        }
+
+        .hover-change {
+            border-top: 1px solid #eceff0;
+            .statistic-padding {
+                padding-top: 7px;
+            }
+            &:hover {
+                background-color: #eceff0;
+            }
+            .note {
+                input {
+                    border: 0px !important;
+                    display: inline;
+                    width: 95%;
+                }
+            }
         }
     }
 </style>

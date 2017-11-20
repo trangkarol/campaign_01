@@ -33,4 +33,8 @@ interface CampaignInterface extends RepositoryInterface
     public function inviteUser($data);
 
     public function acceptInvitation($data);
+
+    public function expensesOfCampaign($campaign);
+
+    public function donationsOfCampaign($campaign);
 }

@@ -108,8 +108,9 @@ export default {
                     .then(registered => {
                         if (registered) {
                             this.$Progress.finish()
-                            if (window.Laravel.url_after_login) {
-                                this.$router.push(window.Laravel.url_after_login)
+                            if (localStorage.getItem('redirect_after_login')){
+                                this.$router.push(localStorage.getItem('redirect_after_login'))
+                                localStorage.removeItem('redirect_after_login')
                             } else {
                                 this.$router.push("/")
                             }

@@ -24,20 +24,23 @@ export default function router(routes) {
     router.beforeEach((to, from, next) => {
         const components = router.getMatchedComponents(to)
         const access_token = localStorage.getItem('access_token')
-
         if (components.length) {
             setTimeout(() => {
                 router.app.setLayout(components[components.length - 1].layout || '')
             }, 0);
         }
-
         //check access token exists within Api local storage
         if (!store.state.auth.user.id && access_token) {
             store.dispatch('auth/check')
                 // get info user
             get(getUser).then((res) => {
                 store.dispatch('auth/setUser', res.data)
-                next()
+                if (localStorage.getItem('redirect_after_login')){
+                    next(localStorage.getItem('redirect_after_login'))
+                    localStorage.removeItem('redirect_after_login')
+                } else {
+                    next()
+                }
             })
             .catch((err) => {
                 store.dispatch('auth/logout')
@@ -62,7 +65,7 @@ export function authGuard(routes) {
         if (store.state.auth.authenticated) {
             next()
         } else {
-            window.Laravel.url_after_login = to.path
+            localStorage.setItem('redirect_after_login', to.path)
             next('/login')
         }
     })

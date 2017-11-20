@@ -82,7 +82,14 @@
         "join_at": "Joined at",
         "guest": "Guest who has donations",
         "percent": "Percent",
-        "info": "{0} has donate {1} time(s) in {2} events(s)"
+        "info": "{0} has donate {1} time(s) in {2} events(s)",
+        "donate": "Donate",
+        "received": "Received",
+        "spent": "Spent",
+        "remain": "Remain",
+        "note": "Note",
+        "total": "Total"
+
     },
         "roles": {
         "owner": "Owner",
