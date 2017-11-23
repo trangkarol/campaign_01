@@ -70,7 +70,7 @@
                 </div>
             </div>
         </div>
-        <information :show.sync="showInfo" :data="information" @reload="fetchStatisticInfo"/>
+        <information :show.sync="showInfo" :data="information" @reload="fetchStatisticInfo" v-if="showInfo"/>
         <user-statistic :show.sync="showUser" :data="userInfo" @reload="fetchUserStatistic"/>
 
         <div class="row">
@@ -191,12 +191,7 @@ export default {
                 }
             },
             showInfo: false,
-            information: {
-                title: '',
-                description: '',
-                active_users: [],
-                reported_at: null
-            },
+            information: {},
             showUser: false,
             userInfo: {}
         }
@@ -219,10 +214,14 @@ export default {
             this.showUser = true
         },
         fetchStatisticInfo() {
+            this.information = {}
             this.$Progress.start()
             get(`campaign/${this.pageId}/get-export-data`)
                 .then(res => {
                     this.information = res.data.data
+                    this.information.expenses = res.data.expenses
+                    this.information.donations = res.data.donates
+                    console.log(this.information)
                     this.information.event_count = this.information.events.length
                     this.information.events = _.groupBy(this.information.events, 'settings[0].date_string')
                     this.information.reported_at = new Date().toLocaleString(window.Laravel.locale)
@@ -231,10 +230,7 @@ export default {
                 .catch(() => this.$Progress.fail)
         },
         getStatisticInfo() {
-            if (!this.information.created_at) {
-                this.fetchStatisticInfo()
-            }
-
+            this.fetchStatisticInfo()
             this.showInfo = true
         }
     },
