@@ -20,3 +20,4 @@ vendor
 /data
 .gitignore
 npm-debug.log
+worker.log

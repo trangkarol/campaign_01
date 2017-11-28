@@ -7,6 +7,6 @@ return [
         'subject' => 'FCampaign-Reset Password',
         'description' => 'You are receiving this email because we received a password reset request for your account.',
         'ending' => 'Thank you for using our application!',
-        'button' => 'Reset Password :link',
-    ]
+        'button' => 'Reset Password',
+    ],
 ];

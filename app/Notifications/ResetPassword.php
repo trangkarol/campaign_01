@@ -46,7 +46,7 @@ class ResetPassword extends Notification implements ShouldQueue
         return (new MailMessage)
                     ->subject(trans('emails.password_reset.subject'))
                     ->line(trans('emails.password_reset.description'))
-                    ->action(trans('emaills.password_reset.button', url('password/reset', $this->token)))
+                    ->action(trans('emails.password_reset.button'), url('password/reset', $this->token))
                     ->line(trans('emails.password_reset.ending'));
     }
 
