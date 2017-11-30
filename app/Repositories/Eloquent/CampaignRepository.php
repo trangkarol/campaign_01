@@ -718,6 +718,16 @@ class CampaignRepository extends BaseRepository implements CampaignInterface
         return $member->pivot->is_manager;
     }
 
+    public function findCampaignExpired()
+    {
+        $enday = Carbon::today()->format('Y-m-d');
+
+        return $this->whereHas('settings', function ($query) use ($enday) {
+                $query->where('key', config('settings.campaigns.end_day'))
+                    ->where('value', '=', $enday);
+            })->get();
+    }
+
     public function expensesOfCampaign($campaign)
     {
         $expenses = $campaign->expenses()->select(

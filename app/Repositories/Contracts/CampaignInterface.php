@@ -37,4 +37,6 @@ interface CampaignInterface extends RepositoryInterface
     public function expensesOfCampaign($campaign);
 
     public function donationsOfCampaign($campaign);
+
+    public function findCampaignExpired();
 }
